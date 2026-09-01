@@ -78,6 +78,7 @@ ceiling height = floor-to-floor − 16.
 | Commercial ground floor | **192** (12M) | 176 | generous, shopfront |
 | Warehouse / industrial | **256** (16M) | 240 | cavernous |
 | Basement / service | **112** (7M) | 96 | oppressive, correct |
+| Single-storey prefab (diner car, kiosk) | **160** (10M) to crown | 112 at eave | low, horizontal |
 
 A 4-storey building with a shopfront is therefore
 `192 + 128 + 128 + 128 = 576` to the roof slab, plus parapet.
@@ -147,9 +148,16 @@ least 16 deep, projecting 8–16 from the wall plane. A mass that just stops at
 the top looks unfinished, and this is the most common cause of "it looks like
 a box".
 
-**R2 — One dominant mass.** The primary mass carries ≥ 60% of the footprint.
-Every other mass is *clearly* subordinate: at least 1M lower, or set back at
-least 1M. Two masses of similar size fight and the building loses its subject.
+**R2 — One dominant mass.** One mass owns the public frontage and is the
+tallest thing on the plot. Every other mass sits behind that frontage and is
+at least 1M lower. Two masses of equal height and equal presence fight, and
+the building loses its subject.
+
+On multi-mass street buildings the primary mass should also carry ≥ 60% of
+the footprint. On single-storey buildings with service wings, ignore that
+number — dominance there is *height and frontage*, not floor area. A kitchen
+block may be nearly as large as the room it serves, provided it stays behind
+and below.
 
 **R3 — No near-misses.** Two faces are either flush, or offset by ≥ 16.
 An 8-unit offset reads as a mistake, not a decision. This is the rule that

@@ -31,6 +31,15 @@ fixing it in Hammer costs an afternoon.
 - [`docs/00-scale-system.md`](docs/00-scale-system.md) — **read first.** The
   module, the storey heights, the bay system, and the nine massing rules.
   Every building on the map obeys it.
+- [`docs/01-diner-massing.md`](docs/01-diner-massing.md) — Building 01, Pass 1.
+  The diner's masses, heights and bays. Drawing set in
+  [`docs/01-diner-massing.html`](docs/01-diner-massing.html).
+
+## Buildings
+
+| # | Building | Pass 1 Massing | Pass 2 Façade | Pass 3 Interior | Pass 4 Materials |
+|---|---|---|---|---|---|
+| 01 | Diner | proposed | — | — | — |
 
 ## Repo layout
 

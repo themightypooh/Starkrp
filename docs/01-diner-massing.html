@@ -1,0 +1,508 @@
+<title>The Diner · Massing Set</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<style>
+:root{
+  --paper:#EDEFF1; --panel:#F6F7F8; --ink:#1B2A33; --muted:#64757F;
+  --rule:#C2CCD2; --grid:#CBD5DA; --grid-hi:#AEBCC4;
+  --a1:#C98980; --a2:#B05B50; --a3:#8A423A;
+  --b1:#7FA0A8; --b2:#567F89; --b3:#3C5F68;
+  --c1:#D9C296; --c2:#C0A268; --c3:#94794A;
+  --glass:#9FB4BE; --hot:#B0332A;
+  --font-d:"Barlow Condensed","Helvetica Neue",Arial,sans-serif;
+  --font-b:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --font-m:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F161B; --panel:#151F26; --ink:#DBE3E8; --muted:#8195A0;
+    --rule:#2B3944; --grid:#22303A; --grid-hi:#2F3F4B;
+    --a1:#D08D83; --a2:#B4665A; --a3:#8E4A41;
+    --b1:#84A9B3; --b2:#588894; --b3:#3D6570;
+    --c1:#DFC79B; --c2:#C4A76D; --c3:#957C4E;
+    --glass:#6E8996; --hot:#E2685B;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F161B; --panel:#151F26; --ink:#DBE3E8; --muted:#8195A0;
+  --rule:#2B3944; --grid:#22303A; --grid-hi:#2F3F4B;
+  --a1:#D08D83; --a2:#B4665A; --a3:#8E4A41;
+  --b1:#84A9B3; --b2:#588894; --b3:#3D6570;
+  --c1:#DFC79B; --c2:#C4A76D; --c3:#957C4E;
+  --glass:#6E8996; --hot:#E2685B;
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-b);
+  line-height:1.6;margin:0;padding:0 20px 96px;-webkit-font-smoothing:antialiased}
+.sheet{max-width:1020px;margin:0 auto}
+
+/* ---- title block ---- */
+.tb{border-bottom:2px solid var(--ink);padding:40px 0 14px;margin-bottom:8px}
+.tb-top{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;
+  font-family:var(--font-m);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted)}
+.tb-top .sep{color:var(--rule)}
+h1{font-family:var(--font-d);font-weight:600;font-size:clamp(38px,7vw,64px);
+  line-height:.95;letter-spacing:-.005em;margin:14px 0 0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--muted)}
+.tb-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));
+  gap:2px 18px;margin-top:20px;font-family:var(--font-m);font-size:12px}
+.tb-meta div{border-top:1px solid var(--rule);padding-top:6px}
+.tb-meta span{display:block;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+
+.lede{font-size:17.5px;max-width:64ch;margin:30px 0 8px}
+.lede strong{font-weight:600}
+p{max-width:66ch}
+
+h2{font-family:var(--font-d);font-weight:600;font-size:15px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);margin:56px 0 0;
+  padding-bottom:7px;border-bottom:1px solid var(--rule)}
+
+/* ---- figures ---- */
+figure{margin:22px 0 0;background:var(--panel);border:1px solid var(--rule)}
+figure svg{display:block;width:100%;height:auto}
+.fig-hd{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;
+  padding:11px 16px;border-bottom:1px solid var(--rule);
+  font-family:var(--font-m);font-size:11px;letter-spacing:.11em;text-transform:uppercase}
+.fig-hd b{font-weight:600;color:var(--hot)}
+.fig-hd span{color:var(--muted)}
+figcaption{padding:13px 16px;border-top:1px solid var(--rule);
+  font-size:14px;color:var(--muted);max-width:74ch}
+figcaption b{color:var(--ink);font-weight:600}
+.svg-wrap{overflow-x:auto;padding:6px}
+
+/* ---- svg drawing conventions ---- */
+.grid16{stroke:var(--grid);stroke-width:.7;fill:none}
+.grid128{stroke:var(--grid-hi);stroke-width:1.6;fill:none}
+.f-top.m-a{fill:var(--a1)} .f-fr.m-a{fill:var(--a2)} .f-sd.m-a{fill:var(--a3)}
+.f-top.m-b{fill:var(--b1)} .f-fr.m-b{fill:var(--b2)} .f-sd.m-b{fill:var(--b3)}
+.f-top.m-c{fill:var(--c1)} .f-fr.m-c{fill:var(--c2)} .f-sd.m-c{fill:var(--c3)}
+polygon{stroke:var(--ink);stroke-width:1.1;stroke-opacity:.35;stroke-linejoin:round}
+.mass-a{fill:var(--a2);fill-opacity:.9;stroke:var(--ink);stroke-width:2.4}
+.mass-b{fill:var(--b2);fill-opacity:.9;stroke:var(--ink);stroke-width:2.4}
+.mass-c{fill:var(--c2);fill-opacity:.9;stroke:var(--ink);stroke-width:2.4}
+.roof{fill:var(--a1);stroke:var(--ink);stroke-width:2.4}
+.plinth{fill:var(--a3);stroke:var(--ink);stroke-width:2}
+.beyond{fill:none;stroke:var(--ink);stroke-width:1.8;stroke-opacity:.55;stroke-dasharray:11 7}
+.glass{fill:var(--glass);fill-opacity:.85;stroke:var(--ink);stroke-width:1.6}
+.ground{stroke:var(--ink);stroke-width:4;stroke-linecap:square}
+.thin{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-opacity:.7}
+.fitout{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-opacity:.62}
+.fitout-f{fill:var(--ink);fill-opacity:.11;stroke:var(--ink);stroke-width:1.6;stroke-opacity:.62}
+.setback{stroke:var(--hot);stroke-width:2.4;stroke-dasharray:20 9 4 9;fill:none}
+.level{stroke:var(--hot);stroke-width:1.3;stroke-dasharray:6 6;stroke-opacity:.75;fill:none}
+.dim{stroke:var(--ink);stroke-width:1.2;stroke-opacity:.8;fill:none}
+.ext{stroke:var(--ink);stroke-width:.9;stroke-opacity:.45;fill:none}
+text{fill:var(--ink);font-family:var(--font-m)}
+.t-dim{font-size:14px;fill:var(--ink);fill-opacity:.85;text-anchor:middle}
+.t-lbl{font-size:16px;font-weight:600;letter-spacing:.09em;text-anchor:middle}
+.t-lbl-l{font-size:16px;font-weight:600;letter-spacing:.09em}
+.t-note{font-size:13px;fill:var(--muted);letter-spacing:.06em}
+.t-hot{fill:var(--hot);font-size:13px;letter-spacing:.1em}
+
+/* ---- legend ---- */
+.legend{display:flex;flex-wrap:wrap;gap:6px 26px;padding:11px 16px;
+  border-top:1px solid var(--rule);font-family:var(--font-m);font-size:12px}
+.legend i{display:inline-block;width:22px;height:11px;margin-right:8px;
+  vertical-align:-1px;border:1px solid var(--ink)}
+
+/* ---- tables ---- */
+.tw{overflow-x:auto;margin-top:22px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+th{font-family:var(--font-d);font-weight:600;font-size:13px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted);text-align:left;
+  border-bottom:1.5px solid var(--ink);padding:7px 12px 7px 0;white-space:nowrap}
+td{border-bottom:1px solid var(--rule);padding:9px 12px 9px 0;vertical-align:top}
+td.n,th.n{font-family:var(--font-m);font-variant-numeric:tabular-nums;text-align:right;
+  padding-right:22px;white-space:nowrap}
+tbody tr td:first-child{font-weight:600}
+.ok{color:var(--b2);font-family:var(--font-m);font-weight:600}
+
+/* ---- ladder ---- */
+.ladder{font-family:var(--font-m);font-size:14px;margin:20px 0 0;
+  border-left:2px solid var(--hot);padding:4px 0 4px 18px;display:grid;gap:5px}
+.ladder b{display:inline-block;min-width:52px;font-weight:600}
+.ladder span{color:var(--muted)}
+
+/* ---- questions ---- */
+.q{margin-top:22px;display:grid;gap:16px}
+.qi{border-top:1px solid var(--rule);padding-top:13px;
+  display:grid;grid-template-columns:34px 1fr;gap:14px}
+.qn{font-family:var(--font-m);font-size:13px;color:var(--hot);padding-top:3px}
+.qi h3{font-family:var(--font-d);font-weight:600;font-size:21px;letter-spacing:.01em;margin:0 0 4px}
+.qi p{margin:0;font-size:14.5px;color:var(--muted);max-width:62ch}
+.qi p b{color:var(--ink);font-weight:600}
+
+footer{margin-top:60px;padding-top:16px;border-top:2px solid var(--ink);
+  font-family:var(--font-m);font-size:11.5px;color:var(--muted);
+  display:flex;flex-wrap:wrap;gap:6px 22px}
+</style>
+
+<div class="sheet">
+
+<header class="tb">
+  <div class="tb-top">
+    <span>Stark RP · Main Street</span><span class="sep">/</span>
+    <span>Building 01</span><span class="sep">/</span>
+    <span>Sheet A-01</span>
+  </div>
+  <h1>The Diner <em>— Massing</em></h1>
+  <div class="tb-meta">
+    <div><span>Pass</span>1 of 4</div>
+    <div><span>Module</span>M = 16 u</div>
+    <div><span>Frontage</span>512 u · 4 bays</div>
+    <div><span>Height</span>160 u crown</div>
+    <div><span>Status</span>Proposed</div>
+  </div>
+</header>
+
+<p class="lede">A prefabricated dining car on the street line with a plainer kitchen block
+added behind it. <strong>The type does the massing work for us</strong> — a dominant mass,
+a subordinate mass and a stepped roofline all fall out of the building's story instead of
+being decoration applied on top of a box.</p>
+
+<p>Everything below is divisible by 16. Origin sits at the west end of the street setback
+line: <b>+x</b> east along the street, <b>+y</b> back from it, <b>+z</b> up.</p>
+
+<h2>1 · The building in three dimensions</h2>
+
+<figure>
+  <div class="fig-hd"><b>Fig 1</b><span>Axonometric from the street, looking north-east</span></div>
+  <div class="svg-wrap">
+  <svg viewBox="-483 -196 953 760" role="img" aria-label="Axonometric view of the diner: a long low dining car with a barrel vault roof on the street frontage, a taller flat-roofed kitchen block behind it to the east, and a small entry vestibule projecting toward the street at the west end.">
+    <polygon class="f-top m-b" points="55.4,144.0 -221.7,-16.0 0.0,-144.0 277.1,16.0"/>
+    <polygon class="f-fr m-b" points="55.4,288.0 -221.7,128.0 -221.7,-16.0 55.4,144.0"/>
+    <polygon class="f-sd m-b" points="55.4,288.0 277.1,160.0 277.1,16.0 55.4,144.0"/>
+    <polygon class="f-top m-a" points="27.7,368.0 -415.7,112.0 -221.7,0.0 221.7,256.0"/>
+    <polygon class="f-fr m-a" points="27.7,496.0 -415.7,240.0 -415.7,112.0 27.7,368.0"/>
+    <polygon class="f-sd m-a" points="27.7,496.0 221.7,384.0 221.7,256.0 27.7,368.0"/>
+    <polygon class="f-top m-a" points="202.3,257.3 -241.1,1.3 -221.7,0.0 221.7,256.0"/>
+    <polygon class="f-top m-a" points="182.9,259.6 -260.5,3.6 -241.1,1.3 202.3,257.3"/>
+    <polygon class="f-top m-a" points="163.5,263.7 -279.9,7.7 -260.5,3.6 182.9,259.6"/>
+    <polygon class="f-top m-a" points="144.1,270.4 -299.3,14.4 -279.9,7.7 163.5,263.7"/>
+    <polygon class="f-top m-a" points="124.7,280.0 -318.7,24.0 -299.3,14.4 144.1,270.4"/>
+    <polygon class="f-top m-a" points="105.3,292.8 -338.1,36.8 -318.7,24.0 124.7,280.0"/>
+    <polygon class="f-top m-a" points="85.9,308.5 -357.5,52.5 -338.1,36.8 105.3,292.8"/>
+    <polygon class="f-top m-a" points="66.5,326.8 -376.9,70.8 -357.5,52.5 85.9,308.5"/>
+    <polygon class="f-top m-a" points="47.1,346.9 -396.3,90.9 -376.9,70.8 66.5,326.8"/>
+    <polygon class="f-top m-a" points="27.7,368.0 -415.7,112.0 -396.3,90.9 47.1,346.9"/>
+    <polygon class="f-sd m-a" points="27.7,368.0 47.1,346.9 66.5,326.8 85.9,308.5 105.3,292.8 124.7,280.0 144.1,270.4 163.5,263.7 182.9,259.6 202.3,257.3 221.7,256.0 27.7,368.0"/>
+    <polygon class="f-top m-c" points="-97.0,360.0 -180.1,312.0 -138.6,288.0 -55.4,336.0"/>
+    <polygon class="f-fr m-c" points="-97.0,472.0 -180.1,424.0 -180.1,312.0 -97.0,360.0"/>
+    <polygon class="f-sd m-c" points="-97.0,472.0 -55.4,448.0 -55.4,336.0 -97.0,360.0"/>
+
+    <text class="t-lbl" x="-194" y="316">A · DINING CAR</text>
+    <text class="t-note" x="-194" y="338" text-anchor="middle">512 × 224 · crown 160</text>
+    <text class="t-lbl" x="28" y="4">B · KITCHEN BLOCK</text>
+    <text class="t-note" x="28" y="26" text-anchor="middle">320 × 256 · parapet 144</text>
+    <text class="t-lbl" x="-139" y="404">C · VESTIBULE</text>
+    <text class="t-note" x="-139" y="426" text-anchor="middle">96 × 48 · 112</text>
+    <text class="t-hot" x="-236" y="514" text-anchor="middle">◄  STREET  ►</text>
+  </svg>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--a2)"></i>A · primary</span>
+    <span><i style="background:var(--b2)"></i>B · secondary</span>
+    <span><i style="background:var(--c2)"></i>C · tertiary</span>
+  </div>
+  <figcaption>The vault is faceted into <b>10 segments</b> across the 224 width — smooth at
+  player distance and far cheaper than true curved geometry. Note that B is nearly as large
+  as A in plan but never competes with it: it sits behind the frontage and 16 below the crown.</figcaption>
+</figure>
+
+<h2>2 · Floor plan</h2>
+
+<figure>
+  <div class="fig-hd"><b>Fig 2</b><span>Plan at +48 · street to the top</span></div>
+  <div class="svg-wrap">
+  <svg viewBox="-132 -128 818 762" role="img" aria-label="Floor plan of the diner showing the dining car along the street with four booths and a nine-stool counter, the entry vestibule at the west end, and the kitchen block behind containing the cook line, walk-in and restrooms.">
+    <defs>
+      <pattern id="g16p" width="16" height="16" patternUnits="userSpaceOnUse"><path class="grid16" d="M16 0H0V16"/></pattern>
+      <pattern id="g128p" width="128" height="128" patternUnits="userSpaceOnUse">
+        <rect width="128" height="128" fill="url(#g16p)"/><path class="grid128" d="M128 0H0V128"/></pattern>
+    </defs>
+    <rect x="-132" y="-128" width="818" height="762" fill="url(#g128p)"/>
+
+    <text class="t-hot" x="256" y="-96" text-anchor="middle">S T R E E T</text>
+    <line class="setback" x1="-72" y1="0" x2="584" y2="0"/>
+    <text class="t-hot" x="-72" y="-12">SETBACK LINE</text>
+
+    <rect class="mass-b" x="192" y="272" width="320" height="256"/>
+    <rect class="mass-a" x="0" y="48" width="512" height="224"/>
+    <rect class="mass-c" x="96" y="0" width="96" height="48"/>
+
+    <rect class="thin" x="16" y="64" width="480" height="192"/>
+    <rect class="thin" x="208" y="288" width="288" height="224"/>
+
+    <rect class="fitout" x="240" y="64" width="64" height="64"/><rect class="fitout-f" x="252" y="84" width="40" height="24"/>
+    <rect class="fitout" x="304" y="64" width="64" height="64"/><rect class="fitout-f" x="316" y="84" width="40" height="24"/>
+    <rect class="fitout" x="368" y="64" width="64" height="64"/><rect class="fitout-f" x="380" y="84" width="40" height="24"/>
+    <rect class="fitout" x="432" y="64" width="64" height="64"/><rect class="fitout-f" x="444" y="84" width="40" height="24"/>
+    <text class="t-note" x="368" y="150" text-anchor="middle">4 BOOTHS @ 64</text>
+
+    <rect class="fitout-f" x="208" y="192" width="288" height="24"/>
+    <circle class="fitout" cx="224" cy="180" r="9"/><circle class="fitout" cx="256" cy="180" r="9"/>
+    <circle class="fitout" cx="288" cy="180" r="9"/><circle class="fitout" cx="320" cy="180" r="9"/>
+    <circle class="fitout" cx="352" cy="180" r="9"/><circle class="fitout" cx="384" cy="180" r="9"/>
+    <circle class="fitout" cx="416" cy="180" r="9"/><circle class="fitout" cx="448" cy="180" r="9"/>
+    <circle class="fitout" cx="480" cy="180" r="9"/>
+    <text class="t-note" x="352" y="209" text-anchor="middle">COUNTER · 9 STOOLS @ 32</text>
+    <rect class="fitout" x="208" y="216" width="288" height="40"/>
+    <text class="t-note" x="352" y="242" text-anchor="middle">BACK LINE</text>
+
+    <text class="t-note" x="24" y="118">ENTRY</text><text class="t-note" x="24" y="136">+ WAITING</text>
+    <rect class="fitout" x="96" y="48" width="96" height="32" stroke-dasharray="7 5"/>
+
+    <rect class="fitout" x="208" y="288" width="288" height="56"/>
+    <text class="t-note" x="352" y="322" text-anchor="middle">COOK LINE</text>
+    <rect class="fitout" x="400" y="416" width="96" height="96"/>
+    <text class="t-note" x="448" y="470" text-anchor="middle">WALK-IN</text>
+    <rect class="fitout" x="208" y="400" width="144" height="112"/>
+    <line class="fitout" x1="280" y1="400" x2="280" y2="512"/>
+    <text class="t-note" x="244" y="462" text-anchor="middle">WC</text>
+    <text class="t-note" x="316" y="462" text-anchor="middle">WC</text>
+    <line class="fitout" x1="336" y1="528" x2="384" y2="528" stroke-width="4" stroke-opacity="1"/>
+    <text class="t-note" x="360" y="552" text-anchor="middle">STAFF</text>
+
+    <text class="t-lbl-l" x="16" y="266" style="font-size:15px">A</text>
+    <text class="t-lbl-l" x="204" y="522" style="font-size:15px">B</text>
+    <text class="t-lbl-l" x="104" y="42" style="font-size:15px">C</text>
+
+    <line class="ext" x1="0" y1="48" x2="0" y2="-64"/><line class="ext" x1="512" y1="48" x2="512" y2="-64"/>
+    <line class="ext" x1="128" y1="48" x2="128" y2="-40"/><line class="ext" x1="256" y1="48" x2="256" y2="-40"/>
+    <line class="ext" x1="384" y1="48" x2="384" y2="-40"/>
+    <line class="dim" x1="0" y1="-52" x2="512" y2="-52"/>
+    <line class="dim" x1="-6" y1="-58" x2="6" y2="-46"/><line class="dim" x1="506" y1="-58" x2="518" y2="-46"/>
+    <line class="dim" x1="122" y1="-58" x2="134" y2="-46"/><line class="dim" x1="250" y1="-58" x2="262" y2="-46"/>
+    <line class="dim" x1="378" y1="-58" x2="390" y2="-46"/>
+    <text class="t-dim" x="64" y="-60">128</text><text class="t-dim" x="192" y="-60">128</text>
+    <text class="t-dim" x="320" y="-60">128</text><text class="t-dim" x="448" y="-60">128</text>
+    <text class="t-dim" x="256" y="-32" style="font-size:16px;font-weight:600">512 = 4 BAYS</text>
+
+    <line class="ext" x1="512" y1="48" x2="588" y2="48"/><line class="ext" x1="512" y1="272" x2="588" y2="272"/>
+    <line class="ext" x1="512" y1="528" x2="652" y2="528"/><line class="ext" x1="192" y1="0" x2="652" y2="0" stroke-dasharray="4 6"/>
+    <line class="dim" x1="560" y1="48" x2="560" y2="272"/>
+    <line class="dim" x1="554" y1="54" x2="566" y2="42"/><line class="dim" x1="554" y1="278" x2="566" y2="266"/>
+    <text class="t-dim" x="560" y="165" transform="rotate(-90 560 165)">224</text>
+    <line class="dim" x1="560" y1="272" x2="560" y2="528"/>
+    <line class="dim" x1="554" y1="278" x2="566" y2="266"/><line class="dim" x1="554" y1="534" x2="566" y2="522"/>
+    <text class="t-dim" x="560" y="405" transform="rotate(-90 560 405)">256</text>
+    <line class="dim" x1="624" y1="0" x2="624" y2="528"/>
+    <line class="dim" x1="618" y1="6" x2="630" y2="-6"/><line class="dim" x1="618" y1="534" x2="630" y2="522"/>
+    <text class="t-dim" x="624" y="268" transform="rotate(-90 624 268)">528 OVERALL</text>
+
+    <line class="ext" x1="0" y1="272" x2="-64" y2="272"/><line class="ext" x1="96" y1="0" x2="-64" y2="0" stroke-dasharray="4 6"/>
+    <line class="ext" x1="96" y1="48" x2="-30" y2="48"/>
+    <line class="dim" x1="-44" y1="0" x2="-44" y2="48"/>
+    <line class="dim" x1="-50" y1="6" x2="-38" y2="-6"/><line class="dim" x1="-50" y1="54" x2="-38" y2="42"/>
+    <text class="t-dim" x="-44" y="24" transform="rotate(-90 -44 24)">48</text>
+
+    <line class="ext" x1="192" y1="528" x2="192" y2="600"/>
+    <line class="dim" x1="192" y1="588" x2="512" y2="588"/>
+    <line class="dim" x1="186" y1="594" x2="198" y2="582"/><line class="dim" x1="506" y1="594" x2="518" y2="582"/>
+    <text class="t-dim" x="352" y="580">320</text>
+    <line class="dim" x1="0" y1="588" x2="192" y2="588"/>
+    <line class="dim" x1="-6" y1="594" x2="6" y2="582"/>
+    <text class="t-dim" x="96" y="580">192 SETBACK</text>
+    <line class="ext" x1="0" y1="272" x2="0" y2="600"/>
+  </svg>
+  </div>
+  <figcaption>The cross-section resolves exactly: <b>64 booth + 40 aisle + 24 stools + 24 counter
+  + 40 back line = 192</b> of interior depth. Fitout is drawn to prove the massing holds the
+  programme — it is <b>indicative only</b> and gets decided properly in Pass 3.</figcaption>
+</figure>
+
+<h2>3 · The street sees this</h2>
+
+<figure>
+  <div class="fig-hd"><b>Fig 3</b><span>South elevation · the frontage</span></div>
+  <div class="svg-wrap">
+  <svg viewBox="-136 -252 792 348" role="img" aria-label="Street elevation of the diner: a long low body with a continuous window band, a barrel vault band above the eave, and the entry vestibule projecting at the left. The kitchen block behind is shown as a hidden dashed outline.">
+    <defs>
+      <pattern id="g16e" width="16" height="16" patternUnits="userSpaceOnUse"><path class="grid16" d="M16 0H0V16"/></pattern>
+      <pattern id="g128e" width="128" height="128" patternUnits="userSpaceOnUse">
+        <rect width="128" height="128" fill="url(#g16e)"/><path class="grid128" d="M128 0H0V128"/></pattern>
+    </defs>
+    <rect x="-136" y="-252" width="792" height="348" fill="url(#g128e)"/>
+
+    <rect class="beyond" x="192" y="-144" width="320" height="144"/>
+    <text class="t-note" x="504" y="-152" text-anchor="end">B BEYOND · 144</text>
+
+    <rect class="roof" x="0" y="-160" width="512" height="32"/>
+    <rect class="mass-a" x="0" y="-128" width="512" height="112"/>
+    <rect class="plinth" x="-16" y="-16" width="544" height="16"/>
+
+    <rect class="glass" x="16" y="-104" width="80" height="72"/>
+    <rect class="glass" x="192" y="-104" width="304" height="72"/>
+    <text class="t-note" x="344" y="-58" text-anchor="middle">GLAZING INDICATIVE · PASS 2</text>
+
+    <rect class="mass-c" x="96" y="-112" width="96" height="112"/>
+    <rect class="fitout" x="120" y="-96" width="48" height="96" stroke-opacity="1"/>
+
+    <line class="ground" x1="-76" y1="0" x2="588" y2="0"/>
+
+    <line class="level" x1="0" y1="-160" x2="600" y2="-160"/>
+    <line class="level" x1="0" y1="-128" x2="600" y2="-128"/>
+    <text class="t-hot" x="604" y="-156">160 CROWN</text>
+    <text class="t-hot" x="604" y="-124">128 EAVE</text>
+
+    <line class="ext" x1="0" y1="-160" x2="-96" y2="-160"/><line class="ext" x1="0" y1="-128" x2="-96" y2="-128"/>
+    <line class="ext" x1="-16" y1="-16" x2="-96" y2="-16"/>
+    <line class="dim" x1="-76" y1="0" x2="-76" y2="-16"/>
+    <line class="dim" x1="-82" y1="-22" x2="-70" y2="-10"/>
+    <text class="t-dim" x="-76" y="-8" transform="rotate(-90 -76 -8)">16</text>
+    <line class="dim" x1="-76" y1="-16" x2="-76" y2="-128"/>
+    <line class="dim" x1="-82" y1="-134" x2="-70" y2="-122"/>
+    <text class="t-dim" x="-76" y="-72" transform="rotate(-90 -76 -72)">112</text>
+    <line class="dim" x1="-76" y1="-128" x2="-76" y2="-160"/>
+    <line class="dim" x1="-82" y1="-166" x2="-70" y2="-154"/>
+    <text class="t-dim" x="-76" y="-144" transform="rotate(-90 -76 -144)">32</text>
+
+    <line class="ext" x1="128" y1="0" x2="128" y2="46"/><line class="ext" x1="256" y1="0" x2="256" y2="46"/>
+    <line class="ext" x1="384" y1="0" x2="384" y2="46"/><line class="ext" x1="0" y1="0" x2="0" y2="46"/>
+    <line class="ext" x1="512" y1="0" x2="512" y2="46"/>
+    <line class="dim" x1="0" y1="38" x2="512" y2="38"/>
+    <line class="dim" x1="-6" y1="44" x2="6" y2="32"/><line class="dim" x1="122" y1="44" x2="134" y2="32"/>
+    <line class="dim" x1="250" y1="44" x2="262" y2="32"/><line class="dim" x1="378" y1="44" x2="390" y2="32"/>
+    <line class="dim" x1="506" y1="44" x2="518" y2="32"/>
+    <text class="t-dim" x="64" y="66">BAY 1</text><text class="t-dim" x="192" y="66">BAY 2</text>
+    <text class="t-dim" x="320" y="66">BAY 3</text><text class="t-dim" x="448" y="66">BAY 4</text>
+  </svg>
+  </div>
+  <figcaption><b>Four bays, no centre.</b> An even bay count has no middle, so the entrance is
+  forced off-axis onto bay 1 — which is what makes it read as roadside commercial rather than
+  civic. That leaves bays 2–4 as one uninterrupted 320-unit window run for the booths.</figcaption>
+</figure>
+
+<h2>4 · Why the silhouette works</h2>
+
+<figure>
+  <div class="fig-hd"><b>Fig 4</b><span>West elevation · the height ladder</span></div>
+  <div class="svg-wrap">
+  <svg viewBox="-124 -252 816 352" role="img" aria-label="West elevation showing four roof heights stepping upward by sixteen units each: vestibule at 112, dining car eave at 128, kitchen block parapet at 144, and vault crown at 160.">
+    <defs>
+      <pattern id="g16w" width="16" height="16" patternUnits="userSpaceOnUse"><path class="grid16" d="M16 0H0V16"/></pattern>
+      <pattern id="g128w" width="128" height="128" patternUnits="userSpaceOnUse">
+        <rect width="128" height="128" fill="url(#g16w)"/><path class="grid128" d="M128 0H0V128"/></pattern>
+    </defs>
+    <rect x="-124" y="-252" width="816" height="352" fill="url(#g128w)"/>
+
+    <rect class="mass-b" x="272" y="-144" width="256" height="144"/>
+    <path class="roof" d="M48,-128 Q160,-192 272,-128 Z"/>
+    <rect class="mass-a" x="48" y="-128" width="224" height="128"/>
+    <rect class="mass-c" x="0" y="-112" width="48" height="112"/>
+    <rect class="plinth" x="48" y="-16" width="496" height="16"/>
+    <line class="ground" x1="-64" y1="0" x2="600" y2="0"/>
+
+    <line class="level" x1="0" y1="-112" x2="640" y2="-112"/>
+    <line class="level" x1="48" y1="-128" x2="640" y2="-128"/>
+    <line class="level" x1="272" y1="-144" x2="640" y2="-144"/>
+    <line class="level" x1="160" y1="-160" x2="640" y2="-160"/>
+    <text class="t-hot" x="646" y="-108">112  C</text>
+    <text class="t-hot" x="646" y="-124">128  A EAVE</text>
+    <text class="t-hot" x="646" y="-140">144  B</text>
+    <text class="t-hot" x="646" y="-156">160  A CROWN</text>
+
+    <line class="dim" x1="612" y1="-112" x2="612" y2="-160"/>
+    <line class="dim" x1="606" y1="-118" x2="618" y2="-106"/><line class="dim" x1="606" y1="-166" x2="618" y2="-154"/>
+    <text class="t-dim" x="596" y="-136" transform="rotate(-90 596 -136)">4 × 16</text>
+
+    <text class="t-lbl" x="24" y="-52" style="font-size:14px">C</text>
+    <text class="t-lbl" x="160" y="-52">A</text>
+    <text class="t-lbl" x="400" y="-64">B</text>
+
+    <line class="ext" x1="0" y1="0" x2="0" y2="46"/><line class="ext" x1="48" y1="0" x2="48" y2="46"/>
+    <line class="ext" x1="272" y1="0" x2="272" y2="46"/><line class="ext" x1="528" y1="0" x2="528" y2="46"/>
+    <line class="dim" x1="0" y1="38" x2="528" y2="38"/>
+    <line class="dim" x1="-6" y1="44" x2="6" y2="32"/><line class="dim" x1="42" y1="44" x2="54" y2="32"/>
+    <line class="dim" x1="266" y1="44" x2="278" y2="32"/><line class="dim" x1="522" y1="44" x2="534" y2="32"/>
+    <text class="t-dim" x="24" y="66">48</text><text class="t-dim" x="160" y="66">224</text>
+    <text class="t-dim" x="400" y="66">256</text>
+    <text class="t-dim" x="264" y="90" style="font-size:16px;font-weight:600">528 OVERALL DEPTH</text>
+    <text class="t-hot" x="-64" y="-172">◄ STREET</text>
+  </svg>
+  </div>
+  <figcaption>This is the whole silhouette strategy in one drawing. Four roof heights, each
+  exactly <b>one module above the last</b>, and no two masses sharing a level. An even ladder
+  reads as deliberate; near-misses of 4 or 8 units are what read as sloppy without the viewer
+  being able to say why.</figcaption>
+</figure>
+
+<div class="ladder">
+  <div><b>160</b><span>A · vault crown</span></div>
+  <div><b>144</b><span>B · kitchen parapet</span></div>
+  <div><b>128</b><span>A · eave</span></div>
+  <div><b>112</b><span>C · vestibule</span></div>
+</div>
+
+<h2>5 · Schedule</h2>
+
+<div class="tw">
+<table>
+  <thead><tr><th>Mass</th><th>Element</th><th class="n">Footprint</th><th class="n">x</th><th class="n">y</th><th class="n">Top</th></tr></thead>
+  <tbody>
+    <tr><td>A</td><td>Dining car</td><td class="n">512 × 224</td><td class="n">0 – 512</td><td class="n">48 – 272</td><td class="n">128 / 160</td></tr>
+    <tr><td>B</td><td>Kitchen block</td><td class="n">320 × 256</td><td class="n">192 – 512</td><td class="n">272 – 528</td><td class="n">144</td></tr>
+    <tr><td>C</td><td>Entry vestibule</td><td class="n">96 × 48</td><td class="n">96 – 192</td><td class="n">0 – 48</td><td class="n">112</td></tr>
+    <tr><td>—</td><td>Plinth, 16 proud</td><td class="n">—</td><td class="n">under A + B</td><td class="n">—</td><td class="n">16</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>6 · Rule check</h2>
+
+<div class="tw">
+<table>
+  <thead><tr><th>Rule</th><th>Satisfied by</th><th class="n"></th></tr></thead>
+  <tbody>
+    <tr><td>R1 Tripartite</td><td>Plinth 16 / body 112 / vault + parapet cap</td><td class="n ok">✔</td></tr>
+    <tr><td>R2 Dominant mass</td><td>A owns the full frontage and is tallest</td><td class="n ok">✔</td></tr>
+    <tr><td>R3 No near-misses</td><td>Offsets are 0, 48, 192; heights step by 16</td><td class="n ok">✔</td></tr>
+    <tr><td>R4 Footprint from bays</td><td>512 = 4 × 128</td><td class="n ok">✔</td></tr>
+    <tr><td>R5 Sit on the ground</td><td>16 plinth, 16 proud</td><td class="n ok">✔</td></tr>
+    <tr><td>R6 Break the roofline</td><td>Four tops, 16 apart</td><td class="n ok">✔</td></tr>
+    <tr><td>R7 Break the façade plane</td><td>Vestibule projects 48</td><td class="n ok">✔</td></tr>
+    <tr><td>R8 Depth beats decoration</td><td>No detail proposed in this pass</td><td class="n ok">✔</td></tr>
+    <tr><td>R9 Street alignment</td><td>C on the line, A and B behind it</td><td class="n ok">✔</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p style="margin-top:20px;color:var(--muted);font-size:14.5px">R2 got amended to reach this
+result. The original wording demanded the primary mass carry 60% of the footprint, which A
+fails at 53%. That threshold turns out to be wrong for single-storey buildings with service
+wings — dominance there is height and frontage, not floor area.</p>
+
+<h2>7 · Before this locks</h2>
+
+<div class="q">
+  <div class="qi"><div class="qn">01</div><div>
+    <h3>Vault, or flat stainless fascia?</h3>
+    <p>The crown only reads from the ends and in three-quarter view — head-on you just see the
+    128 eave. A <b>flat fascia band</b> hiding the vault is equally authentic to the type and
+    much cheaper to build. Vault wins on silhouette; fascia wins as a sign surface.</p>
+  </div></div>
+  <div class="qi"><div class="qn">02</div><div>
+    <h3>Which end takes the kitchen?</h3>
+    <p>Currently east. If players approach the lot from the east, <b>flip it</b> — arrivals
+    should meet the dining car, not the service block and its bins.</p>
+  </div></div>
+  <div class="qi"><div class="qn">03</div><div>
+    <h3>The lot.</h3>
+    <p>Parking assumed west and rear. <b>No site geometry is committed</b> — and on a main
+    street, R9 makes the neighbours' frontage line matter more than anything on this plot.</p>
+  </div></div>
+</div>
+
+<footer>
+  <span>Stark RP · Main Street</span>
+  <span>Sheet A-01 · Pass 1 of 4</span>
+  <span>Units: Source inches · M = 16</span>
+  <span>Next: Pass 2 — Façade</span>
+</footer>
+
+</div>
