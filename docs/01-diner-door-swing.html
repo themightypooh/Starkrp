@@ -1,0 +1,351 @@
+<title>Kitchen Swing Door</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<style>
+:root{
+  --paper:#EDEFF1; --panel:#F6F7F8; --ink:#1B2A33; --muted:#64757F;
+  --rule:#C2CCD2; --grid:#CBD5DA; --grid-hi:#AEBCC4;
+  --wood:#C89A52; --wood-d:#A67C36; --wood-w:#DCB77F;
+  --steel:#AEB9BF; --steel-d:#87949C;
+  --glass:#9FB4BE; --hot:#B0332A; --grime:#3A3226;
+  --font-d:"Barlow Condensed","Helvetica Neue",Arial,sans-serif;
+  --font-b:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --font-m:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0F161B; --panel:#151F26; --ink:#DBE3E8; --muted:#8195A0;
+  --rule:#2B3944; --grid:#22303A; --grid-hi:#2F3F4B;
+  --wood:#B98B47; --wood-d:#8E6A2C; --wood-w:#CFA76D;
+  --steel:#8E9AA2; --steel-d:#6C7880;
+  --glass:#6E8996; --hot:#E2685B; --grime:#0A0805;
+}}
+:root[data-theme="dark"]{
+  --paper:#0F161B; --panel:#151F26; --ink:#DBE3E8; --muted:#8195A0;
+  --rule:#2B3944; --grid:#22303A; --grid-hi:#2F3F4B;
+  --wood:#B98B47; --wood-d:#8E6A2C; --wood-w:#CFA76D;
+  --steel:#8E9AA2; --steel-d:#6C7880;
+  --glass:#6E8996; --hot:#E2685B; --grime:#0A0805;
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-b);
+  line-height:1.6;margin:0;padding:0 20px 96px;-webkit-font-smoothing:antialiased}
+.sheet{max-width:1020px;margin:0 auto}
+.tb{border-bottom:2px solid var(--ink);padding:40px 0 14px;margin-bottom:8px}
+.tb-top{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;
+  font-family:var(--font-m);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted)}
+.tb-top .sep{color:var(--rule)}
+h1{font-family:var(--font-d);font-weight:600;font-size:clamp(38px,7vw,64px);
+  line-height:.95;margin:14px 0 0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--muted)}
+.tb-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:2px 18px;margin-top:20px;font-family:var(--font-m);font-size:12px}
+.tb-meta div{border-top:1px solid var(--rule);padding-top:6px}
+.tb-meta span{display:block;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.lede{font-size:17.5px;max-width:64ch;margin:30px 0 8px}
+p{max-width:66ch}
+h2{font-family:var(--font-d);font-weight:600;font-size:15px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);margin:56px 0 0;
+  padding-bottom:7px;border-bottom:1px solid var(--rule)}
+figure{margin:22px 0 0;background:var(--panel);border:1px solid var(--rule)}
+figure svg{display:block;width:100%;height:auto}
+.fig-hd{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;
+  padding:11px 16px;border-bottom:1px solid var(--rule);
+  font-family:var(--font-m);font-size:11px;letter-spacing:.11em;text-transform:uppercase}
+.fig-hd b{font-weight:600;color:var(--hot)}
+.fig-hd span{color:var(--muted)}
+figcaption{padding:13px 16px;border-top:1px solid var(--rule);
+  font-size:14px;color:var(--muted);max-width:74ch}
+figcaption b{color:var(--ink);font-weight:600}
+.svg-wrap{overflow-x:auto;padding:6px}
+
+.grid16{stroke:var(--grid);stroke-width:.5;fill:none}
+.grid128{stroke:var(--grid-hi);stroke-width:1.1;fill:none}
+.leaf{fill:var(--wood);stroke:var(--ink);stroke-width:1.4}
+.leaf-e{fill:var(--wood-d);stroke:var(--ink);stroke-width:1.4}
+.steel{fill:var(--steel);stroke:var(--ink);stroke-width:1.2}
+.steel-d{fill:var(--steel-d);stroke:var(--ink);stroke-width:1.2}
+.glass{fill:var(--glass);stroke:var(--ink);stroke-width:1.2}
+.ghost{fill:var(--wood);fill-opacity:.24;stroke:var(--ink);stroke-width:1;stroke-opacity:.45;stroke-dasharray:5 4}
+.arcs{fill:none;stroke:var(--hot);stroke-width:1.2;stroke-dasharray:6 5}
+.wear{stroke:none}
+.dim{stroke:var(--ink);stroke-width:.9;stroke-opacity:.8;fill:none}
+.ext{stroke:var(--ink);stroke-width:.6;stroke-opacity:.45;fill:none}
+.lead{stroke:var(--ink);stroke-width:.7;stroke-opacity:.6;fill:none}
+.cl{stroke:var(--hot);stroke-width:.8;stroke-dasharray:10 4 2 4;fill:none}
+text{fill:var(--ink);font-family:var(--font-m)}
+.t-dim{font-size:5px;fill-opacity:.85;text-anchor:middle}
+.t-cal{font-size:5px;fill-opacity:.9}
+.t-hot{fill:var(--hot);font-size:5px}
+.t-num{font-size:5.5px;font-weight:600;fill:var(--paper)}
+.num-bg{fill:var(--hot)}
+
+.tw{overflow-x:auto;margin-top:22px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:540px}
+th{font-family:var(--font-d);font-weight:600;font-size:13px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted);text-align:left;
+  border-bottom:1.5px solid var(--ink);padding:7px 12px 7px 0;white-space:nowrap}
+td{border-bottom:1px solid var(--rule);padding:9px 12px 9px 0;vertical-align:top}
+td.n,th.n{font-family:var(--font-m);font-variant-numeric:tabular-nums;
+  text-align:right;padding-right:22px;white-space:nowrap}
+tbody tr td:first-child{font-weight:600}
+.note{margin-top:20px;padding:14px 16px;border-left:2px solid var(--hot);
+  background:var(--panel);font-size:14.5px;color:var(--muted);max-width:70ch}
+.note b{color:var(--ink);font-weight:600}
+.wl{margin-top:22px;display:grid;gap:13px}
+.wi{display:grid;grid-template-columns:26px 1fr;gap:13px;
+  border-top:1px solid var(--rule);padding-top:11px}
+.wn{font-family:var(--font-m);font-size:12px;font-weight:600;color:var(--hot);padding-top:2px}
+.wi h3{font-family:var(--font-d);font-weight:600;font-size:19px;margin:0 0 2px}
+.wi p{margin:0;font-size:14px;color:var(--muted);max-width:60ch}
+footer{margin-top:60px;padding-top:16px;border-top:2px solid var(--ink);
+  font-family:var(--font-m);font-size:11.5px;color:var(--muted);
+  display:flex;flex-wrap:wrap;gap:6px 22px}
+</style>
+
+<div class="sheet">
+
+<header class="tb">
+  <div class="tb-top">
+    <span>Stark RP · Main Street</span><span class="sep">/</span>
+    <span>Building 01 · Diner</span><span class="sep">/</span>
+    <span>Sheet D-01</span>
+  </div>
+  <h1>Kitchen Swing Door <em>— double-acting</em></h1>
+  <div class="tb-meta">
+    <div><span>Leaf</span>48 × 96 × 4</div>
+    <div><span>Swing</span>±95° sprung</div>
+    <div><span>Latch</span>None</div>
+    <div><span>Handle</span>None</div>
+    <div><span>Source</span>Field photo</div>
+  </div>
+</header>
+
+<p class="lede">No handle, no latch, no lock. The design follows entirely from one fact:
+you arrive at this door with both hands full and open it with a hip or a shoulder.
+Every piece of hardware on it exists to survive that, and <b>the porthole exists because
+you can't stop</b> — you need to see who's coming before you hit it.</p>
+
+<h2>1 · Elevation · push side</h2>
+
+<figure>
+  <div class="fig-hd"><b>Fig 1</b><span>Push side · hinge edge left · units = Source inches</span></div>
+  <div class="svg-wrap">
+  <svg viewBox="-56 -122 280 156" role="img" aria-label="Elevation of the kitchen swing door: a 48 by 96 leaf with a 12-inch porthole at eye height, a vertical push plate near the free edge, and a full-width kick plate at the bottom.">
+    <defs><pattern id="dg16" width="16" height="16" patternUnits="userSpaceOnUse"><path class="grid16" d="M16 0H0V16"/></pattern></defs>
+    <rect x="-56" y="-122" width="280" height="156" fill="url(#dg16)"/>
+    <rect class="steel-d" x="-8" y="-104" width="64" height="8"/>
+    <rect class="steel-d" x="-8" y="-96" width="8" height="96"/>
+    <rect class="steel-d" x="48" y="-96" width="8" height="96"/>
+    <rect class="leaf" x="0" y="-96" width="48" height="96"/>
+    <rect class="steel" x="0" y="-16" width="48" height="16"/>
+    <rect class="steel" x="36" y="-56" width="8" height="32"/>
+    <circle class="steel" cx="24" cy="-64" r="8"/>
+    <circle class="glass" cx="24" cy="-64" r="6"/>
+    <rect class="steel-d" x="-8" y="0" width="64" height="4"/>
+    <rect class="steel-d" x="-4" y="-88" width="4" height="10"/>
+    <rect class="steel-d" x="-4" y="-14" width="4" height="10"/>
+    <line class="cl" x1="24" y1="-110" x2="24" y2="8"/>
+    <line class="cl" x1="-14" y1="-64" x2="64" y2="-64"/>
+    <text class="t-hot" x="66" y="-66">EYE HEIGHT · 64</text>
+    <line class="lead" x1="30" y1="-70" x2="70" y2="-84"/>
+    <text class="t-cal" x="72" y="-86">PORTHOLE Ø12 · BEZEL Ø16</text>
+    <text class="t-cal" x="72" y="-80" fill-opacity=".6">real glass, not an alpha card</text>
+    <line class="lead" x1="45" y1="-40" x2="70" y2="-44"/>
+    <text class="t-cal" x="72" y="-46">PUSH PLATE 8 × 32</text>
+    <text class="t-cal" x="72" y="-40" fill-opacity=".6">on the free edge — most leverage</text>
+    <line class="lead" x1="48" y1="-8" x2="70" y2="-11"/>
+    <text class="t-cal" x="72" y="-13">KICK PLATE 48 × 16</text>
+    <text class="t-cal" x="72" y="-7" fill-opacity=".6">full width — the hip and boot zone</text>
+    <line class="lead" x1="-6" y1="-86" x2="-28" y2="-106"/>
+    <text class="t-cal" x="-52" y="-110">SPRUNG PIVOT ×2</text>
+    <line class="ext" x1="0" y1="0" x2="0" y2="20"/><line class="ext" x1="48" y1="0" x2="48" y2="20"/>
+    <line class="dim" x1="0" y1="14" x2="48" y2="14"/>
+    <line class="dim" x1="-2" y1="16" x2="2" y2="12"/><line class="dim" x1="46" y1="16" x2="50" y2="12"/>
+    <text class="t-dim" x="24" y="23">48</text>
+    <line class="ext" x1="0" y1="-96" x2="-34" y2="-96"/><line class="ext" x1="0" y1="0" x2="-34" y2="0"/>
+    <line class="ext" x1="0" y1="-64" x2="-22" y2="-64"/><line class="ext" x1="0" y1="-16" x2="-22" y2="-16"/>
+    <line class="dim" x1="-30" y1="0" x2="-30" y2="-96"/>
+    <line class="dim" x1="-32" y1="2" x2="-28" y2="-2"/><line class="dim" x1="-32" y1="-94" x2="-28" y2="-98"/>
+    <text class="t-dim" x="-30" y="-48" transform="rotate(-90 -30 -48)">96</text>
+    <line class="dim" x1="-16" y1="0" x2="-16" y2="-16"/>
+    <line class="dim" x1="-18" y1="-14" x2="-14" y2="-18"/>
+    <text class="t-dim" x="-16" y="-6" transform="rotate(-90 -16 -6)">16</text>
+    <line class="dim" x1="-16" y1="-16" x2="-16" y2="-64"/>
+    <line class="dim" x1="-18" y1="-62" x2="-14" y2="-66"/>
+    <text class="t-dim" x="-16" y="-38" transform="rotate(-90 -16 -38)">48</text>
+  </svg>
+  </div>
+  <figcaption>The porthole centre lands at <b>64 — exactly player eye height.</b> That is not a
+  coincidence I engineered around: a real kitchen porthole sits at the sightline of the person
+  carrying the plates, and Source's eye height is the same number. Real-world logic and engine
+  logic agree, so put it there and it will read correctly from both sides.</figcaption>
+</figure>
+
+<h2>2 · Plan · why it swings both ways</h2>
+
+<figure>
+  <div class="fig-hd"><b>Fig 2</b><span>Plan · pivot offset and swing envelope</span></div>
+  <div class="svg-wrap">
+  <svg viewBox="-64 -72 316 152" role="img" aria-label="Plan of the swing door: the pivot sits 4 inches in from the hinge edge and the leaf sweeps 95 degrees to both the kitchen side and the dining side, with no rebate in the jamb.">
+    <rect class="steel-d" x="-40" y="-8" width="32" height="16"/>
+    <rect class="steel-d" x="48" y="-8" width="24" height="16"/>
+    <path class="arcs" d="M48 0 A 44 44 0 0 1 0.2 43.8"/>
+    <path class="arcs" d="M48 0 A 44 44 0 0 0 0.2 -43.8"/>
+    <rect class="ghost" x="0" y="-2" width="48" height="4" transform="rotate(45 4 0)" opacity=".55"/>
+    <rect class="ghost" x="0" y="-2" width="48" height="4" transform="rotate(-45 4 0)" opacity=".55"/>
+    <rect class="ghost" x="0" y="-2" width="48" height="4" transform="rotate(95 4 0)"/>
+    <rect class="ghost" x="0" y="-2" width="48" height="4" transform="rotate(-95 4 0)"/>
+    <rect class="leaf-e" x="0" y="-2" width="48" height="4"/>
+    <circle cx="4" cy="0" r="2.6" fill="var(--hot)"/>
+    <circle cx="4" cy="0" r="5.4" fill="none" stroke="var(--hot)" stroke-width=".8"/>
+    <text class="t-hot" x="4" y="-56" text-anchor="middle">KITCHEN SIDE  ▲</text>
+    <text class="t-hot" x="4" y="62" text-anchor="middle">▼  DINING SIDE</text>
+    <text class="t-cal" x="88" y="-40">SWING ±95°, SPRUNG TO CENTRE</text>
+    <text class="t-cal" x="88" y="-34" fill-opacity=".6">no latch — nothing to catch on the way through</text>
+    <text class="t-cal" x="88" y="-6">NO REBATE IN THE JAMB</text>
+    <text class="t-cal" x="88" y="0" fill-opacity=".6">square on both faces — the leaf must pass clean</text>
+    <text class="t-cal" x="88" y="6" fill-opacity=".6">through the wall plane in either direction</text>
+    <line class="lead" x1="1" y1="4" x2="-20" y2="20"/>
+    <text class="t-cal" x="-62" y="26">PIVOT AT x = 4</text>
+    <text class="t-cal" x="-62" y="32" fill-opacity=".6">clears its own jamb</text>
+  </svg>
+  </div>
+  <figcaption>A normal door stops against a rebate in its frame. This one has none — the jamb is
+  square on both faces so the leaf can pass clean through the wall plane. <b>That is the whole
+  mechanism</b>, and it is the detail most likely to get missed: put a doorstop in the frame and
+  the door only works one way.</figcaption>
+</figure>
+
+<h2>3 · Wear map</h2>
+
+<figure>
+  <div class="fig-hd"><b>Fig 3</b><span>Where the damage goes, and why</span></div>
+  <div class="svg-wrap">
+  <svg viewBox="-12 -114 236 132" role="img" aria-label="Wear map of the swing door showing five zones: a hand-polished halo beside the push plate, a smudge halo around the porthole, a grime band above the kick plate, boot scuffing at the leading corner, and hazed stainless.">
+    <defs>
+      <clipPath id="leafclip"><rect x="0" y="-96" width="48" height="96"/></clipPath>
+      <radialGradient id="handrub"><stop offset="0" stop-color="var(--wood-w)" stop-opacity=".95"/>
+        <stop offset="1" stop-color="var(--wood-w)" stop-opacity="0"/></radialGradient>
+      <radialGradient id="smudge"><stop offset="0" stop-color="var(--grime)" stop-opacity=".3"/>
+        <stop offset="1" stop-color="var(--grime)" stop-opacity="0"/></radialGradient>
+      <linearGradient id="grimeband" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0" stop-color="var(--grime)" stop-opacity=".6"/>
+        <stop offset="1" stop-color="var(--grime)" stop-opacity="0"/></linearGradient>
+    </defs>
+    <rect class="leaf" x="0" y="-96" width="48" height="96"/>
+    <g clip-path="url(#leafclip)">
+      <ellipse class="wear" cx="34" cy="-44" rx="18" ry="26" fill="url(#handrub)"/>
+      <circle class="wear" cx="24" cy="-64" r="14" fill="url(#smudge)"/>
+      <rect class="wear" x="0" y="-30" width="48" height="14" fill="url(#grimeband)"/>
+    </g>
+    <rect class="steel" x="0" y="-16" width="48" height="16"/>
+    <rect class="steel" x="36" y="-56" width="8" height="32"/>
+    <circle class="steel" cx="24" cy="-64" r="8"/>
+    <circle class="glass" cx="24" cy="-64" r="6"/>
+    <rect class="wear" x="0" y="-16" width="48" height="16" fill="var(--grime)" opacity=".18"/>
+    <g clip-path="url(#leafclip)">
+      <ellipse class="wear" cx="9" cy="-7" rx="13" ry="7" fill="var(--grime)" opacity=".4"/>
+      <ellipse class="wear" cx="4" cy="-4" rx="8" ry="4" fill="var(--grime)" opacity=".35"/>
+    </g>
+    <rect x="0" y="-96" width="48" height="96" fill="none" stroke="var(--ink)" stroke-width="1.4"/>
+
+    <line class="lead" x1="52" y1="-88" x2="28" y2="-71"/>
+    <circle class="num-bg" cx="58" cy="-88" r="4.4"/><text class="t-num" x="58" y="-86.2" text-anchor="middle">5</text>
+    <text class="t-cal" x="66" y="-86">STAINLESS — hazed, never mirror</text>
+    <line class="lead" x1="52" y1="-72" x2="31" y2="-59"/>
+    <circle class="num-bg" cx="58" cy="-72" r="4.4"/><text class="t-num" x="58" y="-70.2" text-anchor="middle">2</text>
+    <text class="t-cal" x="66" y="-70">SMUDGE HALO around the glass</text>
+    <line class="lead" x1="52" y1="-50" x2="36" y2="-46"/>
+    <circle class="num-bg" cx="58" cy="-50" r="4.4"/><text class="t-num" x="58" y="-48.2" text-anchor="middle">1</text>
+    <text class="t-cal" x="66" y="-48">HAND RUB — finish worn through</text>
+    <line class="lead" x1="52" y1="-26" x2="40" y2="-22"/>
+    <circle class="num-bg" cx="58" cy="-26" r="4.4"/><text class="t-num" x="58" y="-24.2" text-anchor="middle">3</text>
+    <text class="t-cal" x="66" y="-24">GRIME BAND above the kick plate</text>
+    <line class="lead" x1="52" y1="-8" x2="20" y2="-7"/>
+    <circle class="num-bg" cx="58" cy="-8" r="4.4"/><text class="t-num" x="58" y="-6.2" text-anchor="middle">4</text>
+    <text class="t-cal" x="66" y="-6">BOOT SCUFF at the leading corner</text>
+  </svg>
+  </div>
+  <figcaption>Every zone here is a record of the same motion repeated for years. Get these five
+  right and the door reads as used; <b>apply uniform grunge everywhere and it reads as a texture,
+  not a history.</b></figcaption>
+</figure>
+
+<div class="wl">
+  <div class="wi"><div class="wn">1</div><div>
+    <h3>Hand rub, beside the plate</h3>
+    <p>The worn patch is <b>next to</b> the push plate, not on it. People miss the plate — they
+    shove the bare wood. It polishes lighter, not darker, because the finish wears off.</p>
+  </div></div>
+  <div class="wi"><div class="wn">2</div><div>
+    <h3>Smudge halo</h3>
+    <p>Fingerprints ring the bezel where people steady themselves while looking through.</p>
+  </div></div>
+  <div class="wi"><div class="wn">3</div><div>
+    <h3>Grime band</h3>
+    <p>A dark line sits <b>directly above</b> the kick plate — mop water and grease stop at the
+    metal edge and dry there. The sharpest tell in the whole photo.</p>
+  </div></div>
+  <div class="wi"><div class="wn">4</div><div>
+    <h3>Boot scuff</h3>
+    <p>Heaviest at the leading corner, furthest from the pivot, where the foot actually lands.</p>
+  </div></div>
+  <div class="wi"><div class="wn">5</div><div>
+    <h3>Hazed stainless</h3>
+    <p>Never mirror. Fine omnidirectional scratching kills reflection — a polished chrome shader
+    here will look wrong instantly.</p>
+  </div></div>
+</div>
+
+<h2>4 · Schedule</h2>
+
+<div class="tw">
+<table>
+  <thead><tr><th>Element</th><th>Size</th><th class="n">Position</th><th>Material</th></tr></thead>
+  <tbody>
+    <tr><td>Leaf</td><td>48 × 96 × 4</td><td class="n">hinge edge x = 0</td><td>Varnished ply, worn</td></tr>
+    <tr><td>Porthole glass</td><td>Ø 12</td><td class="n">x 24, z 64</td><td>Glass, smudged</td></tr>
+    <tr><td>Bezel ring</td><td>Ø 16, 2 wide</td><td class="n">x 24, z 64</td><td>Stainless, screwed</td></tr>
+    <tr><td>Push plate</td><td>8 × 32</td><td class="n">x 36–44, z 24–56</td><td>Stainless, hazed</td></tr>
+    <tr><td>Kick plate</td><td>48 × 16</td><td class="n">z 0–16</td><td>Stainless, scuffed</td></tr>
+    <tr><td>Frame</td><td>8 face</td><td class="n">x −8 and 48</td><td>Stainless clad</td></tr>
+    <tr><td>Pivot axis</td><td>—</td><td class="n">x = 4</td><td>Sprung, ×2</td></tr>
+    <tr><td>Swing</td><td>±95°</td><td class="n">—</td><td>Return to centre</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>5 · Build notes</h2>
+
+<p>Cut the porthole as <b>real geometry</b>, not an alpha card — players will use it as a sightline
+and a flat texture breaks the moment anyone approaches off-axis. Collision stays a plain box;
+never trace the round hole.</p>
+
+<p>The leaf wants a <b>hinge constraint with a spring return and ±95° limits</b>, not a scripted
+animation, so it takes an impulse from a body running into it and settles on its own. That
+overshoot-and-settle is most of what sells the door.</p>
+
+<div class="note"><b>Two honest flags.</b> The photo is shot at an angle, so every proportion here
+is estimated off it rather than measured — a square-on shot, or one measurement of the leaf
+width, would let me replace the lot. And I could not reach the s&box docs from this session to
+name the exact hinge component, so the mechanism above is described by behaviour rather than
+by API.</div>
+
+<div class="note"><b>Scaled up from reality.</b> A real commercial swing door is about 36 × 84.
+This one is <b>48 × 96</b>, because the Source player hull is 32 wide and a true-size door leaves
+four inches a side — players catch on the jamb constantly. It reads slightly chunkier than the
+photograph, and that is the correct trade.</div>
+
+<footer>
+  <span>Stark RP · Main Street</span>
+  <span>Sheet D-01 · Building 01</span>
+  <span>Units: Source inches · M = 16</span>
+  <span>Ref: field photo, kitchen side</span>
+</footer>
+
+</div>
