@@ -74,12 +74,17 @@ public sealed class EggFluidField : Component
 	/// the height difference exceeds <c>Yield * CellSize</c>. This single term
 	/// is the difference between egg white and water. Raise it for a fresher
 	/// egg (taller, tighter mound), drop it toward zero for an old one.
+	///
+	/// It is also an <i>angle of repose</i>: the mound stands at a slope of
+	/// <c>Yield</c>, so 0.85 is a 40 degree cone - a gel that would not pour
+	/// out of a shell in the first place. A fresh mound measures nearer 0.35,
+	/// and the style dial multiplies up from there.
 	/// </summary>
 	[Property, Range( 0.0f, 3.0f ), Group( "Rheology" )]
-	public float ThickYield { get; set; } = 0.85f;
+	public float ThickYield { get; set; } = 0.38f;
 
 	[Property, Range( 0.0f, 4.0f ), Group( "Rheology" )]
-	public float YolkYield { get; set; } = 1.6f;
+	public float YolkYield { get; set; } = 0.85f;
 
 	/// <summary>
 	/// Surface tension, as an inward pull on cells that have an empty
@@ -377,8 +382,14 @@ public sealed class EggFluidField : Component
 			var k = flow * (1.0f + _variance[i] * _styleFingering);
 
 			// Cap total outflow at a quarter of the cell per neighbour so four
-			// simultaneous donations can never exceed what is there.
+			// simultaneous donations can never exceed what is there - and
+			// budget them against a running total, because the cohesion pull
+			// below is a fifth outflow. Without the budget a cell can be asked
+			// for more than it holds, the clamp at zero absorbs the shortfall,
+			// and the field quietly *gains* volume - which the style dial's
+			// rim multiplier is more than large enough to trigger.
 			var maxPerNeighbour = depth * 0.25f;
+			var budget = depth;
 			var emptyNeighbours = 0;
 
 			for ( int d = 0; d < 4; d++ )
@@ -409,10 +420,11 @@ public sealed class EggFluidField : Component
 						continue;
 				}
 
-				var amount = MathF.Min( k * dH, maxPerNeighbour );
+				var amount = MathF.Min( MathF.Min( k * dH, maxPerNeighbour ), budget );
 				if ( amount <= 0.0f )
 					continue;
 
+				budget -= amount;
 				_delta[i] -= amount;
 				_delta[j] += amount;
 
@@ -429,7 +441,11 @@ public sealed class EggFluidField : Component
 			// curvature term and reads correctly at this scale.
 			if ( cohesion > 0.0f && emptyNeighbours > 0 )
 			{
-				var pull = MathF.Min( depth * cohesion * 0.25f * emptyNeighbours, maxPerNeighbour );
+				var pull = MathF.Min( MathF.Min( depth * cohesion * 0.25f * emptyNeighbours, maxPerNeighbour ), budget );
+				if ( pull <= 0.0f )
+					continue;
+
+				budget -= pull;
 				_delta[i] -= pull;
 
 				// Push it to the wettest neighbour - that is "inward".

@@ -38,7 +38,8 @@ fixing it in Hammer costs an afternoon.
   shell, two-phase white, membrane-bounded yolk — plus the stylisation dial
   that exaggerates the measured egg back into something readable in first
   person. Research and design for the cooking side, with working code in
-  [`code/Egg/`](code/Egg).
+  [`code/Egg/`](code/Egg). Interactive preview of the dial in
+  [`docs/02-egg-stylisation.html`](docs/02-egg-stylisation.html).
 
 ## Buildings
 

@@ -292,10 +292,25 @@ Two of these are not free and are worth naming:
 - **Volume.** A bigger egg carries more white. It is scaled by the *square* of
   the size dial rather than the cube — the full cube outgrows the pan, and the
   vertical exaggeration is already carrying the depth half of the read.
+- **Outflow has to be budgeted.** The cohesion pull is a fifth outflow on top
+  of four neighbours, each already capped at a quarter of the cell. Uncapped
+  together they can ask a cell for more than it holds, the clamp at zero
+  absorbs the shortfall, and the field silently *gains* volume — at the rim
+  multiplier the preview gained about 8× in two seconds. Every outflow now
+  draws on a single per-cell budget.
+- **`ThickYield` was too high.** The yield slope is an angle of repose: at the
+  original 0.85 the mound stands at 40°, which is a gel that would not pour
+  out of a shell. A fresh mound measures nearer **0.35**, so the default is now
+  0.38 (yolk 0.85) and the dial multiplies up from there.
 - **Forgiveness widens the window, not the skill.** The crack threshold, the
   equator advantage and the flat-vs-edge rule in §Layer B are untouched. The
   aiming test is the mechanic and the dial does not soften it; it only stops
   the *upper* bound from being invisible and unfair.
+
+**Preview.** [`02-egg-stylisation.html`](02-egg-stylisation.html) runs the solver
+in the browser — two pans, the same egg, the dial live between them. The
+JavaScript is a port of `EggFluidField.cs` and `EggYolk.cs` rather than a
+mock-up, which is how the volume-conservation bug below was found.
 
 ### Where it lives
 
@@ -313,6 +328,7 @@ so the dial moves the shading live in the editor.
 | File | Layer |
 |---|---|
 | [`code/Egg/EggStyle.cs`](../code/Egg/EggStyle.cs) | the stylisation dial, and hitstop |
+| [`02-egg-stylisation.html`](02-egg-stylisation.html) | interactive preview of the dial |
 | [`code/Egg/EggFluidField.cs`](../code/Egg/EggFluidField.cs) | D — the solver |
 | [`code/Egg/EggFluidRenderer.cs`](../code/Egg/EggFluidRenderer.cs) | D — surface mesh |
 | [`code/Egg/EggYolk.cs`](../code/Egg/EggYolk.cs) | E — membrane sac |

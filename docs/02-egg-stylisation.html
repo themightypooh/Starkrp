@@ -1,0 +1,952 @@
+<title>The Egg Dial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<style>
+:root{
+  --paper:#EDEFF1; --panel:#F6F7F8; --ink:#1B2A33; --muted:#64757F;
+  --rule:#C2CCD2; --grid:#CBD5DA; --grid-hi:#AEBCC4;
+  --hot:#B0332A;
+  --pan:#8E969B; --pan-d:#6E777D;
+  --alb:#F2F6F7; --alb-d:#C6D3D6;
+  --yolk:#E8A317; --yolk-d:#A9600E;
+  --font-d:"Barlow Condensed","Helvetica Neue",Arial,sans-serif;
+  --font-b:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --font-m:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0F161B; --panel:#151F26; --ink:#DBE3E8; --muted:#8195A0;
+  --rule:#2B3944; --grid:#22303A; --grid-hi:#2F3F4B;
+  --hot:#E2685B;
+  --pan:#4B555B; --pan-d:#333C42;
+  --alb:#D9E6E9; --alb-d:#8FA3A9;
+  --yolk:#E9A620; --yolk-d:#8F4E09;
+}}
+:root[data-theme="dark"]{
+  --paper:#0F161B; --panel:#151F26; --ink:#DBE3E8; --muted:#8195A0;
+  --rule:#2B3944; --grid:#22303A; --grid-hi:#2F3F4B;
+  --hot:#E2685B;
+  --pan:#4B555B; --pan-d:#333C42;
+  --alb:#D9E6E9; --alb-d:#8FA3A9;
+  --yolk:#E9A620; --yolk-d:#8F4E09;
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-b);
+  line-height:1.6;margin:0;padding:0 20px 96px;-webkit-font-smoothing:antialiased}
+.sheet{max-width:1020px;margin:0 auto}
+.tb{border-bottom:2px solid var(--ink);padding:40px 0 14px;margin-bottom:8px}
+.tb-top{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;
+  font-family:var(--font-m);font-size:11px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted)}
+.tb-top .sep{color:var(--rule)}
+h1{font-family:var(--font-d);font-weight:600;font-size:clamp(38px,7vw,64px);
+  line-height:.95;margin:14px 0 0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--muted)}
+.tb-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:2px 18px;margin-top:20px;font-family:var(--font-m);font-size:12px}
+.tb-meta div{border-top:1px solid var(--rule);padding-top:6px}
+.tb-meta span{display:block;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.lede{font-size:17.5px;max-width:64ch;margin:30px 0 8px}
+p{max-width:66ch}
+h2{font-family:var(--font-d);font-weight:600;font-size:15px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);margin:56px 0 0;
+  padding-bottom:7px;border-bottom:1px solid var(--rule)}
+figure{margin:22px 0 0;background:var(--panel);border:1px solid var(--rule)}
+.fig-hd{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;
+  padding:11px 16px;border-bottom:1px solid var(--rule);
+  font-family:var(--font-m);font-size:11px;letter-spacing:.11em;text-transform:uppercase}
+.fig-hd b{font-weight:600;color:var(--hot)}
+.fig-hd span{color:var(--muted)}
+figcaption{padding:13px 16px;border-top:1px solid var(--rule);
+  font-size:14px;color:var(--muted);max-width:74ch}
+figcaption b{color:var(--ink);font-weight:600}
+
+/* ---- the dial ---------------------------------------------------------- */
+.rig{position:sticky;top:0;z-index:5;background:var(--panel);
+  border:1px solid var(--rule);border-top:2px solid var(--hot);margin-top:26px}
+.rig-in{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 26px;
+  align-items:center;padding:13px 16px}
+@media (max-width:720px){.rig-in{grid-template-columns:1fr}}
+.dial-lb{display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--font-m);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.dial-lb b{font-family:var(--font-d);font-size:22px;letter-spacing:.04em;
+  color:var(--ink);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;margin:0;accent-color:var(--hot);height:26px}
+input[type=range]:focus-visible{outline:2px solid var(--hot);outline-offset:3px}
+.presets{display:flex;gap:0;flex-wrap:wrap}
+.presets button{font-family:var(--font-m);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;padding:8px 13px;background:transparent;color:var(--muted);
+  border:1px solid var(--rule);margin-left:-1px;cursor:pointer;white-space:nowrap}
+.presets button:first-child{margin-left:0}
+.presets button[aria-pressed=true]{background:var(--hot);border-color:var(--hot);color:var(--paper)}
+.presets button:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+
+/* ---- twin pans --------------------------------------------------------- */
+.pans{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule)}
+@media (max-width:660px){.pans{grid-template-columns:1fr}}
+.pan{background:var(--panel);padding:12px 12px 6px}
+.pan h3{font-family:var(--font-m);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;margin:0 0 9px;color:var(--muted);
+  display:flex;justify-content:space-between;gap:10px}
+.pan h3 b{color:var(--hot);font-weight:600}
+.pan h3 .off{color:var(--muted);font-weight:400}
+canvas{display:block;width:100%;height:auto;background:transparent}
+.readout{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--rule);border-top:1px solid var(--rule)}
+.readout div{background:var(--panel);padding:9px 12px;font-family:var(--font-m);font-size:12px;
+  font-variant-numeric:tabular-nums}
+.readout span{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;padding:11px 16px;border-top:1px solid var(--rule)}
+.acts button{font-family:var(--font-m);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;padding:9px 15px;background:var(--ink);color:var(--paper);
+  border:1px solid var(--ink);cursor:pointer}
+.acts button.ghost{background:transparent;color:var(--muted);border-color:var(--rule)}
+.acts button:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+
+.tw{overflow-x:auto;margin-top:22px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:600px}
+th{font-family:var(--font-d);font-weight:600;font-size:13px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted);text-align:left;
+  border-bottom:1.5px solid var(--ink);padding:7px 12px 7px 0;white-space:nowrap}
+td{border-bottom:1px solid var(--rule);padding:9px 12px 9px 0;vertical-align:top}
+td.n,th.n{font-family:var(--font-m);font-variant-numeric:tabular-nums;
+  text-align:right;padding-right:22px;white-space:nowrap}
+tbody tr td:first-child{font-weight:600}
+td.n b{color:var(--hot);font-weight:600}
+.bar{display:block;height:3px;background:var(--hot);margin-top:5px;
+  transition:width .12s linear;min-width:1px}
+.note{margin-top:20px;padding:14px 16px;border-left:2px solid var(--hot);
+  background:var(--panel);font-size:14.5px;color:var(--muted);max-width:70ch}
+.note b{color:var(--ink);font-weight:600}
+footer{margin-top:60px;padding-top:16px;border-top:2px solid var(--ink);
+  font-family:var(--font-m);font-size:11.5px;color:var(--muted);
+  display:flex;flex-wrap:wrap;gap:6px 22px}
+@media (prefers-reduced-motion:reduce){.bar{transition:none}}
+</style>
+
+<div class="sheet">
+
+<header class="tb">
+  <div class="tb-top">
+    <span>Stark RP · Kitchen</span><span class="sep">/</span>
+    <span>Egg · Layers D + E</span><span class="sep">/</span>
+    <span>Sheet E-02 · interactive</span>
+  </div>
+  <h1>The Egg Dial <em>— measured, then exaggerated</em></h1>
+  <div class="tb-meta">
+    <div><span>Field</span>72 × 72 @ 0.09in</div>
+    <div><span>Phases</span>Thin · Thick · Yolk</div>
+    <div><span>Step</span>50 Hz fixed</div>
+    <div><span>Dial</span>Caricature 0 → 1</div>
+    <div><span>Default</span>Cookbook · 0.55</div>
+  </div>
+</header>
+
+<p class="lede">Both pans below run the same solver — the one in
+<code>EggFluidField.cs</code>, ported line for line. The left pan is the egg as measured.
+The right pan is that same egg with the style multipliers applied.
+<b>Drag the dial and watch the right pan stop being accurate and start being legible.</b></p>
+
+<div class="rig">
+  <div class="rig-in">
+    <div>
+      <label class="dial-lb" for="dial"><span>Caricature</span><b id="dialv">0.55</b></label>
+      <input type="range" id="dial" min="0" max="1" step="0.01" value="0.55">
+    </div>
+    <div class="presets" role="group" aria-label="Style presets">
+      <button data-v="0" type="button">Documentary</button>
+      <button data-v="0.55" type="button" aria-pressed="true">Cookbook</button>
+      <button data-v="1" type="button">Saturday morning</button>
+    </div>
+  </div>
+</div>
+
+<h2>1 · The pool · plan and section</h2>
+
+<figure>
+  <div class="fig-hd"><b>Fig 1</b><span>Same solver, same volume, both pans · 6.5in of pan across</span></div>
+  <div class="pans">
+    <div class="pan">
+      <h3><span class="off">A · Documentary</span><span class="off">dial 0.00</span></h3>
+      <canvas id="panA" width="520" height="520" role="img"
+        aria-label="Top-down view of an egg cracked into a pan, simulated with no stylisation: a small flat puddle with a barely raised mound."></canvas>
+      <canvas id="secA" width="520" height="150" role="img"
+        aria-label="Cross-section through the measured pool, showing a profile about a tenth of an inch deep."></canvas>
+    </div>
+    <div class="pan">
+      <h3><span><b>B · Styled</b></span><span id="dialv2">dial 0.55</span></h3>
+      <canvas id="panB" width="520" height="520" role="img"
+        aria-label="Top-down view of the same egg with stylisation applied: a taller, tighter mound with a fingered skirt, a beaded rim and a saturated yolk."></canvas>
+      <canvas id="secB" width="520" height="150" role="img"
+        aria-label="Cross-section through the styled pool, showing a taller mound over the same conserved volume."></canvas>
+    </div>
+  </div>
+  <div class="readout">
+    <div><span>White volume</span><b id="rVol">—</b></div>
+    <div><span>Pool width</span><b id="rWide">—</b></div>
+    <div><span>Peak depth</span><b id="rDeep">—</b></div>
+  </div>
+  <div class="acts">
+    <button id="crack" type="button">Crack an egg</button>
+    <button id="poke" class="ghost" type="button">Break the yolk</button>
+    <button id="reset" class="ghost" type="button">Clear both pans</button>
+  </div>
+  <figcaption>Volume is conserved in both pans and both are told the same story — thin
+  albumen first, thick behind it, the yolk landing last. Everything you see change on the
+  right is a <b>multiplier on a measured constant</b>, never a replacement for one, which is
+  why the left pan is always one drag away as the control. Section lines are drawn through the
+  pan centre; the dotted profile on the right is pan A, for comparison.</figcaption>
+</figure>
+
+<h2>2 · The yolk · wobble and rupture</h2>
+
+<figure>
+  <div class="fig-hd"><b>Fig 2</b><span>Mass-spring membrane · 28 nodes · drop it and watch it settle</span></div>
+  <div class="pans">
+    <div class="pan">
+      <h3><span class="off">A · Documentary</span><span class="off">2 cycles, gone</span></h3>
+      <canvas id="yolkA" width="480" height="300" role="img"
+        aria-label="A yolk dropped into a pan with no stylisation: it lands, squashes slightly, and stops almost immediately."></canvas>
+    </div>
+    <div class="pan">
+      <h3><span><b>B · Styled</b></span><span id="ringv">rings on</span></h3>
+      <canvas id="yolkB" width="480" height="300" role="img"
+        aria-label="The same yolk with stylisation: softer membrane and lighter damping, so it squashes further and wobbles for much longer after landing."></canvas>
+    </div>
+  </div>
+  <div class="acts">
+    <button id="drop" type="button">Drop the yolk</button>
+    <button id="prod" class="ghost" type="button">Prod it</button>
+  </div>
+  <figcaption>Softening the membrane and unwinding the damping are done <b>together</b> and
+  that is the whole trick: soften alone and it is jelly, undamp alone and it is a metronome.
+  Prod it hard enough at the top of the dial and the membrane tears — a real spring exceeding
+  its break length, not a scripted event, and the volume drops into the pool as the third phase.</figcaption>
+</figure>
+
+<h2>3 · What the dial is doing</h2>
+
+<div class="tw">
+<table>
+  <thead><tr>
+    <th>Exaggeration</th><th class="n">At this dial</th><th class="n">At 1.0</th><th>What it buys</th>
+  </tr></thead>
+  <tbody id="mult"></tbody>
+</table>
+</div>
+
+<div class="note"><b>Forgiveness widens the window, not the skill.</b> The crack threshold, the
+equator advantage and the flat-versus-edge rule are untouched at every dial position. Only the
+<i>upper</i> bound moves, because losing a breakfast to a physically correct 4in/s overswing is
+not a mechanic — it is a bug with a rationale.</div>
+
+<div class="note"><b>What this preview is not.</b> Two-dimensional lighting standing in for the
+refraction-and-Fresnel material, no shell, no pour particles, and the section is drawn at the
+renderer's vertical exaggeration rather than the shader's. The rheology, the yield stress, the
+cohesion rim and the membrane springs are the real ones. Treat the colours as indicative and
+the shapes as load-bearing.</div>
+
+<footer>
+  <span>Stark RP · Kitchen</span>
+  <span>Sheet E-02 · Egg</span>
+  <span>Units: inches</span>
+  <span>Ref: docs/02-egg-simulation.md §7</span>
+</footer>
+
+</div>
+
+<script>
+"use strict";
+
+/* ------------------------------------------------------------------ style */
+/* Straight port of EggProfile.For - same curves, same numbers. */
+const lerp = (a, b, t) => a + (b - a) * t;
+
+function profile(t){
+  t = Math.min(1, Math.max(0, t));
+  return {
+    t,
+    size:      lerp(1, 1.3, t),
+    mound:     lerp(1, 2.2, t),
+    skirt:     lerp(1, 1.4, t),
+    rim:       lerp(1, 2.4, t),
+    fingering: lerp(1, 1.6, t),
+    height:    lerp(1, 1.7, t),
+    stiffness: lerp(1, 0.45, t),
+    ring:      lerp(1, 0.35, t),
+    squash:    lerp(1, 1.8, t),
+    hitstop:   0.10 * t * t,
+    pourTime:  lerp(1, 0.7, t),
+    pourBody:  lerp(1, 1.45, t),
+    forgive:   lerp(1, 1.6, t),
+    punch:     t,
+    meniscus:  lerp(1, 2, t)
+  };
+}
+
+const MULTS = [
+  ["Size",       p => p.size,      "×1.3",  "On top of the ×1.2 already in the model. True scale reads as a pebble."],
+  ["Mound",      p => p.mound,     "×2.2",  "Yield slope. The mound is the shape an egg is recognised by."],
+  ["Skirt",      p => p.skirt,     "×1.4",  "Thin flow. The two-phase read needs a visible skirt."],
+  ["Rim",        p => p.rim,       "×2.4",  "Cohesion. A beaded edge is the cheapest silhouette in the system."],
+  ["Fingering",  p => p.fingering, "×1.6",  "Flow noise. A circle reads as a decal."],
+  ["Height",     p => p.height,    "×1.7",  "Render lift. Volume conserved, carried in a shape you can see."],
+  ["Membrane",   p => p.stiffness, "×0.45", "Softer sac, so it squashes and holds the squash."],
+  ["Ring",       p => p.ring,      "×0.35", "Damping retention. The wobble outlives the landing."],
+  ["Squash",     p => p.squash,    "×1.8",  "Pressure. Flattening it bulges the sides harder."],
+  ["Hitstop",    p => p.hitstop,   "100ms", "Time dip on the crack. Curved on t² — a short dip is not felt."],
+  ["Pour time",  p => p.pourTime,  "×0.7",  "The real thing dribbles past the interesting part."],
+  ["Pour body",  p => p.pourBody,  "×1.45", "A true-width thread of albumen is two pixels and is not there."],
+  ["Forgiveness",p => p.forgive,   "×1.6",  "Shatter window, upward only. The crack still takes the same swing."],
+  ["Colour",     p => p.punch,     "1.0",   "Saturation, warmth, milkiness, wet rim."]
+];
+
+/* ------------------------------------------------------------------ field */
+/* Port of EggFluidField: three phases, shared head, per-phase yield. */
+const N = 72, CELL = 0.09, MIN_DEPTH = 0.004;
+const THIN_FLOW = 0.22, THICK_FLOW = 0.10, YOLK_FLOW = 0.05;
+const THICK_YIELD = 0.38, YOLK_YIELD = 0.85, COHESION = 0.12, VARIANCE = 0.32;
+
+function hash2(x, y, s){
+  let h = Math.sin(x * 127.1 + y * 311.7 + s * 74.7) * 43758.5453;
+  return h - Math.floor(h);
+}
+function valueNoise(x, y, s){
+  const xi = Math.floor(x), yi = Math.floor(y);
+  const xf = x - xi, yf = y - yi;
+  const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+  const a = hash2(xi, yi, s),     b = hash2(xi + 1, yi, s);
+  const c = hash2(xi, yi + 1, s), d = hash2(xi + 1, yi + 1, s);
+  return lerp(lerp(a, b, u), lerp(c, d, u), v);
+}
+
+class Field {
+  constructor(seed){
+    const n = N * N;
+    this.thin = new Float32Array(n);
+    this.thick = new Float32Array(n);
+    this.yolk = new Float32Array(n);
+    this.ground = new Float32Array(n);
+    this.delta = new Float32Array(n);
+    this.variance = new Float32Array(n);
+
+    for (let y = 0; y < N; y++)
+    for (let x = 0; x < N; x++){
+      const n0 = valueNoise(x * 0.35, y * 0.35, seed);
+      const n1 = valueNoise(x * 1.10, y * 1.10, seed + 13);
+      this.variance[y * N + x] = (lerp(n0, n1, 0.35) * 2 - 1);
+      // The pan: a shallow dish, so fluid pools where it should.
+      const dx = (x - N / 2) * CELL, dy = (y - N / 2) * CELL;
+      const r = Math.hypot(dx, dy);
+      // Barely a dish. The pool has to find its own contact line rather than
+      // being stopped by a wall - the fingered edge is the thing worth seeing.
+      this.ground[y * N + x] = Math.max(0, r - 2.9) * 0.05;
+    }
+  }
+  clear(){ this.thin.fill(0); this.thick.fill(0); this.yolk.fill(0); }
+
+  deposit(cx, cy, volume, phase, radius){
+    const target = this[phase];
+    const r = Math.max(radius / CELL, 0.5), ri = Math.ceil(r), r2 = r * r;
+    let sum = 0;
+    for (let y = -ri; y <= ri; y++) for (let x = -ri; x <= ri; x++){
+      const d2 = x * x + y * y; if (d2 > r2) continue;
+      const px = cx + x, py = cy + y;
+      if (px < 0 || py < 0 || px >= N || py >= N) continue;
+      const f = 1 - Math.sqrt(d2 / r2); sum += f * f;
+    }
+    if (sum <= 0) return;
+    const per = volume / (sum * CELL * CELL);
+    for (let y = -ri; y <= ri; y++) for (let x = -ri; x <= ri; x++){
+      const d2 = x * x + y * y; if (d2 > r2) continue;
+      const px = cx + x, py = cy + y;
+      if (px < 0 || py < 0 || px >= N || py >= N) continue;
+      const f = 1 - Math.sqrt(d2 / r2);
+      target[py * N + px] += f * f * per;
+    }
+  }
+
+  step(p){
+    const rim = COHESION * p.rim;
+    this.relax(this.thin,  Math.min(THIN_FLOW * p.skirt, 0.25), 0,                    rim,       p);
+    this.relax(this.thick, THICK_FLOW,                          THICK_YIELD * p.mound, rim * 1.6, p);
+    this.relax(this.yolk,  YOLK_FLOW,                           YOLK_YIELD * p.mound,  rim * 2.2, p);
+  }
+
+  relax(h, flow, yield_, cohesion, p){
+    const d = this.delta; d.fill(0);
+    const yieldHeight = yield_ * CELL;
+    const fingering = VARIANCE * p.fingering;
+    const thin = this.thin, thick = this.thick, yolk = this.yolk, g = this.ground;
+
+    for (let y = 1; y < N - 1; y++)
+    for (let x = 1; x < N - 1; x++){
+      const i = y * N + x, depth = h[i];
+      if (depth <= MIN_DEPTH) continue;
+
+      const headI = g[i] + thin[i] + thick[i] + yolk[i];
+      const k = flow * (1 + this.variance[i] * fingering);
+      const maxPer = depth * 0.25;
+      let budget = depth;      // total outflow can never exceed what is here
+      let empty = 0;
+
+      for (let dir = 0; dir < 4; dir++){
+        const nx = x + (dir === 0 ? 1 : dir === 1 ? -1 : 0);
+        const ny = y + (dir === 2 ? 1 : dir === 3 ? -1 : 0);
+        const j = ny * N + nx;
+        if (thin[j] + thick[j] + yolk[j] <= MIN_DEPTH) empty++;
+
+        let dH = headI - (g[j] + thin[j] + thick[j] + yolk[j]);
+        if (dH <= 0) continue;
+        if (yield_ > 0){ dH -= yieldHeight; if (dH <= 0) continue; }
+
+        const amount = Math.min(k * dH, maxPer, budget);
+        if (amount <= 0) continue;
+        budget -= amount;
+        d[i] -= amount; d[j] += amount;
+      }
+
+      if (cohesion > 0 && empty > 0){
+        const pull = Math.min(depth * cohesion * 0.25 * empty, maxPer, budget);
+        if (pull <= 0) continue;
+        budget -= pull;
+        d[i] -= pull;
+        let best = -1, bestDepth = 0;
+        for (let dir = 0; dir < 4; dir++){
+          const nx = x + (dir === 0 ? 1 : dir === 1 ? -1 : 0);
+          const ny = y + (dir === 2 ? 1 : dir === 3 ? -1 : 0);
+          const j = ny * N + nx;
+          if (h[j] > bestDepth){ bestDepth = h[j]; best = j; }
+        }
+        if (best >= 0) d[best] += pull; else d[i] += pull;
+      }
+    }
+    for (let i = 0; i < h.length; i++) if (d[i] !== 0) h[i] = Math.max(0, h[i] + d[i]);
+  }
+
+  stats(){
+    let vol = 0, peak = 0, minX = N, maxX = -1;
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++){
+      const i = y * N + x, dpt = this.thin[i] + this.thick[i] + this.yolk[i];
+      vol += dpt;
+      if (dpt > peak) peak = dpt;
+      if (dpt > MIN_DEPTH){ if (x < minX) minX = x; if (x > maxX) maxX = x; }
+    }
+    return { volume: vol * CELL * CELL, peak, width: maxX < 0 ? 0 : (maxX - minX + 1) * CELL };
+  }
+}
+
+/* ------------------------------------------------------------------ pour */
+/* Layer C, compressed: thin leaves first, thick follows, yolk lands last. */
+class Pour {
+  constructor(field){ this.field = field; this.t = -1; }
+  begin(){ this.t = 0; this.yolkDone = false; }
+  update(dt, p){
+    if (this.t < 0) return;
+    const prev = this.t;
+    this.t += dt;
+    const dur = 0.55 * p.pourTime;
+    const size = p.size * p.size;
+    const white = 2.05 * size;
+    const cx = N / 2, cy = N / 2;
+
+    const emit = (from, to, vol, phase, radius, jitter) => {
+      const a = Math.min(Math.max((prev - from) / (to - from), 0), 1);
+      const b = Math.min(Math.max((this.t - from) / (to - from), 0), 1);
+      if (b <= a) return;
+      const share = (b - a) * vol;
+      const steps = 5;
+      for (let s = 0; s < steps; s++){
+        const ang = Math.random() * Math.PI * 2, rad = Math.random() * jitter;
+        this.field.deposit(
+          Math.round(cx + Math.cos(ang) * rad),
+          Math.round(cy + Math.sin(ang) * rad),
+          share / steps, phase, radius);
+      }
+    };
+
+    // Scattered the way falling, bouncing particles actually land - a pour
+    // dropped on one cell builds a cone the yield stress then refuses to let
+    // down, which is a solver artefact rather than an egg.
+    emit(0, dur * 0.55, white * 0.4, "thin", 1.15 * p.pourBody, 19);
+    emit(dur * 0.2, dur, white * 0.6, "thick", 0.9 * p.pourBody, 9);
+
+    if (!this.yolkDone && this.t > dur * 0.8){
+      this.yolkDone = true;
+      if (window.__yolkDrop) window.__yolkDrop();
+    }
+    if (this.t > dur + 0.5) this.t = -1;
+  }
+}
+
+/* --------------------------------------------------------------- drawing */
+function cssVar(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function parseHex(h){
+  h = h.replace("#", "");
+  if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  const v = parseInt(h, 16);
+  return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+}
+let PAL = {};
+function readPalette(){
+  PAL = {
+    pan: parseHex(cssVar("--pan")), panD: parseHex(cssVar("--pan-d")),
+    alb: parseHex(cssVar("--alb")), albD: parseHex(cssVar("--alb-d")),
+    yolk: parseHex(cssVar("--yolk")), yolkD: parseHex(cssVar("--yolk-d")),
+    ink: cssVar("--ink"), muted: cssVar("--muted"), hot: cssVar("--hot"),
+    rule: cssVar("--rule"), panel: cssVar("--panel"), grid: cssVar("--grid")
+  };
+}
+const mix = (a, b, t) => [lerp(a[0],b[0],t), lerp(a[1],b[1],t), lerp(a[2],b[2],t)];
+
+function drawPan(cv, field, p, yolk){
+  const ctx = cv.getContext("2d");
+  const W = cv.width, px = W / N;
+  ctx.clearRect(0, 0, W, cv.height);
+
+  const img = ctx.createImageData(N, N);
+  const dat = img.data;
+  const punch = p.punch, hgt = p.height;
+
+  for (let y = 0; y < N; y++)
+  for (let x = 0; x < N; x++){
+    const i = y * N + x;
+    const thin = field.thin[i], thick = field.thick[i], yolk = field.yolk[i];
+    const depth = thin + thick + yolk;
+
+    // The pan: dish shading, so the fluid has something to sit in.
+    const dish = Math.min(1, field.ground[i] * 1.6);
+    let col = mix(PAL.pan, PAL.panD, dish * 0.9);
+
+    if (depth > MIN_DEPTH){
+      // Surface normal from the height gradient, lit from the upper left -
+      // this is what the mound is actually read from.
+      // Wide stencil: the per-cell flow noise is real, but differencing
+      // adjacent cells turns it into dither. Two cells out reads the mound
+      // and not the grain.
+      const hL = at(field, x - 2, y), hR = at(field, x + 2, y);
+      const hD = at(field, x, y - 2), hU = at(field, x, y + 2);
+      const gx = (hR - hL) / (4 * CELL) * hgt, gy = (hU - hD) / (4 * CELL) * hgt;
+      const shade = Math.min(1.3, Math.max(0.76, 1 + (gx + gy) * 0.16));
+
+      const thickFrac = (thick + yolk) / depth;
+      const yolkFrac = yolk / depth;
+
+      // Milkiness: only the thick phase scatters, and the dial pushes it.
+      // Beer-Lambert, roughly: the skirt is a film you can see the pan
+      // through and the mound is not. Saturating this is what turns the
+      // whole pool into one white blob.
+      const opacity = Math.min(0.96, 1 - Math.exp(-depth * (2.4 + 7 * thickFrac * lerp(1, 1.7, punch))));
+      let fluid = mix(PAL.albD, PAL.alb, Math.min(1, thickFrac * lerp(1, 1.5, punch) + 0.15));
+      if (yolkFrac > 0.02){
+        const yc = mix(PAL.yolkD, PAL.yolk, Math.min(1, depth * 9));
+        fluid = mix(fluid, yc, Math.min(1, yolkFrac * 2.2));
+      }
+      fluid = fluid.map(c => Math.min(255, c * shade));
+
+      // Meniscus: darken where the pool runs out.
+      let wet = 0;
+      for (const [ox, oy] of [[1,0],[-1,0],[0,1],[0,-1]])
+        if (at(field, x + ox, y + oy) > MIN_DEPTH) wet++;
+      const edge = 1 - wet / 4;
+      const men = Math.min(0.85, 0.55 * p.meniscus) * edge * edge;
+      fluid = mix(fluid, PAL.panD, men);
+
+      col = mix(col, fluid, opacity);
+    }
+
+    const o = i * 4;
+    dat[o] = col[0]; dat[o+1] = col[1]; dat[o+2] = col[2]; dat[o+3] = 255;
+  }
+
+  ctx.putImageData(img, 0, 0);
+  ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(cv, 0, 0, N, N, 0, 0, W, W);
+
+  // The intact sac, in plan. Layer E is a body sitting in the field, not part
+  // of it - and without it on screen the pool is unreadable as an egg.
+  if (yolk && yolk.intact){
+    const scale = W / (N * CELL);           // pixels per inch
+    const rx = yolk.R / 46 * 0.52 * scale;  // sac radius back into inches
+    const squash = 1 + (1 - yolk.area() / yolk.restArea) * 0.9;
+    ctx.save();
+    ctx.translate(W * 0.5 + 12, W * 0.5 + 6);
+    const g = ctx.createRadialGradient(-rx * 0.3, -rx * 0.35, rx * 0.12, 0, 0, rx * 1.25);
+    g.addColorStop(0, "rgb(" + mix(PAL.yolk, [255,255,255], 0.16 + 0.2 * p.punch).map(Math.round).join(",") + ")");
+    g.addColorStop(1, "rgb(" + mix(PAL.yolkD, PAL.yolk, 0.2 + 0.3 * p.punch).map(Math.round).join(",") + ")");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx * squash, rx * squash, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255," + (0.2 + 0.3 * p.punch).toFixed(2) + ")";
+    ctx.lineWidth = 1 + p.punch; ctx.stroke();
+    ctx.restore();
+  }
+
+  // Section line, so Fig 1's two halves obviously belong together.
+  ctx.save();
+  ctx.strokeStyle = PAL.hot; ctx.globalAlpha = 0.75;
+  ctx.lineWidth = 1.5; ctx.setLineDash([10, 4, 2, 4]);
+  ctx.beginPath(); ctx.moveTo(0, W / 2); ctx.lineTo(W, W / 2); ctx.stroke();
+  ctx.restore();
+
+  // Scale bar: one inch, because every other sheet on this map carries one.
+  ctx.save();
+  ctx.strokeStyle = PAL.ink; ctx.globalAlpha = 0.55; ctx.lineWidth = 2;
+  const inch = px / CELL;
+  ctx.beginPath(); ctx.moveTo(14, W - 16); ctx.lineTo(14 + inch, W - 16); ctx.stroke();
+  ctx.fillStyle = PAL.ink; ctx.globalAlpha = 0.7;
+  ctx.font = "11px ui-monospace, Menlo, monospace";
+  ctx.fillText("1 in", 14, W - 22);
+  ctx.restore();
+}
+function at(f, x, y){
+  if (x < 0 || y < 0 || x >= N || y >= N) return 0;
+  const i = y * N + x;
+  return f.thin[i] + f.thick[i] + f.yolk[i];
+}
+
+function drawSection(cv, field, p, ghost){
+  const ctx = cv.getContext("2d");
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const base = H - 26;
+  const scale = 150 * p.height;   // inches of depth -> pixels
+  const y = N >> 1;
+
+  ctx.strokeStyle = PAL.grid; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, base); ctx.lineTo(W, base); ctx.stroke();
+
+  const profile = (f, sc) => {
+    const pts = [];
+    for (let x = 0; x < N; x++){
+      const i = y * N + x;
+      const g = f.ground[i] * sc * 0.35;
+      pts.push([x / (N - 1) * W, base - g - (f.thin[i] + f.thick[i] + f.yolk[i]) * sc]);
+    }
+    return pts;
+  };
+
+  if (ghost){
+    ctx.save();
+    ctx.strokeStyle = PAL.muted; ctx.globalAlpha = 0.75;
+    ctx.setLineDash([4, 4]); ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    profile(ghost, 150).forEach(([px, py], i) => i ? ctx.lineTo(px, py) : ctx.moveTo(px, py));
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  const pts = profile(field, scale);
+  ctx.beginPath();
+  ctx.moveTo(0, base);
+  pts.forEach(([px, py]) => ctx.lineTo(px, py));
+  ctx.lineTo(W, base);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, base - 90, 0, base);
+  grad.addColorStop(0, "rgba(" + PAL.alb.join(",") + ",0.92)");
+  grad.addColorStop(1, "rgba(" + PAL.albD.join(",") + ",0.55)");
+  ctx.fillStyle = grad; ctx.fill();
+
+  ctx.strokeStyle = PAL.ink; ctx.globalAlpha = 0.8; ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  pts.forEach(([px, py], i) => i ? ctx.lineTo(px, py) : ctx.moveTo(px, py));
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = PAL.muted;
+  ctx.font = "10px ui-monospace, Menlo, monospace";
+  ctx.fillText("SECTION · VERT ×" + (1.45 * p.height).toFixed(2), 8, H - 8);
+}
+
+/* ------------------------------------------------------------------ yolk */
+/* Layer E in section: a ring of nodes, radial + surface springs, pressure. */
+class Yolk {
+  constructor(){ this.reset(1); }
+  reset(size){
+    const n = 28;
+    this.R = 0.52 * size * 46;      // pixels
+    this.nodes = [];
+    for (let i = 0; i < n; i++){
+      const a = i / n * Math.PI * 2;
+      this.nodes.push({ x: Math.cos(a) * this.R, y: Math.sin(a) * this.R, vx: 0, vy: 0 });
+    }
+    this.cx = 240; this.cy = 90;
+    this.vy = 0;
+    this.intact = true;
+    this.restArea = Math.PI * this.R * this.R;
+    this.restLink = 2 * this.R * Math.sin(Math.PI / n);
+  }
+  area(){
+    let a = 0;
+    const nd = this.nodes;
+    for (let i = 0; i < nd.length; i++){
+      const b = nd[(i + 1) % nd.length];
+      a += nd[i].x * b.y - b.x * nd[i].y;
+    }
+    return Math.abs(a) / 2;
+  }
+  step(dt, p, floor){
+    if (!this.intact) return;
+    const nd = this.nodes;
+    const surfaceK = 165 * p.stiffness;
+    const radialK  = 105 * p.stiffness;
+    const retention = Math.pow(0.0016, p.ring);
+    const damp = Math.pow(retention, dt);
+
+    this.vy += 620 * dt;
+    this.cy += this.vy * dt;
+
+    const err = (this.restArea - this.area()) / this.restArea;
+    const pressure = err * 900 * p.squash;
+
+    for (const n of nd){
+      const d = Math.hypot(n.x, n.y) || 0.0001;
+      const ux = n.x / d, uy = n.y / d;
+      const f = (this.R - d) * radialK + pressure * 26;
+      n.vx += ux * f * dt; n.vy += uy * f * dt;
+    }
+    for (let i = 0; i < nd.length; i++){
+      const a = nd[i], b = nd[(i + 1) % nd.length];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const d = Math.hypot(dx, dy) || 0.0001;
+      // 2.6 rather than the sim's 1.9: this is a 28-node ring standing in
+      // for a 160-node lattice, so each link carries far more of the squash.
+      if (d > this.restLink * 2.6){ this.rupture(); return; }
+      const f = (d - this.restLink) * surfaceK * 0.5;
+      a.vx += dx / d * f * dt; a.vy += dy / d * f * dt;
+      b.vx -= dx / d * f * dt; b.vy -= dy / d * f * dt;
+    }
+    for (const n of nd){
+      n.vx *= damp; n.vy *= damp;
+      // Cap node speed. A spring lattice that overshoots at this scale tears
+      // itself on the first landing, which is a solver failure, not a yolk.
+      const sp = Math.hypot(n.vx, n.vy);
+      if (sp > 900){ n.vx = n.vx / sp * 900; n.vy = n.vy / sp * 900; }
+      n.x += n.vx * dt; n.y += n.vy * dt;
+      // Floor, in world space: the pan stops the sac, not the sac's centre.
+      const wy = this.cy + n.y;
+      if (wy > floor){
+        n.y = floor - this.cy;
+        n.vy = Math.min(0, n.vy) * 0.15;
+      }
+      const d = Math.hypot(n.x, n.y);
+      if (d < this.R * 0.4 && d > 0.0001){
+        n.x = n.x / d * this.R * 0.4; n.y = n.y / d * this.R * 0.4;
+        n.vx = n.vy = 0;
+      }
+    }
+    let low = -Infinity;
+    for (const n of nd) low = Math.max(low, this.cy + n.y);
+    if (low >= floor - 0.5 && this.vy > 0) this.vy = 0;
+    if (this.cy + this.R * 0.4 > floor){ this.cy = floor - this.R * 0.4; this.vy = 0; }
+  }
+  prod(power){
+    if (!this.intact) return;
+    const nd = this.nodes;
+    for (let i = 0; i < nd.length; i++){
+      const a = i / nd.length * Math.PI * 2;
+      if (Math.cos(a) < 0.2) continue;
+      nd[i].vx -= 260 * power; nd[i].vy += 90 * power;
+    }
+  }
+  rupture(){ this.intact = false; }
+}
+
+function drawYolk(cv, yolk, p, label){
+  const ctx = cv.getContext("2d");
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  const floor = H - 44;
+
+  ctx.fillStyle = PAL.panel; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "rgb(" + PAL.panD.join(",") + ")";
+  ctx.fillRect(0, floor, W, H - floor);
+  ctx.strokeStyle = PAL.rule; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, floor + 0.5); ctx.lineTo(W, floor + 0.5); ctx.stroke();
+
+  if (!yolk.intact){
+    ctx.fillStyle = "rgb(" + mix(PAL.yolkD, PAL.yolk, 0.55).join(",") + ")";
+    ctx.beginPath();
+    ctx.ellipse(yolk.cx, floor - 5, yolk.R * 2.4, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = PAL.hot;
+    ctx.font = "11px ui-monospace, Menlo, monospace";
+    ctx.fillText("MEMBRANE TORE · VOLUME TO THE POOL", 16, 24);
+    return;
+  }
+
+  const nd = yolk.nodes;
+  ctx.beginPath();
+  for (let i = 0; i <= nd.length; i++){
+    const a = nd[i % nd.length], b = nd[(i + 1) % nd.length];
+    const x = yolk.cx + a.x, y = yolk.cy + a.y;
+    const nx = yolk.cx + b.x, ny = yolk.cy + b.y;
+    if (i === 0) ctx.moveTo((x + nx) / 2, (y + ny) / 2);
+    else ctx.quadraticCurveTo(x, y, (x + nx) / 2, (y + ny) / 2);
+  }
+  ctx.closePath();
+
+  const g = ctx.createRadialGradient(
+    yolk.cx - yolk.R * 0.35, yolk.cy - yolk.R * 0.45, yolk.R * 0.15,
+    yolk.cx, yolk.cy, yolk.R * 1.5);
+  const hi = mix(PAL.yolk, [255, 255, 255], 0.18 + 0.22 * p.punch);
+  const lo = mix(PAL.yolkD, PAL.yolk, 0.15 * p.punch);
+  g.addColorStop(0, "rgb(" + hi.map(Math.round).join(",") + ")");
+  g.addColorStop(1, "rgb(" + lo.map(Math.round).join(",") + ")");
+  ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255," + (0.25 + 0.35 * p.punch).toFixed(2) + ")";
+  ctx.lineWidth = 1.4 + p.punch; ctx.stroke();
+
+  ctx.fillStyle = PAL.muted;
+  ctx.font = "10px ui-monospace, Menlo, monospace";
+  ctx.fillText(label, 12, 20);
+}
+
+/* ------------------------------------------------------------------- rig */
+const dial = document.getElementById("dial");
+const dialv = document.getElementById("dialv");
+const dialv2 = document.getElementById("dialv2");
+const ringv = document.getElementById("ringv");
+const buttons = [...document.querySelectorAll(".presets button")];
+
+const fieldA = new Field(3), fieldB = new Field(3);
+const pourA = new Pour(fieldA), pourB = new Pour(fieldB);
+const yolkA = new Yolk(), yolkB = new Yolk();
+
+const panA = document.getElementById("panA"), panB = document.getElementById("panB");
+const secA = document.getElementById("secA"), secB = document.getElementById("secB");
+const yA = document.getElementById("yolkA"), yB = document.getElementById("yolkB");
+
+const DOC = profile(0);
+let style = profile(0.55);
+let hitstop = 0;
+
+function setDial(v, fromButton){
+  dial.value = v;
+  style = profile(parseFloat(v));
+  dialv.textContent = style.t.toFixed(2);
+  dialv2.textContent = "dial " + style.t.toFixed(2);
+  ringv.textContent = style.t < 0.15 ? "barely rings" : style.t < 0.7 ? "rings on" : "rings hard";
+  buttons.forEach(b => b.setAttribute("aria-pressed",
+    String(Math.abs(parseFloat(b.dataset.v) - style.t) < 0.005)));
+  yolkB.R = 0.52 * style.size * 46;
+  yolkB.restArea = Math.PI * yolkB.R * yolkB.R;
+  yolkB.restLink = 2 * yolkB.R * Math.sin(Math.PI / yolkB.nodes.length);
+  renderTable();
+}
+
+function renderTable(){
+  const tb = document.getElementById("mult");
+  tb.innerHTML = "";
+  for (const [name, fn, at1, why] of MULTS){
+    const now = fn(style), full = fn(profile(1));
+    const isMs = name === "Hitstop";
+    const shown = isMs ? (now * 1000).toFixed(0) + "ms" : "×" + now.toFixed(2);
+    const frac = full === 1 ? 0 : Math.min(1, Math.abs(now - fn(DOC)) / Math.abs(full - fn(DOC)));
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      "<td>" + name + "</td>" +
+      "<td class='n'><b>" + shown + "</b><span class='bar' style='width:" +
+        (frac * 100).toFixed(0) + "%'></span></td>" +
+      "<td class='n'>" + at1 + "</td>" +
+      "<td>" + why + "</td>";
+    tb.appendChild(tr);
+  }
+}
+
+function crack(){
+  fieldA.clear(); fieldB.clear();
+  pourA.begin(); pourB.begin();
+  hitstop = style.hitstop;
+  dropYolks();
+}
+function dropYolks(){
+  yolkA.reset(1); yolkB.reset(style.size);
+  yolkA.cy = 150; yolkB.cy = 150;
+}
+window.__yolkDrop = () => {};
+
+document.getElementById("crack").addEventListener("click", crack);
+document.getElementById("reset").addEventListener("click", () => {
+  fieldA.clear(); fieldB.clear(); pourA.t = -1; pourB.t = -1;
+});
+document.getElementById("drop").addEventListener("click", dropYolks);
+document.getElementById("prod").addEventListener("click", () => {
+  yolkA.prod(1); yolkB.prod(1 + style.t * 1.4);
+});
+document.getElementById("poke").addEventListener("click", () => {
+  yolkA.prod(2.6); yolkB.prod(2.6 + style.t * 2);
+  // A ruptured yolk hands its volume to the pool as the third phase.
+  setTimeout(() => {
+    if (!yolkA.intact) fieldA.deposit(N/2, N/2, 0.95, "yolk", 0.5);
+    if (!yolkB.intact) fieldB.deposit(N/2, N/2, 0.95 * style.size * style.size, "yolk", 0.5 * style.size);
+  }, 60);
+});
+
+dial.addEventListener("input", e => setDial(e.target.value));
+buttons.forEach(b => b.addEventListener("click", () => setDial(b.dataset.v)));
+
+const readVol = document.getElementById("rVol");
+const readWide = document.getElementById("rWide");
+const readDeep = document.getElementById("rDeep");
+
+let last = performance.now(), acc = 0, statTick = 0;
+function frame(now){
+  const raw = Math.min(0.05, (now - last) / 1000);
+  last = now;
+
+  // Hitstop, unscaled - the dip slows the sim, not its own recovery.
+  let dt = raw;
+  if (hitstop > 0){ hitstop -= raw; dt = raw * 0.08; }
+
+  acc += dt;
+  const STEP = 1 / 50;
+  let steps = 0;
+  while (acc >= STEP && steps < 4){
+    acc -= STEP; steps++;
+    pourA.update(STEP, DOC); pourB.update(STEP, style);
+    fieldA.step(DOC); fieldB.step(style);
+    // The sac wants a finer step than the field does - four sub-steps is the
+    // cheapest thing that keeps a stiff membrane from tearing on contact.
+    for (let k = 0; k < 6; k++){
+      yolkA.step(STEP / 6, DOC, yA.height - 44);
+      yolkB.step(STEP / 6, style, yB.height - 44);
+    }
+  }
+
+  drawPan(panA, fieldA, DOC, yolkA);
+  drawPan(panB, fieldB, style, yolkB);
+  drawSection(secA, fieldA, DOC, null);
+  drawSection(secB, fieldB, style, fieldA);
+  drawYolk(yA, yolkA, DOC, "MEMBRANE ×1.00 · DAMPING ×1.00");
+  drawYolk(yB, yolkB, style,
+    "MEMBRANE ×" + style.stiffness.toFixed(2) + " · DAMPING ×" + style.ring.toFixed(2));
+
+  if (++statTick % 6 === 0){
+    const a = fieldA.stats(), b = fieldB.stats();
+    readVol.textContent = a.volume.toFixed(2) + " → " + b.volume.toFixed(2) + " in³";
+    readWide.textContent = a.width.toFixed(1) + " → " + b.width.toFixed(1) + " in";
+    readDeep.textContent = a.peak.toFixed(3) + " → " + b.peak.toFixed(3) + " in";
+  }
+
+  requestAnimationFrame(frame);
+}
+
+readPalette();
+if (window.matchMedia){
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  mq.addEventListener?.("change", readPalette);
+}
+setDial(0.55);
+crack();
+requestAnimationFrame(frame);
+</script>
