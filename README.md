@@ -34,9 +34,9 @@ fixing it in Hammer costs an afternoon.
 - [`docs/01-diner-massing.md`](docs/01-diner-massing.md) — Building 01, Pass 1.
   The diner's masses, heights and bays. Drawing set in
   [`docs/01-diner-massing.html`](docs/01-diner-massing.html).
-- [`docs/01-diner-door-swing.md`](docs/01-diner-door-swing.md) — the kitchen
-  swing door, drawn from a field photo. Drawing set in
-  [`docs/01-diner-door-swing.html`](docs/01-diner-door-swing.html).
+- [`docs/02-egg-simulation.md`](docs/02-egg-simulation.md) — breakable egg:
+  shell, two-phase white, membrane-bounded yolk. Research and design for the
+  cooking side, with working code in [`code/Egg/`](code/Egg).
 
 ## Buildings
 
@@ -47,6 +47,7 @@ fixing it in Hammer costs an afternoon.
 ## Repo layout
 
 ```
+code/          gameplay code, by system
 docs/          design documents and per-building specs
 ```
 
