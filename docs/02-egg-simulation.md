@@ -298,29 +298,31 @@ Two of these are not free and are worth naming:
   absorbs the shortfall, and the field silently *gains* volume — at the rim
   multiplier the preview gained about 8× in two seconds. Every outflow now
   draws on a single per-cell budget.
-- **`ThickYield` was too high.** The yield slope is an angle of repose: at the
-  original 0.85 the mound stands at 40°, which is a gel that would not pour
-  out of a shell. A fresh mound measures nearer **0.35**, so the default is now
-  0.38 (yolk 0.85) and the dial multiplies up from there.
+- **`ThickYield` was far too high.** The yield slope is an angle of repose: at
+  the original 0.85 the mound stands at 40°, which is a gel that would not pour
+  out of a shell — in the preview it built a literal cone. A fresh egg holds
+  about 0.4in over a 2in mound, a slope near **0.18**, so that is the default
+  now (yolk 0.25) and the dial multiplies up from there.
+- **The vertical render lift cannot be a flat scale.** It exists to rescue a
+  tenth-of-an-inch film; applied to the whole field it turns the mound into a
+  traffic cone. It has to decay with depth — the preview uses
+  `d · (1 + (L−1)·e^(−d/0.22))`, full lift on the skirt and none on the mound.
+- **The membrane tore on every landing.** Handing the sac's raw impact speed to
+  the squash spring is a units error, not a fragile yolk: it has to be divided
+  into spring units first. Worth checking the same line in `EggYolk.cs`
+  before that lands in a build.
 - **Forgiveness widens the window, not the skill.** The crack threshold, the
   equator advantage and the flat-vs-edge rule in §Layer B are untouched. The
   aiming test is the mechanic and the dial does not soften it; it only stops
   the *upper* bound from being invisible and unfair.
 
-**Preview.** [`02-egg-stylisation.html`](02-egg-stylisation.html) is a playable
-rig: drag the egg around a counter in synced elevation and plan views, slam it
-into the flat or into the `edge`-tagged rail, and watch the crack test, the
-pour and the pool run at whatever the dial is set to. The JavaScript is a port
-of `EggFluidField.cs`, `EggShell.cs`'s crack test and the yolk sac rather than
-a mock-up, which is how the volume-conservation bug below was found.
-
-The elevation is drawn true scale with the renderer's vertical lift dotted over
-it — which shows up the **open tuning question**: the mound stands around 1.1in
-tall, where a real one is nearer 0.4in. The yield stress acts as an angle of
-repose, so a pour that lands in a tight footprint builds a cone the solver then
-refuses to let down. Either `ThickYield` comes down again or Layer C has to
-scatter deposits over the egg's own footprint; the preview leans on the
-second.
+**Preview.** [`02-egg-stylisation.html`](02-egg-stylisation.html) is a 3D rig:
+pick the egg up off the counter, slam it into the flat or into the
+`edge`-tagged rail, orbit around the result. One scene, so the pool, the shell
+halves and the yolk are genuinely sitting on that surface. The solver, the
+crack test and the sac are ports of the C# rather than a mock-up, which is how
+the bugs below were found. Written against a small painter's-algorithm
+renderer rather than a library, so the page has nothing to fetch.
 
 ### Where it lives
 

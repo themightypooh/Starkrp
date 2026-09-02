@@ -76,15 +76,16 @@ public sealed class EggFluidField : Component
 	/// egg (taller, tighter mound), drop it toward zero for an old one.
 	///
 	/// It is also an <i>angle of repose</i>: the mound stands at a slope of
-	/// <c>Yield</c>, so 0.85 is a 40 degree cone - a gel that would not pour
-	/// out of a shell in the first place. A fresh mound measures nearer 0.35,
-	/// and the style dial multiplies up from there.
+	/// <c>Yield</c>. 0.85 is a 40 degree cone - a gel that would not pour out of
+	/// a shell in the first place. A fresh egg's thick white holds about 0.4in
+	/// over a 2in mound, which is a slope near 0.18, and the style dial
+	/// multiplies up from there.
 	/// </summary>
 	[Property, Range( 0.0f, 3.0f ), Group( "Rheology" )]
-	public float ThickYield { get; set; } = 0.38f;
+	public float ThickYield { get; set; } = 0.18f;
 
 	[Property, Range( 0.0f, 4.0f ), Group( "Rheology" )]
-	public float YolkYield { get; set; } = 0.85f;
+	public float YolkYield { get; set; } = 0.25f;
 
 	/// <summary>
 	/// Surface tension, as an inward pull on cells that have an empty

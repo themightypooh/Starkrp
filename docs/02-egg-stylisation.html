@@ -99,7 +99,7 @@ input[type=range]:focus-visible{outline:2px solid var(--hot);outline-offset:3px}
 .view h3 b{color:var(--hot);font-weight:600}
 canvas{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
 canvas.grabbing{cursor:grabbing}
-.hint{position:absolute;right:20px;bottom:16px;text-align:right;font-family:var(--font-m);font-size:11px;
+.hint{position:absolute;left:22px;bottom:20px;font-family:var(--font-m);font-size:11px;
   letter-spacing:.1em;text-transform:uppercase;color:var(--muted);pointer-events:none}
 .res{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--rule);
   border-top:1px solid var(--rule)}
@@ -112,6 +112,19 @@ canvas.grabbing{cursor:grabbing}
 .res b.q-clean{color:var(--good)}
 .res b.q-messy,.res b.q-knock{color:var(--warn)}
 .res b.q-shattered{color:var(--hot)}
+
+/* ---- the stage --------------------------------------------------------- */
+.stage{position:relative;background:var(--panel)}
+canvas{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
+canvas.grabbing{cursor:grabbing}
+canvas:focus-visible{outline:2px solid var(--hot);outline-offset:-2px}
+.cams{position:absolute;right:14px;top:14px;display:flex}
+.cams button{font-family:var(--font-m);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;padding:7px 11px;background:var(--panel);color:var(--muted);
+  border:1px solid var(--rule);margin-left:-1px;cursor:pointer;white-space:nowrap}
+.cams button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.cams button:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+.fig-state{margin-left:auto;color:var(--hot)!important;font-weight:600}
 
 /* ---- twin pans --------------------------------------------------------- */
 .pans{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule)}
@@ -176,10 +189,10 @@ footer{margin-top:60px;padding-top:16px;border-top:2px solid var(--ink);
   </div>
 </header>
 
-<p class="lede">Two views of one simulation, not two simulations. <b>Drag the egg in either
-view and slam it into the counter</b> — the elevation gives you height and impact speed, the
-plan gives you where on the counter it lands and how the pool spreads. Hit the flat surface
-side-on for a clean break; catch the raised edge and you drive shell inward.</p>
+<p class="lede"><b>Drag the egg and slam it into the counter.</b> Drag anywhere else to
+swing the camera around — this is one 3D scene, so the pool, the shell and the yolk are
+really sitting on that surface rather than being drawn onto it. Hit the flat side-on for a
+clean break; catch the raised rail and you drive shell inward.</p>
 
 <div class="rig">
   <div class="rig-in">
@@ -198,19 +211,15 @@ side-on for a clean break; catch the raised edge and you drive shell inward.</p>
 <h2>1 · The rig</h2>
 
 <figure>
-  <div class="fig-hd"><b>Fig 1</b><span>One body · two projections · 6.5in of counter</span></div>
-  <div class="views">
-    <div class="view">
-      <h3><span><b>Elevation</b> · looking along Z</span><span id="hLabel">height 2.4in</span></h3>
-      <canvas id="side" width="620" height="440" role="img"
-        aria-label="Side elevation of an egg above a kitchen counter with a raised edge rail on the right. Drag the egg here to set its height and slam it down."></canvas>
-      <div class="hint" id="hintSide">Drag the egg · release to drop</div>
-    </div>
-    <div class="view">
-      <h3><span><b>Plan</b> · looking down</span><span id="zLabel">z 0.0in</span></h3>
-      <canvas id="plan" width="460" height="460" role="img"
-        aria-label="Top-down plan of the same counter, showing where the egg sits and how the pool of white spreads across the surface."></canvas>
-      <div class="hint">Drag here to move across the counter</div>
+  <div class="fig-hd"><b>Fig 1</b><span>Live · 6.5in of counter · drag to handle, drag off to orbit</span>
+    <span id="hLabel" class="fig-state">intact</span></div>
+  <div class="stage">
+    <canvas id="view" width="1000" height="620" tabindex="0" role="img"
+      aria-label="A 3D kitchen counter with an egg resting on it and a raised rail along one side. Drag the egg to lift and slam it; drag elsewhere to orbit the camera."></canvas>
+    <div class="cams" role="group" aria-label="Camera">
+      <button data-cam="eye" type="button">Eye level</button>
+      <button data-cam="three" type="button" aria-pressed="true">Three-quarter</button>
+      <button data-cam="top" type="button">Top down</button>
     </div>
   </div>
   <div class="res">
@@ -225,16 +234,12 @@ side-on for a clean break; catch the raised edge and you drive shell inward.</p>
     <button id="slam" class="ghost" type="button">Slam it for me</button>
     <button id="poke" class="ghost" type="button">Break the yolk</button>
   </div>
-  <figcaption>The crack is the same three-input test as <code>EggShell.cs</code>:
-  <b>impact speed along the contact normal</b>, <b>the angle between that normal and the egg's
-  long axis</b> — an egg is an arch, so it is far stronger end-on — and <b>what it hit</b>. The
-  raised rail is tagged <code>edge</code>: it needs less force, and it drives fragments inward,
-  which is exactly why the flat counter is the taught technique. Damage accumulates, so two
-  soft taps open an egg one hard one would have destroyed. The elevation is drawn
-  <b>true scale</b>, with the renderer's vertical lift as the dotted line over it — which is
-  also how you can see that the mound stands taller than a real one does. That is the yield
-  stress behaving like an angle of repose over a small pour footprint, and it is the next
-  tuning question.</figcaption>
+  <figcaption>The crack is the three-input test from <code>EggShell.cs</code>: <b>impact speed
+  along the contact normal</b>, <b>the angle between that normal and the egg's long axis</b> —
+  an egg is an arch, so it is far stronger end-on — and <b>what it hit</b>. The rail is tagged
+  <code>edge</code>: it needs less force, and it drives fragments inward, which is exactly why
+  the flat counter is the taught technique. Damage accumulates, so two soft taps open an egg
+  that one hard one would have destroyed.</figcaption>
 </figure>
 
 <h2>2 · What the dial is doing</h2>
@@ -250,14 +255,16 @@ side-on for a clean break; catch the raised edge and you drive shell inward.</p>
 
 <div class="note"><b>Forgiveness widens the window, not the skill.</b> The crack threshold, the
 equator advantage and the flat-versus-edge rule are untouched at every dial position. Only the
-<i>upper</i> bound moves — drag the dial to Saturday Morning and the same slam that shattered
-the egg at Documentary opens it cleanly.</div>
+<i>upper</i> bound moves — set Documentary and slam it, then Saturday Morning and slam it
+identically; the same impact goes from shattered to clean.</div>
 
-<div class="note"><b>What this preview is not.</b> Flat shading standing in for the refraction
-and Fresnel material; the shell is an ellipsoid rather than the authored model; and the yolk is
-a three-axis volume-preserving sac standing in for the 160-node membrane lattice, so it squashes
-and rings correctly but cannot tear along a seam. The field solver, the yield stress, the
-cohesion rim and the crack test are the shipped ones, ported line for line.</div>
+<div class="note"><b>What this preview is not.</b> Flat-shaded triangles standing in for the
+refraction-and-Fresnel material, an ellipsoid instead of the authored shell model, and a
+three-axis volume-preserving sac instead of the 160-node membrane lattice — so the yolk
+squashes, rings and tears, but cannot split along a seam. The field solver, the yield stress,
+the cohesion rim and the crack test are the shipped ones, ported line for line. The mound also
+stands taller here than a real one does: the yield stress acts as an angle of repose, and that
+is the next tuning question rather than something the preview hides.</div>
 
 <footer>
   <span>Stark RP · Kitchen</span>
@@ -301,7 +308,7 @@ function profile(t){
 /* Port of EggFluidField: three phases, shared head, per-phase yield. */
 const N = 72, CELL = 0.09, MIN_DEPTH = 0.004;
 const THIN_FLOW = 0.22, THICK_FLOW = 0.10, YOLK_FLOW = 0.05;
-const THICK_YIELD = 0.38, YOLK_YIELD = 0.85, COHESION = 0.12, VARIANCE = 0.32;
+const THICK_YIELD = 0.18, YOLK_YIELD = 0.25, COHESION = 0.12, VARIANCE = 0.32;
 
 function hash2(x, y, s){
   let h = Math.sin(x * 127.1 + y * 311.7 + s * 74.7) * 43758.5453;
@@ -458,12 +465,12 @@ class Egg {
     this.size = size;
     this.a = 1.15 * size;              // semi-major, along the long axis
     this.b = 0.85 * size;              // semi-minor
-    this.axis = nrm3([0.93, 0.18, 0.32]);
-    // Starts at rest on the counter: the page should open on an egg you can
-    // pick up, not on one already falling.
-    this.v = [0, 0, 0];
-    this.p = [-1.1, 0, -0.6];
+    this.axis = nrm3([0.93, 0.16, 0.33]);
     this.spin = [0.9, 0.5, -0.6];
+    this.v = [0, 0, 0];
+    // Starts at rest on the counter: the page opens on an egg you can pick
+    // up, not on one already falling.
+    this.p = [-1.1, 0, -0.6];
     this.p[1] = this.supportY();
     this.held = false;
     this.opened = false;
@@ -547,8 +554,10 @@ class Sac {
     if (this.y - ry <= floor){
       this.y = floor + ry;
       if (this.vy < 0){
-        // Landing squash, scaled by the style dial's pressure term.
-        this.sv += this.vy / this.R * 0.38 * p.squash;
+        // Landing squash, scaled by the dial's pressure term. Divided down
+        // into spring units - handing the raw impact speed to the membrane
+        // tears it on every landing, which is a units bug, not a fragile yolk.
+        this.sv += Math.max(-9, this.vy / (this.R * 3.5)) * 0.35 * p.squash;
         this.vy = -this.vy * 0.12;
       }
       // Resting slump: the sac carries its own weight, and a slack membrane
@@ -562,7 +571,7 @@ class Sac {
     this.s = Math.min(1.5, Math.max(0.12, this.s));
 
     // Membrane tear: squashed past what the skin will take.
-    if (this.s < 0.22) this.rupture();
+    if (this.s < 0.16) this.rupture();
   }
   /* Volume-preserving bulge, with the dial pushing it wider than it has to be. */
   radii(p){
@@ -574,9 +583,16 @@ class Sac {
   rupture(){
     if (!this.intact) return;
     this.intact = false;
+    // Spread across the sac's own footprint, scattered - dropping the whole
+    // volume on one cell builds a cone the yield stress then refuses to let
+    // down, which is a solver artefact and not a broken yolk.
     const size = state.style.size;
-    field.deposit(worldToCell(this.x), worldToCell(this.z),
-      0.95 * size * size, "yolk", 0.55 * size);
+    const total = 0.95 * size * size;
+    for (let i = 0; i < 6; i++){
+      const a = Math.random() * Math.PI * 2, r = Math.random() * 0.5;
+      field.deposit(worldToCell(this.x + Math.cos(a) * r), worldToCell(this.z + Math.sin(a) * r),
+        total / 6, "yolk", 0.85 * size);
+    }
     readout.food = readout.food;   // unchanged; rupture is not contamination
     setQuality(state.quality, "yolk broken");
   }
@@ -593,9 +609,9 @@ class Debris {
         x: egg.p[0] + ax * dir * egg.a * 0.4,
         y: egg.p[1] + ay * dir * egg.a * 0.4,
         z: egg.p[2] + az * dir * egg.a * 0.4,
-        vx: ax * dir * 7 + (Math.random() - 0.5) * 5,
-        vy: 17 + Math.random() * 8,
-        vz: az * dir * 7 + (Math.random() - 0.5) * 5,
+        vx: ax * dir * 14 + (Math.random() - 0.5) * 8,
+        vy: 26 + Math.random() * 12,
+        vz: az * dir * 14 + (Math.random() - 0.5) * 8,
         rot: Math.random() * Math.PI, rotv: (Math.random() - 0.5) * 9,
         a: egg.a, b: egg.b, dir
       });
@@ -680,7 +696,7 @@ class Pour {
     // Thin leaves first and fastest - the skirt is laid down before the mound
     // lands on top of it, and reversing that order looks wrong.
     emit(0, dur * 0.55, white * 0.4, "thin", 1.15 * p.pourBody, 19);
-    emit(dur * 0.2, dur, white * 0.6, "thick", 1.1 * p.pourBody, 14);
+    emit(dur * 0.2, dur, white * 0.6, "thick", 0.9 * p.pourBody, 9);
 
     if (this.t > dur + 0.5) this.t = -1;
   }
@@ -689,7 +705,7 @@ class Pour {
 const worldToCell = w => Math.round((w + HALF) / CELL);
 const cellToWorld = c => c * CELL - HALF;
 
-/* --------------------------------------------------------------- palette */
+/* -------------------------------------------------------------- palette */
 function cssVar(name){
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
@@ -714,320 +730,378 @@ function readPalette(){
   };
 }
 
-/* --------------------------------------------------------------- the pool */
-function poolDepth(x, z){
-  const i = z * N + x;
-  return field.thin[i] + field.thick[i] + field.yolk[i];
-}
+/* What a body resting on the counter actually rests on: the counter, plus
+   whatever fluid is already lying there. */
 function depthAtWorld(wx, wz){
   const x = worldToCell(wx), z = worldToCell(wz);
   if (x < 0 || z < 0 || x >= N || z >= N) return 0;
-  return poolDepth(x, z);
-}
-/* What the yolk and the shell rest on: the counter, plus whatever is on it. */
-function surfaceAt(wx, wz){
-  return depthAtWorld(wx, wz) * 0.6;
-}
-
-/* ---------------------------------------------------------------- shading */
-function shadeCell(x, z, p, out){
   const i = z * N + x;
-  const thin = field.thin[i], thick = field.thick[i], yolk = field.yolk[i];
-  const depth = thin + thick + yolk;
-
-  let col = mix(PAL.pan, PAL.panD, 0.12);
-  if (depth <= MIN_DEPTH){ out[0] = col[0]; out[1] = col[1]; out[2] = col[2]; return; }
-
-  const g = (a, b) => (a - b) / (4 * CELL) * p.height;
-  const gx = g(depthAtCell(x + 2, z), depthAtCell(x - 2, z));
-  const gz = g(depthAtCell(x, z + 2), depthAtCell(x, z - 2));
-  const shade = Math.min(1.3, Math.max(0.76, 1 + (gx + gz) * 0.16));
-
-  const thickFrac = (thick + yolk) / depth;
-  const yolkFrac = yolk / depth;
-  const punch = p.punch;
-
-  // Beer-Lambert, roughly: the skirt is a film you see the counter through and
-  // the mound is not. Saturating this turns the whole pool into one white blob.
-  const opacity = Math.min(0.96,
-    1 - Math.exp(-depth * (2.4 + 7 * thickFrac * lerp(1, 1.7, punch))));
-
-  let fluid = mix(PAL.albD, PAL.alb, Math.min(1, thickFrac * lerp(1, 1.5, punch) + 0.15));
-  if (yolkFrac > 0.02)
-    fluid = mix(fluid, mix(PAL.yolkD, PAL.yolk, Math.min(1, depth * 9)),
-                Math.min(1, yolkFrac * 2.2));
-  fluid = fluid.map(c => c * shade);
-
-  let wet = 0;
-  for (const [ox, oz] of [[1,0],[-1,0],[0,1],[0,-1]])
-    if (depthAtCell(x + ox, z + oz) > MIN_DEPTH) wet++;
-  const edge = 1 - wet / 4;
-  fluid = mix(fluid, PAL.panD, Math.min(0.85, 0.55 * p.meniscus) * edge * edge);
-
-  col = mix(col, fluid, opacity);
-  out[0] = col[0]; out[1] = col[1]; out[2] = col[2];
+  return field.thin[i] + field.thick[i] + field.yolk[i];
 }
-function depthAtCell(x, z){
-  if (x < 0 || z < 0 || x >= N || z >= N) return 0;
-  return poolDepth(x, z);
+const surfaceAt = (wx, wz) => depthAtWorld(wx, wz) * 0.6;
+
+/* ------------------------------------------------------------------- 3D */
+/*
+   A small painter's-algorithm renderer. Everything in the scene is triangles
+   in world space; they are transformed into camera space, shaded against one
+   key light, sorted back to front and filled. That is enough for this scene -
+   a counter, a shell, a pool and a yolk - and it keeps the whole preview a
+   single file with nothing to fetch.
+*/
+const cam = { yaw: -0.62, pitch: 0.42, dist: 8.2, target: [0, 0.3, 0], fov: 1.05 };
+
+let camEye = [0,0,0], camR = [1,0,0], camU = [0,1,0], camF = [0,0,1];
+
+const sub = (a, b) => [a[0]-b[0], a[1]-b[1], a[2]-b[2]];
+const add = (a, b) => [a[0]+b[0], a[1]+b[1], a[2]+b[2]];
+const scl = (a, s) => [a[0]*s, a[1]*s, a[2]*s];
+const dot = (a, b) => a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+const cross = (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+const norm = a => { const l = Math.hypot(a[0],a[1],a[2]) || 1; return [a[0]/l, a[1]/l, a[2]/l]; };
+
+function updateCamera(){
+  const cb = Math.cos(cam.pitch), sb = Math.sin(cam.pitch);
+  camEye = add(cam.target, [cam.dist*cb*Math.sin(cam.yaw), cam.dist*sb, cam.dist*cb*Math.cos(cam.yaw)]);
+  camF = norm(sub(cam.target, camEye));
+  camR = norm(cross(camF, [0, 1, 0]));
+  camU = cross(camR, camF);
+}
+function toCam(p){
+  const v = sub(p, camEye);
+  return [dot(v, camR), dot(v, camU), dot(v, camF)];
 }
 
-/* ------------------------------------------------------------- plan view */
-const planScratch = document.createElement("canvas");
-planScratch.width = N; planScratch.height = N;
+const LIGHT = norm([-0.45, 0.82, 0.36]);
 
-function drawPlan(cv, p){
-  const ctx = cv.getContext("2d");
-  const W = cv.width, H = cv.height;
-  const S = W / (N * CELL);                       // pixels per inch
-  const toX = wx => (wx + HALF) * S;
-  const toZ = wz => (wz + HALF) * S;
-
-  ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = rgb(mix(PAL.pan, PAL.panD, 0.35));
-  ctx.fillRect(0, 0, W, H);
-
-  const sctx = planScratch.getContext("2d");
-  const img = sctx.createImageData(N, N);
-  const out = [0, 0, 0];
-  for (let z = 0; z < N; z++)
-  for (let x = 0; x < N; x++){
-    shadeCell(x, z, p, out);
-    const o = (z * N + x) * 4;
-    img.data[o] = out[0]; img.data[o+1] = out[1]; img.data[o+2] = out[2]; img.data[o+3] = 255;
+class Renderer {
+  constructor(cv){
+    this.cv = cv;
+    this.ctx = cv.getContext("2d");
+    this.tris = [];
+    this.overlay = [];
   }
-  sctx.putImageData(img, 0, 0);
-  ctx.imageSmoothingEnabled = true;
-  ctx.drawImage(planScratch, 0, 0, N, N, 0, 0, W, H);
+  begin(){
+    this.tris.length = 0;
+    this.overlay.length = 0;
+    this.bias = 0;
+    updateCamera();
+    this.W = this.cv.width; this.H = this.cv.height;
+    this.F = (this.H * 0.5) / Math.tan(cam.fov * 0.5);
+  }
+  project(p){
+    const c = toCam(p);
+    if (c[2] < 0.15) return null;
+    return [this.W * 0.5 + c[0] * this.F / c[2],
+            this.H * 0.5 - c[1] * this.F / c[2],
+            c[2]];
+  }
+  /* One triangle, shaded. `col` is [r,g,b]; `alpha` defaults to opaque. */
+  tri(a, b, c, col, alpha, flat, spec){
+    const pa = this.project(a), pb = this.project(b), pc = this.project(c);
+    if (!pa || !pb || !pc) return;
 
-  // The rail, seen from above.
-  ctx.fillStyle = rgb(mix(PAL.pan, PAL.panD, 0.75));
-  ctx.fillRect(toX(RAIL.x0), 0, (RAIL.x1 - RAIL.x0) * S, H);
-  ctx.strokeStyle = PAL.hot; ctx.globalAlpha = 0.5; ctx.lineWidth = 1;
-  ctx.setLineDash([6, 4]);
-  ctx.beginPath();
-  ctx.moveTo(toX(RAIL.x0), 0); ctx.lineTo(toX(RAIL.x0), H);
-  ctx.stroke();
-  ctx.setLineDash([]); ctx.globalAlpha = 1;
-  ctx.fillStyle = PAL.hot;
-  ctx.font = "10px ui-monospace, Menlo, monospace";
-  ctx.save();
-  ctx.translate(toX(RAIL.x0) - 6, 14); ctx.rotate(Math.PI / 2);
-  ctx.fillText("EDGE", 0, 0);
-  ctx.restore();
+    // Backface cull in screen space, so a closed hull never fights itself.
+    const area = (pb[0]-pa[0]) * (pc[1]-pa[1]) - (pc[0]-pa[0]) * (pb[1]-pa[1]);
+    if (area >= 0) return;
 
-  drawDebrisPlan(ctx, toX, toZ, S);
+    let shade = 1;
+    if (!flat){
+      const n = norm(cross(sub(b, a), sub(c, a)));
+      shade = 0.42 + 0.72 * Math.max(0, dot(n, LIGHT));
+      // A touch of rim: the up-facing half of a body picks up the room.
+      shade += 0.12 * Math.max(0, n[1]);
+
+      if (spec){
+        // Blinn-Phong, one light. On the pool this is the wet sheet, and it
+        // does more work than anything else in the material.
+        const centre = [(a[0]+b[0]+c[0])/3, (a[1]+b[1]+c[1])/3, (a[2]+b[2]+c[2])/3];
+        const v = norm(sub(camEye, centre));
+        const hv = norm(add(v, LIGHT));
+        shade += spec[0] * Math.pow(Math.max(0, dot(n, hv)), spec[1]);
+      }
+    }
+    // `bias` pushes a surface back in the sort. A painter's renderer has no
+    // depth buffer, so a body standing in the pool loses ties with the pool
+    // cells around it and gets a hole punched through it; biasing the fluid
+    // half an inch back settles that in the body's favour.
+    this.tris.push({ pa, pb, pc, col, alpha: alpha === undefined ? 1 : alpha,
+                     shade, z: (pa[2] + pb[2] + pc[2]) / 3 + this.bias });
+  }
+  quad(a, b, c, d, col, alpha, flat, spec){
+    this.tri(a, b, c, col, alpha, flat, spec);
+    this.tri(a, c, d, col, alpha, flat, spec);
+  }
+  line(a, b, col, width, alpha){
+    const pa = this.project(a), pb = this.project(b);
+    if (!pa || !pb) return;
+    this.overlay.push({ kind: "line", pa, pb, col, width: width || 1,
+                        alpha: alpha === undefined ? 1 : alpha, z: (pa[2] + pb[2]) / 2 });
+  }
+  dot3(p, r, col){
+    const q = this.project(p);
+    if (!q) return;
+    this.tris.push({ kind: "dot", pa: q, r: r * this.F / q[2], col, alpha: 1, shade: 1, z: q[2] });
+  }
+  label(p, text, col, dy){
+    const q = this.project(p);
+    if (!q) return;
+    this.overlay.push({ kind: "text", x: q[0], y: q[1] + (dy || 0), text, col, z: q[2] });
+  }
+  flush(){
+    const ctx = this.ctx;
+    this.tris.sort((a, b) => b.z - a.z);
+
+    for (const t of this.tris){
+      if (t.kind === "dot"){
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = rgb(t.col);
+        ctx.beginPath(); ctx.arc(t.pa[0], t.pa[1], Math.max(1, t.r), 0, Math.PI * 2); ctx.fill();
+        continue;
+      }
+      ctx.globalAlpha = t.alpha;
+      ctx.fillStyle = rgb([t.col[0] * t.shade, t.col[1] * t.shade, t.col[2] * t.shade]);
+      ctx.beginPath();
+      ctx.moveTo(t.pa[0], t.pa[1]);
+      ctx.lineTo(t.pb[0], t.pb[1]);
+      ctx.lineTo(t.pc[0], t.pc[1]);
+      ctx.closePath();
+      ctx.fill();
+      // Hairline along the shared edges kills the seams that a painter's
+      // renderer leaves between adjacent triangles.
+      ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    this.overlay.sort((a, b) => b.z - a.z);
+    for (const o of this.overlay){
+      ctx.globalAlpha = o.alpha === undefined ? 1 : o.alpha;
+      if (o.kind === "line"){
+        ctx.strokeStyle = o.col; ctx.lineWidth = o.width;
+        ctx.beginPath(); ctx.moveTo(o.pa[0], o.pa[1]); ctx.lineTo(o.pb[0], o.pb[1]); ctx.stroke();
+      } else {
+        ctx.fillStyle = o.col;
+        ctx.font = "11px ui-monospace, Menlo, monospace";
+        ctx.fillText(o.text, o.x, o.y);
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+}
+
+/* ------------------------------------------------------------------ meshes */
+/* A UV sphere, built once and reused for every round thing in the scene. */
+function buildSphere(rings, segs){
+  const verts = [], faces = [];
+  for (let i = 0; i <= rings; i++){
+    const v = i / rings, phi = v * Math.PI;
+    for (let j = 0; j <= segs; j++){
+      const u = j / segs, th = u * Math.PI * 2;
+      verts.push([Math.sin(phi) * Math.cos(th), Math.cos(phi), Math.sin(phi) * Math.sin(th)]);
+    }
+  }
+  const row = segs + 1;
+  for (let i = 0; i < rings; i++)
+  for (let j = 0; j < segs; j++){
+    const a = i * row + j, b = a + row;
+    faces.push([a, b, a + 1], [b, b + 1, a + 1]);
+  }
+  return { verts, faces };
+}
+const SPHERE = buildSphere(14, 20);
+
+/* Rotation that takes +X onto the egg's long axis. */
+function axisBasis(axis){
+  const f = norm(axis);
+  let up = Math.abs(f[1]) > 0.94 ? [1, 0, 0] : [0, 1, 0];
+  const r = norm(cross(up, f));
+  return [f, cross(f, r), r];
+}
+
+function drawEllipsoid(R, centre, radii, axis, col, alpha, taper, spec){
+  const [ex, ey, ez] = axisBasis(axis);
+  const pts = SPHERE.verts.map(v => {
+    // Egg taper: one end fatter than the other, along the long axis.
+    const t = taper ? 1 - taper * v[1] * 0.5 : 1;
+    const local = [v[1] * radii[0], v[0] * radii[1] * t, v[2] * radii[2] * t];
+    return [
+      centre[0] + ex[0]*local[0] + ey[0]*local[1] + ez[0]*local[2],
+      centre[1] + ex[1]*local[0] + ey[1]*local[1] + ez[1]*local[2],
+      centre[2] + ex[2]*local[0] + ey[2]*local[1] + ez[2]*local[2]
+    ];
+  });
+  for (const f of SPHERE.faces) R.tri(pts[f[0]], pts[f[1]], pts[f[2]], col, alpha, false, spec);
+}
+
+/* Half a shell: the same sphere, cut, with the cut face closed off. */
+function drawHalfShell(R, h, col, inner){
+  const [ex, ey, ez] = axisBasis([Math.cos(h.rot), Math.sin(h.rot) * 0.4, Math.sin(h.rot)]);
+  const c = [h.x, h.y, h.z];
+  const put = v => [
+    c[0] + ex[0]*v[0] + ey[0]*v[1] + ez[0]*v[2],
+    c[1] + ex[1]*v[0] + ey[1]*v[1] + ez[1]*v[2],
+    c[2] + ex[2]*v[0] + ey[2]*v[1] + ez[2]*v[2]
+  ];
+  const rings = 7, segs = 14, ra = h.a * 0.62, rb = h.b * 0.62;
+  const ring = [];
+  for (let i = 0; i <= rings; i++){
+    const phi = (i / rings) * (Math.PI / 2);
+    const r = [];
+    for (let j = 0; j <= segs; j++){
+      const th = j / segs * Math.PI * 2;
+      r.push(put([Math.cos(phi) * ra * h.dir,
+                  Math.sin(phi) * Math.cos(th) * rb,
+                  Math.sin(phi) * Math.sin(th) * rb]));
+    }
+    ring.push(r);
+  }
+  for (let i = 0; i < rings; i++)
+  for (let j = 0; j < segs; j++)
+    R.quad(ring[i][j], ring[i][j+1], ring[i+1][j+1], ring[i+1][j], col);
+
+  // The cut face, dished inward so a half reads as a cup rather than a disc.
+  const rim = ring[rings], mid = put([-0.42 * ra * h.dir, 0, 0]);
+  for (let j = 0; j < segs; j++) R.tri(mid, rim[j+1], rim[j], inner);
+  for (let j = 0; j < segs; j++) R.tri(mid, rim[j], rim[j+1], inner);
+}
+
+/* ------------------------------------------------------------------ scene */
+function drawScene(R, p){
+  const ctx = R.ctx;
+  ctx.clearRect(0, 0, R.W, R.H);
+  ctx.fillStyle = PAL.panel;
+  ctx.fillRect(0, 0, R.W, R.H);
+
+  drawCounter(R);
+  drawRail(R);
+  drawPool(R, p);
+  drawDebris3(R);
 
   if (sac.alive && sac.intact){
     const [rr, ry] = sac.radii(p);
-    paintSac(ctx, toX(sac.x), toZ(sac.z), rr * S, rr * S, p);
-  }
-
-  if (!egg.opened) paintEggPlan(ctx, toX, toZ, S, p);
-
-  // Scale bar - every other sheet on this map carries one.
-  ctx.strokeStyle = PAL.ink; ctx.globalAlpha = 0.5; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(14, H - 14); ctx.lineTo(14 + S, H - 14); ctx.stroke();
-  ctx.globalAlpha = 0.7; ctx.fillStyle = PAL.ink;
-  ctx.fillText("1 in", 14, H - 20);
-  ctx.globalAlpha = 1;
-}
-
-function paintEggPlan(ctx, toX, toZ, S, p){
-  const flat = Math.hypot(egg.axis[0], egg.axis[2]) || 0.0001;
-  const ang = Math.atan2(egg.axis[2], egg.axis[0]);
-  const along = lerp(egg.b, egg.a, flat);          // foreshortened by tilt
-
-  // Cast shadow: how high it is reads as how far the shadow is offset.
-  const lift = Math.max(0, egg.p[1] - egg.supportY());
-  ctx.save();
-  ctx.globalAlpha = 0.28 / (1 + lift * 0.5);
-  ctx.fillStyle = "#000";
-  ctx.beginPath();
-  ctx.ellipse(toX(egg.p[0]) + lift * 6, toZ(egg.p[2]) + lift * 6,
-    along * S, egg.b * S, ang, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  paintEgg(ctx, toX(egg.p[0]), toZ(egg.p[2]), along * S, egg.b * S, ang, p);
-}
-
-function drawDebrisPlan(ctx, toX, toZ, S){
-  for (const h of debris.halves){
-    ctx.save();
-    ctx.translate(toX(h.x), toZ(h.z));
-    ctx.rotate(h.rot);
-    ctx.fillStyle = rgb(PAL.shell);
-    ctx.strokeStyle = rgb(PAL.shellD); ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.ellipse(0, 0, h.a * S * 0.42, h.b * S * 0.5, 0, 0, Math.PI * 2);
-    ctx.fill(); ctx.stroke();
-    ctx.restore();
-  }
-  ctx.fillStyle = rgb(PAL.shell);
-  for (const b of debris.bits){
-    ctx.beginPath();
-    ctx.arc(toX(b.x), toZ(b.z), Math.max(1.4, b.r * S), 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-/* --------------------------------------------------------- elevation view */
-function drawSide(cv, p){
-  const ctx = cv.getContext("2d");
-  const W = cv.width, H = cv.height;
-  const S = W / (N * CELL);
-  const baseY = H - 74;                            // y = 0 sits here
-  const toX = wx => (wx + HALF) * S;
-  const toY = wy => baseY - wy * S;
-
-  ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = PAL.panel; ctx.fillRect(0, 0, W, H);
-
-  // Counter slab.
-  ctx.fillStyle = rgb(mix(PAL.pan, PAL.panD, 0.55));
-  ctx.fillRect(0, baseY, W, H - baseY);
-  ctx.strokeStyle = rgb(mix(PAL.pan, PAL.panD, 0.9));
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, baseY + 0.5); ctx.lineTo(W, baseY + 0.5); ctx.stroke();
-
-  // The rail, in section, with its tag.
-  ctx.fillStyle = rgb(mix(PAL.pan, PAL.panD, 0.8));
-  ctx.fillRect(toX(RAIL.x0), toY(RAIL.top), (RAIL.x1 - RAIL.x0) * S, RAIL.top * S);
-  ctx.fillStyle = PAL.hot;
-  ctx.font = "10px ui-monospace, Menlo, monospace";
-  ctx.fillText("EDGE", toX(RAIL.x0) - 2, toY(RAIL.top) - 7);
-
-  // The pool in section, cut through the line the egg came down on. Taking a
-  // max over z instead draws a needle through the tallest cell on the counter,
-  // which is not a section of anything.
-  const lift = 1.45 * p.height;
-  const cutZ = Math.min(N - 2, Math.max(1, worldToCell(pour.t >= -0.5 ? pour.z : sac.z || 0)));
-  const cut = [];
-  for (let x = 0; x < N; x++){
-    // Three cells wide, so a single noisy cell cannot spike the line.
-    cut.push((poolDepth(x, cutZ - 1) + poolDepth(x, cutZ) + poolDepth(x, cutZ + 1)) / 3);
-  }
-
-  ctx.beginPath();
-  ctx.moveTo(0, baseY);
-  for (let x = 0; x < N; x++) ctx.lineTo(toX(cellToWorld(x)), toY(cut[x]));
-  ctx.lineTo(W, baseY);
-  ctx.closePath();
-  const grad = ctx.createLinearGradient(0, baseY - 70, 0, baseY);
-  grad.addColorStop(0, "rgba(" + PAL.alb.join(",") + ",0.95)");
-  grad.addColorStop(1, "rgba(" + PAL.albD.join(",") + ",0.6)");
-  ctx.fillStyle = grad; ctx.fill();
-  ctx.strokeStyle = PAL.ink; ctx.globalAlpha = 0.55; ctx.lineWidth = 1.2;
-  ctx.stroke(); ctx.globalAlpha = 1;
-
-  // The fill is true scale - this elevation is the one place on the sheet
-  // where an inch is an inch. The dotted line above it is the same section as
-  // the renderer actually ships it, vertical lift and all.
-  ctx.save();
-  ctx.strokeStyle = PAL.hot; ctx.globalAlpha = 0.7;
-  ctx.setLineDash([4, 4]); ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  for (let x = 0; x < N; x++){
-    const px = toX(cellToWorld(x)), py = toY(cut[x] * lift);
-    x ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
-  }
-  ctx.stroke();
-  ctx.restore();
-  ctx.fillStyle = PAL.hot;
-  ctx.font = "10px ui-monospace, Menlo, monospace";
-  ctx.fillText("AS RENDERED · VERT ×" + lift.toFixed(2), 14, 20);
-  ctx.fillStyle = PAL.muted;
-  ctx.fillText("SOLID = TRUE SCALE", 14, 34);
-
-  if (sac.alive && sac.intact){
-    const [rr, ry] = sac.radii(p);
-    paintSac(ctx, toX(sac.x), toY(sac.y), rr * S, ry * S, p);
-  }
-
-  for (const h of debris.halves){
-    ctx.save();
-    ctx.translate(toX(h.x), toY(h.y));
-    ctx.rotate(h.rot);
-    ctx.fillStyle = rgb(PAL.shell);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, h.a * S * 0.46, h.b * S * 0.58, 0, 0, Math.PI, true);
-    ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = rgb(PAL.shellD); ctx.lineWidth = 1.5; ctx.stroke();
-    // The inside of the shell, so a half reads as a cup and not a pebble.
-    ctx.beginPath();
-    ctx.ellipse(0, 0, h.a * S * 0.46, h.b * S * 0.2, 0, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(0,0,0,0.22)"; ctx.lineWidth = 1; ctx.stroke();
-    ctx.restore();
-  }
-  ctx.fillStyle = rgb(PAL.shell);
-  for (const b of debris.bits){
-    ctx.beginPath();
-    ctx.arc(toX(b.x), toY(b.y), Math.max(1.4, b.r * S), 0, Math.PI * 2);
-    ctx.fill();
+    const yolkCol = mix(PAL.yolkD, PAL.yolk, 0.55 + 0.4 * p.punch);
+    drawEllipsoid(R, [sac.x, sac.y, sac.z], [rr, ry, rr], [1, 0, 0], yolkCol, 1, 0,
+      [0.6 + 0.4 * p.punch, 34]);
   }
 
   if (!egg.opened){
-    const flat = Math.hypot(egg.axis[0], egg.axis[1]) || 0.0001;
-    const ang = Math.atan2(-egg.axis[1], egg.axis[0]);
-    const along = lerp(egg.b, egg.a, flat);
-    paintEgg(ctx, toX(egg.p[0]), toY(egg.p[1]), along * S, egg.b * S, ang, p);
-
-    // Drop line and height, so the impact speed is something you can aim.
-    const floorY = egg.p[0] > RAIL.x0 - egg.b && egg.p[0] < RAIL.x1 + egg.b
-      ? RAIL.top : 0;
-    const h = egg.p[1] - egg.supportY() - floorY;
-    if (h > 0.15){
-      ctx.save();
-      ctx.strokeStyle = PAL.hot; ctx.globalAlpha = 0.55;
-      ctx.setLineDash([5, 5]); ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(toX(egg.p[0]), toY(egg.p[1] - egg.supportY()));
-      ctx.lineTo(toX(egg.p[0]), toY(floorY));
-      ctx.stroke();
-      ctx.restore();
-      ctx.fillStyle = PAL.hot;
-      ctx.fillText(h.toFixed(1) + "in", toX(egg.p[0]) + 6, toY(floorY) - 6);
-    }
-
-    // Damage, if it has been knocked but not opened.
-    if (egg.damage > 0.02){
-      ctx.fillStyle = PAL.hot;
-      ctx.fillText("DAMAGE " + Math.round(Math.min(1, egg.damage) * 100) + "%",
-        toX(egg.p[0]) - 26, toY(egg.p[1]) - egg.b * S - 12);
-    }
+    shadow(R, egg.p, egg.a * 0.95);
+    drawEllipsoid(R, egg.p, [egg.a, egg.b, egg.b], egg.axis, PAL.shell, 1, 0.28, [0.22, 12]);
+    dropLine(R, p);
   }
-
-  ctx.strokeStyle = PAL.ink; ctx.globalAlpha = 0.5; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(14, H - 14); ctx.lineTo(14 + S, H - 14); ctx.stroke();
-  ctx.globalAlpha = 0.7; ctx.fillStyle = PAL.ink;
-  ctx.fillText("1 in", 14, H - 20);
-  ctx.globalAlpha = 1;
 }
 
-/* ------------------------------------------------------------------ paint */
-function paintEgg(ctx, cx, cy, rx, ry, ang, p){
-  ctx.save();
-  ctx.translate(cx, cy); ctx.rotate(ang);
-  const g = ctx.createRadialGradient(-rx * 0.3, -ry * 0.4, ry * 0.1, 0, 0, rx * 1.25);
-  g.addColorStop(0, rgb(mix(PAL.shell, [255,255,255], 0.35)));
-  g.addColorStop(1, rgb(PAL.shellD));
-  ctx.fillStyle = g;
-  ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = "rgba(0,0,0,0.28)"; ctx.lineWidth = 1; ctx.stroke();
-  ctx.restore();
+function drawCounter(R){
+  // The counter is under everything, so it is biased hard to the back of the
+  // sort and can never paint over the pool lying on it.
+  R.bias = 3;
+  const c = mix(PAL.pan, PAL.panD, 0.35);
+  const E = HALF + 0.35;
+  R.quad([-E, 0, -E], [-E, 0, E], [E, 0, E], [E, 0, -E], c, 1, true);
+
+  // A one-inch grid, because every other sheet on this map carries a scale.
+  const g = PAL.grid;
+  for (let i = -3; i <= 3; i++){
+    const w = i === 0 ? 1.4 : 0.7;
+    R.line([i, 0.004, -E], [i, 0.004, E], g, w, 0.5);
+    R.line([-E, 0.004, i], [E, 0.004, i], g, w, 0.5);
+  }
+  R.line([-E, 0.005, -HALF], [E, 0.005, -HALF], PAL.rule, 1, 0.7);
+  R.bias = 0;
 }
-function paintSac(ctx, cx, cy, rx, ry, p){
-  ctx.save();
-  ctx.translate(cx, cy);
-  const g = ctx.createRadialGradient(-rx * 0.3, -ry * 0.4, ry * 0.12, 0, 0, rx * 1.3);
-  g.addColorStop(0, rgb(mix(PAL.yolk, [255,255,255], 0.16 + 0.22 * p.punch)));
-  g.addColorStop(1, rgb(mix(PAL.yolkD, PAL.yolk, 0.2 + 0.35 * p.punch)));
-  ctx.fillStyle = g;
-  ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255," + (0.2 + 0.35 * p.punch).toFixed(2) + ")";
-  ctx.lineWidth = 1 + p.punch; ctx.stroke();
-  ctx.restore();
+
+function drawRail(R){
+  const c = mix(PAL.pan, PAL.panD, 0.8);
+  const { x0, x1, top } = RAIL, E = HALF + 0.35;
+  // Top and the two faces the egg can actually strike.
+  R.quad([x0, top, -E], [x0, top, E], [x1, top, E], [x1, top, -E], c);
+  R.quad([x0, 0, -E], [x0, top, -E], [x0, top, E], [x0, 0, E], mix(c, [0,0,0], 0.15));
+  R.quad([x1, 0, E], [x1, top, E], [x1, top, -E], [x1, 0, -E], mix(c, [0,0,0], 0.25));
+  R.label([x0, top + 0.25, 2.2], "EDGE", PAL.hot);
+}
+
+/* The pool: the height field as a surface, cells below the contact-line
+   threshold skipped entirely, so the silhouette of the mesh is the silhouette
+   of the puddle - which is the thing the eye reads. */
+function drawPool(R, p){
+  // Vertical exaggeration, but only where it was meant to apply. A flat scale
+  // on the whole field turns a mound into a traffic cone; the lift exists to
+  // rescue a tenth-of-an-inch film, so it decays as the depth gets real.
+  const L = 1.45 * p.height;
+  const lift = d => d * (1 + (L - 1) * Math.exp(-d / 0.22));
+  R.bias = 0.35;
+  const step = 2;
+  const h = (x, z) => {
+    if (x < 0 || z < 0 || x >= N || z >= N) return 0;
+    const i = z * N + x;
+    return field.thin[i] + field.thick[i] + field.yolk[i];
+  };
+  const phase = (x, z) => {
+    const i = z * N + x;
+    const d = field.thin[i] + field.thick[i] + field.yolk[i];
+    if (d <= 0) return [0, 0];
+    return [(field.thick[i] + field.yolk[i]) / d, field.yolk[i] / d];
+  };
+
+  for (let z = 0; z < N - step; z += step)
+  for (let x = 0; x < N - step; x += step){
+    const d00 = h(x, z), d10 = h(x + step, z),
+          d11 = h(x + step, z + step), d01 = h(x, z + step);
+    const dm = (d00 + d10 + d11 + d01) / 4;
+    if (dm <= MIN_DEPTH) continue;
+
+    const [thickFrac, yolkFrac] = phase(x + (step >> 1), z + (step >> 1));
+    let col = mix(PAL.albD, PAL.alb, Math.min(1, thickFrac * lerp(1, 1.5, p.punch) + 0.2));
+    if (yolkFrac > 0.02)
+      col = mix(col, mix(PAL.yolkD, PAL.yolk, 0.6), Math.min(1, yolkFrac * 2.4));
+
+    // Beer-Lambert: the skirt is a film you see the counter through, the mound
+    // is not. This is the two-phase read, and it is most of the material.
+    const alpha = Math.min(0.97,
+      1 - Math.exp(-dm * (5 + 12 * thickFrac * lerp(1, 1.7, p.punch))));
+
+    const wx = cellToWorld(x), wz = cellToWorld(z), s = CELL * step;
+    R.quad(
+      [wx,     lift(d00), wz],
+      [wx,     lift(d01), wz + s],
+      [wx + s, lift(d11), wz + s],
+      [wx + s, lift(d10), wz],
+      col, alpha, false, [0.85 + 0.5 * p.punch, 26]);
+  }
+  R.bias = 0;
+}
+
+function drawDebris3(R){
+  for (const hf of debris.halves) drawHalfShell(R, hf, PAL.shell, mix(PAL.shell, PAL.shellD, 0.55));
+  for (const b of debris.bits) R.dot3([b.x, b.y, b.z], b.r, PAL.shell);
+}
+
+/* Contact shadow, as a flat fan on the counter. Reads as height, which is the
+   one thing a single fixed view cannot otherwise tell you. */
+function shadow(R, at, r){
+  const lift = Math.max(0, at[1] - egg.supportY());
+  const spread = r * (1 + lift * 0.28);
+  const a = Math.max(0.05, 0.3 / (1 + lift * 0.7));
+  const c = [0, 0, 0];
+  const cx = at[0] + lift * 0.22, cz = at[2] - lift * 0.12;
+  const seg = 16, y = 0.006;
+  for (let i = 0; i < seg; i++){
+    const t0 = i / seg * Math.PI * 2, t1 = (i + 1) / seg * Math.PI * 2;
+    R.tri([cx, y, cz],
+          [cx + Math.cos(t1) * spread, y, cz + Math.sin(t1) * spread],
+          [cx + Math.cos(t0) * spread, y, cz + Math.sin(t0) * spread],
+          c, a, true);
+  }
+}
+
+function dropLine(R, p){
+  const floor = (egg.p[0] > RAIL.x0 - egg.b && egg.p[0] < RAIL.x1 + egg.b) ? RAIL.top : 0;
+  const bottom = egg.p[1] - egg.supportY();
+  if (bottom - floor < 0.2) return;
+  R.line([egg.p[0], bottom, egg.p[2]], [egg.p[0], floor, egg.p[2]], PAL.hot, 1, 0.6);
+  R.label([egg.p[0], (bottom + floor) / 2, egg.p[2]],
+    (bottom - floor).toFixed(1) + "in", PAL.hot, -4);
+  if (egg.damage > 0.02)
+    R.label([egg.p[0], egg.p[1] + egg.b + 0.35, egg.p[2]],
+      "DAMAGE " + Math.round(Math.min(1, egg.damage) * 100) + "%", PAL.hot);
 }
 
 /* -------------------------------------------------------------------- rig */
@@ -1040,11 +1114,13 @@ const pour = new Pour();
 const state = { style: profile(0.55), hitstop: 0, quality: "intact" };
 const readout = { food: -1 };
 
+const view = document.getElementById("view");
+const R = new Renderer(view);
+
 const dial = document.getElementById("dial");
 const dialv = document.getElementById("dialv");
 const buttons = [...document.querySelectorAll(".presets button")];
-const sideCv = document.getElementById("side");
-const planCv = document.getElementById("plan");
+const camButtons = [...document.querySelectorAll(".cams button")];
 
 const MULTS = [
   ["Size",       p => p.size,      "×1.3",  "On top of the ×1.2 already in the model. True scale reads as a pebble."],
@@ -1077,15 +1153,13 @@ function renderTable(){
   const p = state.style, full = profile(1), zero = profile(0);
   tb.innerHTML = "";
   for (const [name, fn, at1, why] of MULTS){
-    const now = fn(p);
-    const span = Math.abs(fn(full) - fn(zero));
+    const now = fn(p), span = Math.abs(fn(full) - fn(zero));
     const frac = span === 0 ? 0 : Math.min(1, Math.abs(now - fn(zero)) / span);
     const shown = name === "Hitstop" ? (now * 1000).toFixed(0) + "ms" : "×" + now.toFixed(2);
     const tr = document.createElement("tr");
-    tr.innerHTML =
-      "<td>" + name + "</td>" +
+    tr.innerHTML = "<td>" + name + "</td>" +
       "<td class='n'><b>" + shown + "</b><span class='bar' style='width:" +
-        (frac * 100).toFixed(0) + "%'></span></td>" +
+      (frac * 100).toFixed(0) + "%'></span></td>" +
       "<td class='n'>" + at1 + "</td><td>" + why + "</td>";
     tb.appendChild(tr);
   }
@@ -1109,9 +1183,6 @@ function onImpact(speed, onEdge){
 
   const equatorDot = egg.equatorDot();
   const p = state.style;
-
-  // Effective strength: side-on is weaker, and a hard edge concentrates the
-  // load - but see below for what an edge does to the fragments.
   const strength = lerp(1, EQUATOR_ADVANTAGE, equatorDot) * (onEdge ? 0.7 : 1);
   const need = CRACK_SPEED * strength;
   const shatterAt = SHATTER_SPEED * strength * p.forgive;
@@ -1122,144 +1193,158 @@ function onImpact(speed, onEdge){
   rAngle.textContent = (Math.acos(Math.min(1, 1 - equatorDot)) * 180 / Math.PI).toFixed(0) +
     "° " + (equatorDot > 0.65 ? "side-on" : equatorDot > 0.35 ? "oblique" : "end-on");
 
-  if (egg.damage < 1){
-    setQuality("knock", onEdge ? "on the edge" : "flat, held");
-    return;
-  }
+  if (egg.damage < 1){ setQuality("knock", onEdge ? "on the edge" : "on the flat"); return; }
 
   let quality, fragments;
   if (speed > shatterAt){ quality = "shattered"; fragments = 6 + Math.floor(Math.random() * 7); }
   else if (speed > shatterAt * 0.72 || equatorDot < 0.35){
     quality = "messy"; fragments = 2 + Math.floor(Math.random() * 4);
   } else { quality = "clean"; fragments = Math.floor(Math.random() * 3); }
-
   if (onEdge) fragments += 2;
-  open(quality, fragments, onEdge, speed);
-}
 
-function open(quality, fragments, onEdge, speed){
   egg.opened = true;
   setQuality(quality, onEdge ? "on the edge" : "on the flat");
   rFrag.textContent = fragments + (fragments === 1 ? " piece" : " pieces");
-
-  state.hitstop = state.style.hitstop;
+  state.hitstop = p.hitstop;
 
   debris.open(egg, quality, fragments, onEdge);
+  pour.begin(egg.p[0], egg.p[2], quality === "shattered" ? 0.65 : 1);
 
-  const lost = quality === "shattered" ? 0.35 : 0;
-  pour.begin(egg.p[0], egg.p[2], 1 - lost);
-
-  // A hard crack stresses the membrane on the way out, which is why slamming
-  // an egg gets you a broken yolk even when the shell comes off cleanly.
-  const R = 0.52 * state.style.size;
-  sac.spawn(egg.p[0], Math.max(egg.p[1], R + 0.2), egg.p[2], R);
-  sac.sv -= Math.min(0.9, speed / SHATTER_SPEED) * 0.8;
+  const Rr = 0.52 * p.size;
+  sac.spawn(egg.p[0], Math.max(egg.p[1], Rr + 0.2), egg.p[2], Rr);
+  sac.sv -= Math.min(0.9, speed / SHATTER_SPEED) * 0.45;
 }
 
 /* ---------------------------------------------------------------- pointer */
-function bindDrag(cv, axes){
-  let dragging = false, lastT = 0, lastP = null;
+let mode = null, lastX = 0, lastY = 0, lastT = 0;
 
-  const toWorld = e => {
-    const r = cv.getBoundingClientRect();
-    const S = r.width / (N * CELL);
-    const x = (e.clientX - r.left) / S - HALF;
-    const second = axes === "xy"
-      ? (r.height - 74 * (r.height / cv.height) - (e.clientY - r.top)) / S
-      : (e.clientY - r.top) / S - HALF;
-    return [x, second];
-  };
-
-  cv.addEventListener("pointerdown", e => {
-    if (egg.opened) return;
-    const [x, s] = toWorld(e);
-    const near = axes === "xy"
-      ? Math.hypot(x - egg.p[0], s - egg.p[1])
-      : Math.hypot(x - egg.p[0], s - egg.p[2]);
-    if (near > egg.a * 1.6) return;
-
-    dragging = true; egg.held = true; egg.resting = false;
-    cv.classList.add("grabbing");
-    cv.setPointerCapture(e.pointerId);
-    lastP = [x, s]; lastT = performance.now();
-    e.preventDefault();
-  });
-
-  cv.addEventListener("pointermove", e => {
-    if (!dragging) return;
-    const [x, s] = toWorld(e);
-    const now = performance.now();
-    const dt = Math.max(0.008, (now - lastT) / 1000);
-
-    if (axes === "xy"){
-      egg.v[0] = (x - egg.p[0]) / dt;
-      egg.v[1] = (s - egg.p[1]) / dt;
-      egg.p[0] = x;
-      egg.p[1] = Math.max(egg.supportY(), Math.min(6.5, s));
-    } else {
-      egg.v[0] = (x - egg.p[0]) / dt;
-      egg.v[2] = (s - egg.p[2]) / dt;
-      egg.p[0] = x;
-      egg.p[2] = Math.max(-HALF + 0.3, Math.min(HALF - 0.3, s));
-    }
-    lastP = [x, s]; lastT = now;
-  });
-
-  const release = e => {
-    if (!dragging) return;
-    dragging = false; egg.held = false;
-    cv.classList.remove("grabbing");
-    // Cap the throw: a pointer that jumps across the canvas in one event
-    // should not hand the egg a thousand inches a second.
-    for (let i = 0; i < 3; i++) egg.v[i] = Math.max(-420, Math.min(420, egg.v[i]));
-  };
-  cv.addEventListener("pointerup", release);
-  cv.addEventListener("pointercancel", release);
+function eggScreen(){
+  R.begin();
+  return R.project(egg.p);
 }
-bindDrag(sideCv, "xy");
-bindDrag(planCv, "xz");
+
+view.addEventListener("pointerdown", e => {
+  const r = view.getBoundingClientRect();
+  const px = (e.clientX - r.left) * view.width / r.width;
+  const py = (e.clientY - r.top) * view.height / r.height;
+
+  const q = eggScreen();
+  const grabbable = !egg.opened && q;
+  const radius = grabbable ? Math.max(28, egg.a * R.F / q[2] * 1.4) : 0;
+
+  mode = (grabbable && Math.hypot(px - q[0], py - q[1]) < radius) ? "drag" : "orbit";
+  if (mode === "drag"){ egg.held = true; egg.resting = false; }
+
+  lastX = e.clientX; lastY = e.clientY; lastT = performance.now();
+  view.classList.add("grabbing");
+  view.setPointerCapture(e.pointerId);
+  e.preventDefault();
+});
+
+view.addEventListener("pointermove", e => {
+  if (!mode) return;
+  const dx = e.clientX - lastX, dy = e.clientY - lastY;
+  const now = performance.now();
+  const dt = Math.max(0.008, (now - lastT) / 1000);
+  lastX = e.clientX; lastY = e.clientY; lastT = now;
+
+  if (mode === "orbit"){
+    cam.yaw -= dx * 0.008;
+    cam.pitch = Math.min(1.5, Math.max(0.03, cam.pitch + dy * 0.006));
+    setCamButtons(null);
+    return;
+  }
+
+  // Drag in the plane through the egg that faces the camera: pull it up, sling
+  // it down, slide it across - all from one gesture, the way you would hold it.
+  const rect = view.getBoundingClientRect();
+  const scale = view.width / rect.width;
+  const depth = toCam(egg.p)[2];
+  const k = depth / R.F * scale;
+  const move = add(scl(camR, dx * k), scl(camU, -dy * k));
+
+  const before = egg.p.slice();
+  egg.p = add(egg.p, move);
+  egg.p[1] = Math.max(egg.supportY(), Math.min(7, egg.p[1]));
+  egg.p[0] = Math.min(HALF - 0.3, Math.max(-HALF + 0.3, egg.p[0]));
+  egg.p[2] = Math.min(HALF - 0.3, Math.max(-HALF + 0.3, egg.p[2]));
+  for (let i = 0; i < 3; i++) egg.v[i] = (egg.p[i] - before[i]) / dt;
+});
+
+function release(){
+  if (mode === "drag"){
+    egg.held = false;
+    for (let i = 0; i < 3; i++) egg.v[i] = Math.max(-460, Math.min(460, egg.v[i]));
+  }
+  mode = null;
+  view.classList.remove("grabbing");
+}
+view.addEventListener("pointerup", release);
+view.addEventListener("pointercancel", release);
+view.addEventListener("wheel", e => {
+  cam.dist = Math.min(26, Math.max(5.5, cam.dist + Math.sign(e.deltaY) * 0.8));
+  e.preventDefault();
+}, { passive: false });
+
+/* Keyboard, so the rig is not mouse-only. */
+view.addEventListener("keydown", e => {
+  const step = e.shiftKey ? 0.5 : 0.15;
+  if (e.key === "ArrowLeft")  { cam.yaw -= 0.12; }
+  else if (e.key === "ArrowRight"){ cam.yaw += 0.12; }
+  else if (e.key === "ArrowUp")   { cam.pitch = Math.min(1.5, cam.pitch + 0.08); }
+  else if (e.key === "ArrowDown") { cam.pitch = Math.max(0.03, cam.pitch - 0.08); }
+  else if (e.key === " " || e.key === "Enter"){ slam(); }
+  else return;
+  e.preventDefault();
+});
 
 /* ---------------------------------------------------------------- actions */
-document.getElementById("again").addEventListener("click", () => {
-  field.clear();
-  debris.clear();
-  sac.alive = false;
-  pour.t = -1;
+function newEgg(){
+  field.clear(); debris.clear();
+  sac.alive = false; pour.t = -1;
   egg.reset(state.style.size);
   readout.food = -1;
   setQuality("intact", "");
   rSpeed.textContent = "—"; rAngle.textContent = "—";
   rFrag.textContent = "—"; rFood.textContent = "—";
-});
-
-document.getElementById("slam").addEventListener("click", () => {
+}
+function slam(){
   if (egg.opened) return;
   egg.held = false;
-  egg.p[1] = 3.4;
-  egg.p[0] = -0.9;
-  egg.axis = nrm3([0.97, 0.12, 0.2]);   // side-on, the taught technique
+  egg.p = [-0.9, 3.4, -0.4];
+  egg.axis = norm([0.97, 0.12, 0.2]);      // side-on: the taught technique
   egg.v = [0, -46, 0];
-});
-
+}
+document.getElementById("again").addEventListener("click", newEgg);
+document.getElementById("slam").addEventListener("click", slam);
 document.getElementById("poke").addEventListener("click", () => {
   if (sac.alive && sac.intact) sac.sv -= 3.4;
 });
+
+const CAMS = {
+  eye:  { pitch: 0.19, dist: 8.6, yaw: -0.62 },
+  three:{ pitch: 0.46, dist: 9.2, yaw: -0.62 },
+  top:  { pitch: 1.47, dist: 8.4, yaw: 0 }
+};
+function setCamButtons(name){
+  camButtons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.cam === name)));
+}
+camButtons.forEach(b => b.addEventListener("click", () => {
+  Object.assign(cam, CAMS[b.dataset.cam]);
+  setCamButtons(b.dataset.cam);
+}));
 
 dial.addEventListener("input", e => setDial(e.target.value));
 buttons.forEach(b => b.addEventListener("click", () => setDial(b.dataset.v)));
 
 /* ------------------------------------------------------------------- loop */
 const hLabel = document.getElementById("hLabel");
-const zLabel = document.getElementById("zLabel");
-const hintSide = document.getElementById("hintSide");
-
 let last = performance.now(), acc = 0, tick = 0;
 
 function frame(now){
   const raw = Math.min(0.05, (now - last) / 1000);
   last = now;
 
-  // Hitstop runs on unscaled time - the dip must not slow its own recovery.
   let dt = raw;
   if (state.hitstop > 0){ state.hitstop -= raw; dt = raw * 0.08; }
 
@@ -1272,23 +1357,19 @@ function frame(now){
     debris.step(STEP);
     pour.update(STEP, state.style);
     field.step(state.style);
-    // The sac wants a finer step than the field does.
     for (let k = 0; k < 6; k++) sac.step(STEP / 6, state.style, surfaceAt);
   }
 
-  drawSide(sideCv, state.style);
-  drawPlan(planCv, state.style);
+  R.begin();
+  drawScene(R, state.style);
+  R.flush();
 
   if (++tick % 8 === 0){
     if (!egg.opened){
-      const h = Math.max(0, egg.p[1] - egg.supportY());
-      hLabel.textContent = "height " + h.toFixed(1) + "in";
-      zLabel.textContent = "z " + egg.p[2].toFixed(1) + "in";
-      hintSide.textContent = egg.held ? "Release to drop" : "Drag the egg · release to drop";
+      hLabel.textContent = "intact · " +
+        Math.max(0, egg.p[1] - egg.supportY()).toFixed(1) + "in up";
     } else {
-      hLabel.textContent = "opened";
-      zLabel.textContent = "pool " + field.stats().volume.toFixed(2) + " in³";
-      hintSide.textContent = "New egg to go again";
+      hLabel.textContent = "pool " + field.stats().volume.toFixed(2) + " in³";
       const n = debris.contamination();
       if (n !== readout.food){
         readout.food = n;
@@ -1296,7 +1377,6 @@ function frame(now){
       }
     }
   }
-
   requestAnimationFrame(frame);
 }
 
@@ -1305,8 +1385,8 @@ if (window.matchMedia){
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", readPalette);
 }
 setDial(0.55);
-setQuality("intact", "");
-egg.reset(state.style.size);
+setCamButtons("three");
+newEgg();
 requestAnimationFrame(frame);
 
 </script>
