@@ -94,6 +94,13 @@ PS
 	// good at spotting when it is missing.
 	float g_flMeniscus < Default( 0.55 ); Range( 0.0, 1.0 ); >;
 
+	// Style dials, written by EggFluidRenderer from EggStyle. Both are 0/1
+	// (no effect) at Documentary. ColourPunch pushes the scatter tint and the
+	// specular sheet; MeniscusGain deepens the dark line at the contact edge,
+	// which is the cheapest silhouette read in the whole material.
+	float g_flColourPunch  < Attribute( "ColourPunch" );  Default( 0.0 ); >;
+	float g_flMeniscusGain < Attribute( "MeniscusGain" ); Default( 1.0 ); >;
+
 	CreateTexture2D( g_tFrameBuffer ) < Attribute( "FrameTexture" ); SrgbRead( true ); Filter( BILINEAR ); AddressU( CLAMP ); AddressV( CLAMP ); >;
 
 	float4 MainPs( PixelInput i ) : SV_Target0
@@ -139,11 +146,16 @@ PS
 		// and letting it stay clear is what makes the skirt read as a
 		// separate substance rather than as a thin bit of the same one.
 
-		float scatter = 1.0 - exp( -pathLength * g_flScatterDensity * thickFrac );
-		float3 body   = lerp( transmitted, g_vScatterTint, scatter * 0.85 );
+		// Style: the thick phase goes milkier than it measures, so the mound
+		// separates from the skirt at a glance instead of on inspection.
+		float scatterDensity = g_flScatterDensity * lerp( 1.0, 1.7, g_flColourPunch );
+
+		float scatter = 1.0 - exp( -pathLength * scatterDensity * thickFrac );
+		float3 body   = lerp( transmitted, g_vScatterTint, scatter * lerp( 0.85, 1.0, g_flColourPunch ) );
 
 		// --- meniscus -----------------------------------------------------
-		body *= lerp( 1.0, 1.0 - g_flMeniscus, edge * edge );
+		float meniscus = saturate( g_flMeniscus * g_flMeniscusGain );
+		body *= lerp( 1.0, 1.0 - meniscus, edge * edge );
 
 		// --- the wet sheet -------------------------------------------------
 		//
@@ -155,8 +167,10 @@ PS
 
 		float3 shaded = ShadingModelStandard::Shade( m ).rgb;
 
-		float fresnel = pow( 1.0 - ndotv, 5.0 );
-		shaded += fresnel * 0.35;
+		// Broader and brighter with the dial - a wide wet highlight is what
+		// says "just cracked" from across the room.
+		float fresnel = pow( 1.0 - ndotv, lerp( 5.0, 3.2, g_flColourPunch ) );
+		shaded += fresnel * lerp( 0.35, 0.6, g_flColourPunch );
 
 		// Fade the very shallowest film out rather than ending it on a hard
 		// polygon edge - the field's contact-line threshold is a grid cell

@@ -4,6 +4,11 @@ Research pass for a breakable egg: shell, yolk, and a two-phase white.
 Cooking is explicitly out of scope. This document covers what the egg *is*
 and how the liquid behaves and reads on screen.
 
+Sections 1–6 describe the egg as measured. **Section 7 is the one that ships**
+— the measured egg turned out to be too honest to read in a first-person
+kitchen, and everything since is a single dial that exaggerates it back into
+legibility.
+
 Units are inches, as everywhere else on this map. A US large egg is
 **2.3in long, 1.7in wide, ~50g**. That matters more than it sounds — see
 [Scale](#scale-is-the-first-problem).
@@ -240,10 +245,74 @@ is ~72KB and has no business on the wire.
 
 ---
 
-## 7. Code
+## 7. Stylisation — selling it
+
+The sim above is accurate and, played, it is underwhelming. That is not a
+failure of the sim; it is what a real egg is. A US large egg cracked into a
+pan is a ~2.3in object producing a ~4in puddle a tenth of an inch deep, in
+colours (near-colourless white, a yolk closer to mustard than to orange) that
+nobody's memory agrees with, over about 400ms, with a yolk whose wobble is two
+low cycles and gone. Held in first person at arm's length, on a hob, for the
+half second the player is looking at it, most of that lands as *nothing
+happened*.
+
+So the measured egg stays exactly as it is, and the exaggeration goes on top
+as multipliers — never as replacements. One dial, `Caricature`, 0 to 1:
+
+| Preset | Dial | What it is for |
+|---|---|---|
+| **Documentary** | 0.00 | The measured egg. For checking the sim, not for playing. |
+| **Cookbook** | 0.55 | **Shipping default.** Reads across a kitchen, still behaves like an egg. |
+| **Saturday Morning** | 1.00 | Everything at once. Big, slow, wobbly, luridly yellow. |
+
+Keeping 0 meaningful is the point of building it this way: any time the egg
+looks wrong, the first question is whether it is the sim or the lie, and that
+is one dial away from being answered.
+
+### What the dial actually does
+
+| Exaggeration | At 1.0 | Why it earns its place |
+|---|---|---|
+| **Size** | ×1.3 on the egg, yolk and pool | On top of the ×1.2 in §2. A true-scale egg reads as a pebble. |
+| **Mound** | yield ×2.2 | The mound is the shape an egg is *recognised* by, so it gets the biggest single push. |
+| **Skirt** | thin flow ×1.4 | The two-phase read only works if the skirt is visibly running out from under the mound. |
+| **Rim** | cohesion ×2.4, meniscus ×2 | Silhouette is all a player reads at speed. A fat bead and a dark contact line are the cheapest legibility in the system. |
+| **Fingering** | flow noise ×1.6 | A circle reads as a decal. Irregularity reads as fluid. |
+| **Height** | render lift ×1.7 | On top of the renderer's own ×1.45. Volume is conserved; it is just carried in a shape you can see. |
+| **Wobble** | membrane ×0.45, damping retention ×0.35 | Softened *and* underdamped together. Softening alone gives jelly; undamping alone gives a metronome. The yolk rings past the landing, where the player is looking. |
+| **Squash** | pressure ×1.8 | A squashed sac bulges harder, so the landing has a real anticipation-and-settle rather than a stop. |
+| **Hitstop** | 100ms, on t² | A beat of `Scene.TimeScale` dip on the crack. Physically a lie; it is the difference between an egg that broke and an egg that *you* broke. Curved on t² because a short dip is imperceptible and there is no point spending the first half of the dial on frames nobody feels. |
+| **Pour time** | ×0.7 | The real thing dribbles for most of a second after the interesting part is over. |
+| **Pour body** | ×1.45 | A physically sized thread of albumen is two pixels wide and simply is not there. |
+| **Forgiveness** | shatter threshold ×1.6 | Widened upward only: the crack still takes the same swing, there is just more room above it. Losing a breakfast to a correct 4in/s overswing is not a mechanic, it is a bug with a rationale. |
+| **Colour** | saturation, warmth, milkiness, rim | Pushed toward the egg people think they saw. Real yolk is duller than anyone remembers. |
+
+Two of these are not free and are worth naming:
+
+- **Volume.** A bigger egg carries more white. It is scaled by the *square* of
+  the size dial rather than the cube — the full cube outgrows the pan, and the
+  vertical exaggeration is already carrying the depth half of the read.
+- **Forgiveness widens the window, not the skill.** The crack threshold, the
+  equator advantage and the flat-vs-edge rule in §Layer B are untouched. The
+  aiming test is the mechanic and the dial does not soften it; it only stops
+  the *upper* bound from being invisible and unfair.
+
+### Where it lives
+
+`EggStyle` is a scene component holding the preset. `EggStyle.Current` is what
+every other system reads, and with no component in the scene it falls back to
+Cookbook rather than to the honest setting — shipping should not depend on
+someone remembering to place it. The two shaders take `ColourPunch` and
+`MeniscusGain` as attributes, written per-frame by the renderer and the yolk,
+so the dial moves the shading live in the editor.
+
+---
+
+## 8. Code
 
 | File | Layer |
 |---|---|
+| [`code/Egg/EggStyle.cs`](../code/Egg/EggStyle.cs) | the stylisation dial, and hitstop |
 | [`code/Egg/EggFluidField.cs`](../code/Egg/EggFluidField.cs) | D — the solver |
 | [`code/Egg/EggFluidRenderer.cs`](../code/Egg/EggFluidRenderer.cs) | D — surface mesh |
 | [`code/Egg/EggYolk.cs`](../code/Egg/EggYolk.cs) | E — membrane sac |

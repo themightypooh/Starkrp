@@ -153,8 +153,15 @@ public sealed class EggShell : Component, Component.ICollisionListener, Componen
 		var onEdge = c.Other.GameObject.IsValid() && c.Other.GameObject.Tags.Has( "edge", true );
 		var strength = MathX.Lerp( 1.0f, EquatorAdvantage, equatorDot ) * (onEdge ? 0.7f : 1.0f);
 
+		// Forgiveness. The measured window between "cracked" and "destroyed"
+		// is narrow enough that a player who swings slightly too hard loses
+		// their breakfast to a number they cannot see. Widening it upward
+		// only - the crack still takes the same swing, there is just more
+		// room above it before things go wrong.
+		var style = EggStyle.Current;
+
 		var need = CrackThreshold * strength;
-		var shatterAt = ShatterThreshold * strength;
+		var shatterAt = ShatterThreshold * strength * style.Forgiveness;
 
 		Damage += speed / need;
 
@@ -202,6 +209,11 @@ public sealed class EggShell : Component, Component.ICollisionListener, Componen
 		if ( onEdge ) fragments += 2;
 
 		var contentsLost = quality == CrackQuality.Shattered ? 0.35f : 0.0f;
+
+		// A beat of hitstop on the moment of impact. Physically this is a
+		// lie; it is also the difference between an egg that breaks and an
+		// egg that you broke.
+		EggHitStop.Play( Scene, EggStyle.Current.HitStop );
 
 		SpawnHalves( c );
 		var shellInFood = SpawnFragments( c, fragments );
@@ -269,7 +281,7 @@ public sealed class EggShell : Component, Component.ICollisionListener, Componen
 			p.Velocity = (c.Contact.Normal + Vector3.Random * 0.8f).Normal
 				* Game.Random.Float( 8.0f, 34.0f );
 
-			p.Size = Vector3.One * Game.Random.Float( 0.05f, 0.16f );
+			p.Size = Vector3.One * Game.Random.Float( 0.05f, 0.16f ) * EggStyle.Current.Size;
 
 			// Predictive only - the definitive test is done on rest, below.
 			if ( Field.IsValid() && Field.IsInPool( c.Contact.Point ) )

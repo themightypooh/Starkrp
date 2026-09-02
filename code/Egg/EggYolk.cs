@@ -83,6 +83,10 @@ public sealed class EggYolk : Component
 		_body.AngularDamping = 6.0f;
 		_body.MassOverride = 0.017f;   // 17g. Surface densities are kg/m3, so mass is kg.
 
+		// The dial scales the yolk up bodily. Everything downstream is written
+		// against Radius, so this is the only place it needs to happen.
+		Radius *= EggStyle.Current.Size;
+
 		var collider = Components.GetOrCreate<SphereCollider>();
 		collider.Radius = Radius * 0.82f;   // sits slightly inside the skin
 		collider.Friction = 1.2f;
@@ -209,9 +213,18 @@ public sealed class EggYolk : Component
 		// Membrane stiffness scales hard with freshness - this is the whole
 		// fresh/old axis, and it is deliberately non-linear because the
 		// perceptual difference between a fresh and a week-old yolk is large.
-		var surfaceK = MathX.Lerp( 60.0f, 900.0f, Freshness * Freshness );
-		var radialK = MathX.Lerp( 40.0f, 420.0f, Freshness );
-		var damping = MathF.Pow( 0.0016f, dt );   // frame-rate independent
+		var style = EggStyle.Current;
+
+		var surfaceK = MathX.Lerp( 60.0f, 900.0f, Freshness * Freshness ) * style.MembraneStiffness;
+		var radialK = MathX.Lerp( 40.0f, 420.0f, Freshness ) * style.MembraneStiffness;
+
+		// Frame-rate independent, and deliberately underdamped once the style
+		// dial is up: a real yolk gives you two cycles and stops, which is
+		// honest and completely unreadable. Raising the per-second retention
+		// lets the wobble ring on past the landing, where the player is
+		// actually looking.
+		var retention = MathF.Pow( 0.0016f, style.WobbleRing );
+		var damping = MathF.Pow( retention, dt );
 
 		// Gravity in the yolk's local frame. The sac slumps under its own
 		// weight - a fresh one holds a dome against it, an old one does not.
@@ -223,7 +236,7 @@ public sealed class EggYolk : Component
 		// Pressure term. Springs alone let a squashed sac lose volume; this
 		// pushes every node outward when it does, so flattening it makes it
 		// bulge at the sides. That bulge is most of why it reads as a sac.
-		var pressure = volumeError * MathX.Lerp( 120.0f, 700.0f, Freshness );
+		var pressure = volumeError * MathX.Lerp( 120.0f, 700.0f, Freshness ) * style.Squash;
 
 		for ( int i = 0; i < _nodes.Length; i++ )
 		{
@@ -373,6 +386,7 @@ public sealed class EggYolk : Component
 		if ( _so is null || !IsIntact ) return;
 
 		_so.Transform = WorldTransform;
+		_so.Attributes.Set( "ColourPunch", EggStyle.Current.ColourPunch );
 
 		for ( int i = 0; i < _nodes.Length; i++ )
 		{

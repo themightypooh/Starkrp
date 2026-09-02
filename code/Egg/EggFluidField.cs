@@ -314,12 +314,22 @@ public sealed class EggFluidField : Component
 		if ( _thin is null )
 			return;
 
+		// The style dial. Everything below is still the measured rheology -
+		// these are multipliers on it, and at Documentary they are all 1.
+		var style = EggStyle.Current;
+		_styleFingering = FlowVariance * style.Fingering;
+
+		var rim = Cohesion * style.Rim;
+
 		// Solved in this order deliberately. Thin runs first and furthest, so
 		// the skirt is laid down before the mound settles on top of it.
-		Relax( _thin, ThinFlow, 0.0f, Cohesion );
-		Relax( _thick, ThickFlow, ThickYield, Cohesion * 1.6f );
-		Relax( _yolk, YolkFlow, YolkYield, Cohesion * 2.2f );
+		Relax( _thin, MathF.Min( ThinFlow * style.Skirt, 0.25f ), 0.0f, rim );
+		Relax( _thick, ThickFlow, ThickYield * style.Mound, rim * 1.6f );
+		Relax( _yolk, YolkFlow, YolkYield * style.Mound, rim * 2.2f );
 	}
+
+	/// <summary>Style-scaled <see cref="FlowVariance"/>, refreshed each step.</summary>
+	float _styleFingering;
 
 	/// <summary>
 	/// One relaxation sweep of a single phase.
@@ -364,7 +374,7 @@ public sealed class EggFluidField : Component
 				continue;
 
 			var headI = _ground[i] + _thin[i] + _thick[i] + _yolk[i];
-			var k = flow * (1.0f + _variance[i] * FlowVariance);
+			var k = flow * (1.0f + _variance[i] * _styleFingering);
 
 			// Cap total outflow at a quarter of the cell per neighbour so four
 			// simultaneous donations can never exceed what is there.

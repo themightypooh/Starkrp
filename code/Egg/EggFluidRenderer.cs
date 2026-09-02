@@ -55,6 +55,7 @@ public sealed class EggFluidRenderer : Component, Component.ExecuteInEditor
 	int _vertexCount;
 	int _indexCount;
 	int _tick;
+	float _styleHeight = 1.0f;
 
 	protected override void OnEnabled()
 	{
@@ -101,6 +102,10 @@ public sealed class EggFluidRenderer : Component, Component.ExecuteInEditor
 
 		_so.Transform = WorldTransform;
 
+		var style = EggStyle.Current;
+		_so.Attributes.Set( "ColourPunch", style.ColourPunch );
+		_so.Attributes.Set( "MeniscusGain", style.Meniscus );
+
 		if ( !Field.IsDirty )
 			return;
 
@@ -114,6 +119,11 @@ public sealed class EggFluidRenderer : Component, Component.ExecuteInEditor
 
 	void Rebuild()
 	{
+		// Vertical exaggeration on top of the renderer's own. The mound is
+		// the read, and at true depth there barely is one.
+		var style = EggStyle.Current;
+		_styleHeight = style.Height;
+
 		var w = Field.Width;
 		var stride = w + 1;
 		var cell = Field.Cell;
@@ -224,7 +234,7 @@ public sealed class EggFluidRenderer : Component, Component.ExecuteInEditor
 		var pos = new Vector3(
 			gx * Field.Cell - w * Field.Cell * 0.5f,
 			gy * Field.Cell - w * Field.Cell * 0.5f,
-			sGround + depth * HeightScale );
+			sGround + depth * HeightScale * _styleHeight );
 
 		var slot = _vertexCount++;
 		_vertices[slot] = new Vertex

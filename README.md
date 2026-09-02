@@ -35,8 +35,10 @@ fixing it in Hammer costs an afternoon.
   The diner's masses, heights and bays. Drawing set in
   [`docs/01-diner-massing.html`](docs/01-diner-massing.html).
 - [`docs/02-egg-simulation.md`](docs/02-egg-simulation.md) — breakable egg:
-  shell, two-phase white, membrane-bounded yolk. Research and design for the
-  cooking side, with working code in [`code/Egg/`](code/Egg).
+  shell, two-phase white, membrane-bounded yolk — plus the stylisation dial
+  that exaggerates the measured egg back into something readable in first
+  person. Research and design for the cooking side, with working code in
+  [`code/Egg/`](code/Egg).
 
 ## Buildings
 

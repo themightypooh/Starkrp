@@ -71,7 +71,12 @@ public sealed class EggPour : Component
 		_elapsed = 0.0f;
 		_pouring = true;
 
-		var white = WhiteVolume * _fraction;
+		// Style: a bigger egg carries more white. Scaled by the square rather
+		// than the cube of the size dial - full cube gives a puddle that
+		// outgrows the pan, and the renderer's vertical exaggeration is
+		// already carrying the depth half of the read.
+		var size = EggStyle.Current.Size;
+		var white = WhiteVolume * _fraction * size * size;
 		_thickVolumePerParticle = white * ThickFraction / ThickParticles;
 		_thinVolumePerParticle = white * (1.0f - ThickFraction) / ThinParticles;
 
@@ -140,10 +145,14 @@ public sealed class EggPour : Component
 		// while the thick albumen is still deciding to move. Emitting on that
 		// schedule is what lays the skirt down before the mound arrives, which
 		// is the correct order and looks wrong if you reverse it.
-		Emit( _thin, ThinParticles, 0.0f, PourDuration * 0.55f, 18.0f );
-		Emit( _thick, ThickParticles, PourDuration * 0.2f, PourDuration, 7.0f );
+		// Snappier than life. The real thing dribbles for the better part of a
+		// second after the interesting part is over.
+		var duration = PourDuration * EggStyle.Current.PourTime;
 
-		if ( _elapsed > PourDuration + 3.0f )
+		Emit( _thin, ThinParticles, 0.0f, duration * 0.55f, 18.0f );
+		Emit( _thick, ThickParticles, duration * 0.2f, duration, 7.0f );
+
+		if ( _elapsed > duration + 3.0f )
 			_pouring = false;
 	}
 
@@ -169,7 +178,9 @@ public sealed class EggPour : Component
 			p.Velocity = (Vector3.Down + Vector3.Random * 0.35f).Normal
 				* speed * Game.Random.Float( 0.6f, 1.4f );
 
-			p.Size = Vector3.One * Game.Random.Float( 0.08f, 0.2f );
+			// Fatter strings than the real ones. A physically sized thread of
+			// albumen is a couple of pixels wide and simply is not there.
+			p.Size = Vector3.One * Game.Random.Float( 0.08f, 0.2f ) * EggStyle.Current.PourBody;
 		}
 	}
 }

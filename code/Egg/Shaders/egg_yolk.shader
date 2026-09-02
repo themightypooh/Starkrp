@@ -79,6 +79,24 @@ PS
 	// The membrane, not the yolk. Very smooth, very thin.
 	float g_flMembraneRoughness < Default( 0.09 ); Range( 0.0, 1.0 ); >;
 
+	// Style dial, written by EggYolk from EggStyle. 0 leaves the measured
+	// colour alone; 1 pushes it to the yolk people remember rather than the
+	// one they last actually looked at - more saturated, warmer, and with a
+	// harder rim so the silhouette survives a dim kitchen.
+	float g_flColourPunch < Attribute( "ColourPunch" ); Default( 0.0 ); >;
+
+	float3 Punch( float3 c, float amount )
+	{
+		float luma = dot( c, float3( 0.2126, 0.7152, 0.0722 ) );
+		float3 saturated = luma + ( c - luma ) * 1.55;
+
+		// Warm the push as well as saturating it - pure saturation on an
+		// already-orange albedo just goes red.
+		saturated *= float3( 1.04, 1.0, 0.88 );
+
+		return lerp( c, saturated, amount );
+	}
+
 	float3 MainPs( PixelInput i ) : SV_Target0
 	{
 		float thickness = i.vTextureCoords.z;
@@ -93,7 +111,8 @@ PS
 		// Where the sac is squashed thin it goes lighter and more saturated,
 		// where it bulges it goes deep. Deformation therefore shades itself,
 		// which is what stops a wobbling yolk looking like a wobbling ball.
-		float3 albedo = lerp( g_vDeepColor, g_vYolkColor, saturate( thickness ) );
+		float3 albedo = Punch( lerp( g_vDeepColor, g_vYolkColor, saturate( thickness ) ),
+		                       g_flColourPunch );
 
 		m.Albedo    = albedo;
 		m.Roughness = g_flMembraneRoughness;
@@ -135,8 +154,10 @@ PS
 		// Rim brightening from the wet skin. A fresh membrane is taut and
 		// glossy; an old one is slack and dull, so freshness drives it.
 
-		float fresnel = pow( 1.0 - ndotv, 4.0 );
-		shaded += fresnel * lerp( 0.08, 0.45, freshness );
+		// Rim exponent tightens and brightens with the style dial: a hard
+		// highlight along the edge is what reads as "wet" at a glance.
+		float fresnel = pow( 1.0 - ndotv, lerp( 4.0, 2.6, g_flColourPunch ) );
+		shaded += fresnel * lerp( 0.08, 0.45, freshness ) * lerp( 1.0, 1.8, g_flColourPunch );
 
 		return shaded;
 	}
