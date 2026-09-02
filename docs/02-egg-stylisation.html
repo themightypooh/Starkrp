@@ -7,10 +7,11 @@
 :root{
   --paper:#EDEFF1; --panel:#F6F7F8; --ink:#1B2A33; --muted:#64757F;
   --rule:#C2CCD2; --grid:#CBD5DA; --grid-hi:#AEBCC4;
-  --hot:#B0332A;
+  --hot:#B0332A; --good:#3F7A54; --warn:#9A6B15;
   --pan:#8E969B; --pan-d:#6E777D;
   --alb:#F2F6F7; --alb-d:#C6D3D6;
   --yolk:#E8A317; --yolk-d:#A9600E;
+  --shell:#E4D9C6; --shell-d:#B3A488;
   --font-d:"Barlow Condensed","Helvetica Neue",Arial,sans-serif;
   --font-b:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
   --font-m:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -18,18 +19,20 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --paper:#0F161B; --panel:#151F26; --ink:#DBE3E8; --muted:#8195A0;
   --rule:#2B3944; --grid:#22303A; --grid-hi:#2F3F4B;
-  --hot:#E2685B;
+  --hot:#E2685B; --good:#63B07C; --warn:#D2A03F;
   --pan:#4B555B; --pan-d:#333C42;
   --alb:#D9E6E9; --alb-d:#8FA3A9;
   --yolk:#E9A620; --yolk-d:#8F4E09;
+  --shell:#CBBFA8; --shell-d:#8C8069;
 }}
 :root[data-theme="dark"]{
   --paper:#0F161B; --panel:#151F26; --ink:#DBE3E8; --muted:#8195A0;
   --rule:#2B3944; --grid:#22303A; --grid-hi:#2F3F4B;
-  --hot:#E2685B;
+  --hot:#E2685B; --good:#63B07C; --warn:#D2A03F;
   --pan:#4B555B; --pan-d:#333C42;
   --alb:#D9E6E9; --alb-d:#8FA3A9;
   --yolk:#E9A620; --yolk-d:#8F4E09;
+  --shell:#CBBFA8; --shell-d:#8C8069;
 }
 
 *{box-sizing:border-box}
@@ -85,6 +88,31 @@ input[type=range]:focus-visible{outline:2px solid var(--hot);outline-offset:3px}
 .presets button[aria-pressed=true]{background:var(--hot);border-color:var(--hot);color:var(--paper)}
 .presets button:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
 
+
+/* ---- the rig ----------------------------------------------------------- */
+.views{display:grid;grid-template-columns:1.35fr 1fr;gap:1px;background:var(--rule)}
+@media (max-width:760px){.views{grid-template-columns:1fr}}
+.view{background:var(--panel);padding:12px 12px 8px;position:relative}
+.view h3{font-family:var(--font-m);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;margin:0 0 9px;color:var(--muted);
+  display:flex;justify-content:space-between;gap:10px}
+.view h3 b{color:var(--hot);font-weight:600}
+canvas{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
+canvas.grabbing{cursor:grabbing}
+.hint{position:absolute;right:20px;bottom:16px;text-align:right;font-family:var(--font-m);font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted);pointer-events:none}
+.res{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--rule);
+  border-top:1px solid var(--rule)}
+@media (max-width:760px){.res{grid-template-columns:repeat(2,1fr)}}
+.res div{background:var(--panel);padding:9px 12px;font-family:var(--font-m);font-size:12px;
+  font-variant-numeric:tabular-nums}
+.res span{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted)}
+.res b{font-weight:600}
+.res b.q-clean{color:var(--good)}
+.res b.q-messy,.res b.q-knock{color:var(--warn)}
+.res b.q-shattered{color:var(--hot)}
+
 /* ---- twin pans --------------------------------------------------------- */
 .pans{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule)}
 @media (max-width:660px){.pans{grid-template-columns:1fr}}
@@ -129,28 +157,29 @@ footer{margin-top:60px;padding-top:16px;border-top:2px solid var(--ink);
 @media (prefers-reduced-motion:reduce){.bar{transition:none}}
 </style>
 
+
 <div class="sheet">
 
 <header class="tb">
   <div class="tb-top">
     <span>Stark RP · Kitchen</span><span class="sep">/</span>
-    <span>Egg · Layers D + E</span><span class="sep">/</span>
+    <span>Egg · Layers B, C, D, E</span><span class="sep">/</span>
     <span>Sheet E-02 · interactive</span>
   </div>
-  <h1>The Egg Dial <em>— measured, then exaggerated</em></h1>
+  <h1>The Egg Dial <em>— pick it up and break it</em></h1>
   <div class="tb-meta">
+    <div><span>Body</span>2.3 × 1.7in ellipsoid</div>
+    <div><span>Crack at</span>42 in/s side-on</div>
+    <div><span>Shatter</span>145 in/s × forgiveness</div>
     <div><span>Field</span>72 × 72 @ 0.09in</div>
-    <div><span>Phases</span>Thin · Thick · Yolk</div>
-    <div><span>Step</span>50 Hz fixed</div>
-    <div><span>Dial</span>Caricature 0 → 1</div>
-    <div><span>Default</span>Cookbook · 0.55</div>
+    <div><span>Dial</span>Cookbook · 0.55</div>
   </div>
 </header>
 
-<p class="lede">Both pans below run the same solver — the one in
-<code>EggFluidField.cs</code>, ported line for line. The left pan is the egg as measured.
-The right pan is that same egg with the style multipliers applied.
-<b>Drag the dial and watch the right pan stop being accurate and start being legible.</b></p>
+<p class="lede">Two views of one simulation, not two simulations. <b>Drag the egg in either
+view and slam it into the counter</b> — the elevation gives you height and impact speed, the
+plan gives you where on the counter it lands and how the pool spreads. Hit the flat surface
+side-on for a clean break; catch the raised edge and you drive shell inward.</p>
 
 <div class="rig">
   <div class="rig-in">
@@ -166,70 +195,49 @@ The right pan is that same egg with the style multipliers applied.
   </div>
 </div>
 
-<h2>1 · The pool · plan and section</h2>
+<h2>1 · The rig</h2>
 
 <figure>
-  <div class="fig-hd"><b>Fig 1</b><span>Same solver, same volume, both pans · 6.5in of pan across</span></div>
-  <div class="pans">
-    <div class="pan">
-      <h3><span class="off">A · Documentary</span><span class="off">dial 0.00</span></h3>
-      <canvas id="panA" width="520" height="520" role="img"
-        aria-label="Top-down view of an egg cracked into a pan, simulated with no stylisation: a small flat puddle with a barely raised mound."></canvas>
-      <canvas id="secA" width="520" height="150" role="img"
-        aria-label="Cross-section through the measured pool, showing a profile about a tenth of an inch deep."></canvas>
+  <div class="fig-hd"><b>Fig 1</b><span>One body · two projections · 6.5in of counter</span></div>
+  <div class="views">
+    <div class="view">
+      <h3><span><b>Elevation</b> · looking along Z</span><span id="hLabel">height 2.4in</span></h3>
+      <canvas id="side" width="620" height="440" role="img"
+        aria-label="Side elevation of an egg above a kitchen counter with a raised edge rail on the right. Drag the egg here to set its height and slam it down."></canvas>
+      <div class="hint" id="hintSide">Drag the egg · release to drop</div>
     </div>
-    <div class="pan">
-      <h3><span><b>B · Styled</b></span><span id="dialv2">dial 0.55</span></h3>
-      <canvas id="panB" width="520" height="520" role="img"
-        aria-label="Top-down view of the same egg with stylisation applied: a taller, tighter mound with a fingered skirt, a beaded rim and a saturated yolk."></canvas>
-      <canvas id="secB" width="520" height="150" role="img"
-        aria-label="Cross-section through the styled pool, showing a taller mound over the same conserved volume."></canvas>
+    <div class="view">
+      <h3><span><b>Plan</b> · looking down</span><span id="zLabel">z 0.0in</span></h3>
+      <canvas id="plan" width="460" height="460" role="img"
+        aria-label="Top-down plan of the same counter, showing where the egg sits and how the pool of white spreads across the surface."></canvas>
+      <div class="hint">Drag here to move across the counter</div>
     </div>
   </div>
-  <div class="readout">
-    <div><span>White volume</span><b id="rVol">—</b></div>
-    <div><span>Pool width</span><b id="rWide">—</b></div>
-    <div><span>Peak depth</span><b id="rDeep">—</b></div>
+  <div class="res">
+    <div><span>Outcome</span><b id="rQuality">intact</b></div>
+    <div><span>Impact</span><b id="rSpeed">—</b></div>
+    <div><span>Angle</span><b id="rAngle">—</b></div>
+    <div><span>Shell</span><b id="rFrag">—</b></div>
+    <div><span>In the food</span><b id="rFood">—</b></div>
   </div>
   <div class="acts">
-    <button id="crack" type="button">Crack an egg</button>
+    <button id="again" type="button">New egg</button>
+    <button id="slam" class="ghost" type="button">Slam it for me</button>
     <button id="poke" class="ghost" type="button">Break the yolk</button>
-    <button id="reset" class="ghost" type="button">Clear both pans</button>
   </div>
-  <figcaption>Volume is conserved in both pans and both are told the same story — thin
-  albumen first, thick behind it, the yolk landing last. Everything you see change on the
-  right is a <b>multiplier on a measured constant</b>, never a replacement for one, which is
-  why the left pan is always one drag away as the control. Section lines are drawn through the
-  pan centre; the dotted profile on the right is pan A, for comparison.</figcaption>
+  <figcaption>The crack is the same three-input test as <code>EggShell.cs</code>:
+  <b>impact speed along the contact normal</b>, <b>the angle between that normal and the egg's
+  long axis</b> — an egg is an arch, so it is far stronger end-on — and <b>what it hit</b>. The
+  raised rail is tagged <code>edge</code>: it needs less force, and it drives fragments inward,
+  which is exactly why the flat counter is the taught technique. Damage accumulates, so two
+  soft taps open an egg one hard one would have destroyed. The elevation is drawn
+  <b>true scale</b>, with the renderer's vertical lift as the dotted line over it — which is
+  also how you can see that the mound stands taller than a real one does. That is the yield
+  stress behaving like an angle of repose over a small pour footprint, and it is the next
+  tuning question.</figcaption>
 </figure>
 
-<h2>2 · The yolk · wobble and rupture</h2>
-
-<figure>
-  <div class="fig-hd"><b>Fig 2</b><span>Mass-spring membrane · 28 nodes · drop it and watch it settle</span></div>
-  <div class="pans">
-    <div class="pan">
-      <h3><span class="off">A · Documentary</span><span class="off">2 cycles, gone</span></h3>
-      <canvas id="yolkA" width="480" height="300" role="img"
-        aria-label="A yolk dropped into a pan with no stylisation: it lands, squashes slightly, and stops almost immediately."></canvas>
-    </div>
-    <div class="pan">
-      <h3><span><b>B · Styled</b></span><span id="ringv">rings on</span></h3>
-      <canvas id="yolkB" width="480" height="300" role="img"
-        aria-label="The same yolk with stylisation: softer membrane and lighter damping, so it squashes further and wobbles for much longer after landing."></canvas>
-    </div>
-  </div>
-  <div class="acts">
-    <button id="drop" type="button">Drop the yolk</button>
-    <button id="prod" class="ghost" type="button">Prod it</button>
-  </div>
-  <figcaption>Softening the membrane and unwinding the damping are done <b>together</b> and
-  that is the whole trick: soften alone and it is jelly, undamp alone and it is a metronome.
-  Prod it hard enough at the top of the dial and the membrane tears — a real spring exceeding
-  its break length, not a scripted event, and the volume drops into the pool as the third phase.</figcaption>
-</figure>
-
-<h2>3 · What the dial is doing</h2>
+<h2>2 · What the dial is doing</h2>
 
 <div class="tw">
 <table>
@@ -242,14 +250,14 @@ The right pan is that same egg with the style multipliers applied.
 
 <div class="note"><b>Forgiveness widens the window, not the skill.</b> The crack threshold, the
 equator advantage and the flat-versus-edge rule are untouched at every dial position. Only the
-<i>upper</i> bound moves, because losing a breakfast to a physically correct 4in/s overswing is
-not a mechanic — it is a bug with a rationale.</div>
+<i>upper</i> bound moves — drag the dial to Saturday Morning and the same slam that shattered
+the egg at Documentary opens it cleanly.</div>
 
-<div class="note"><b>What this preview is not.</b> Two-dimensional lighting standing in for the
-refraction-and-Fresnel material, no shell, no pour particles, and the section is drawn at the
-renderer's vertical exaggeration rather than the shader's. The rheology, the yield stress, the
-cohesion rim and the membrane springs are the real ones. Treat the colours as indicative and
-the shapes as load-bearing.</div>
+<div class="note"><b>What this preview is not.</b> Flat shading standing in for the refraction
+and Fresnel material; the shell is an ellipsoid rather than the authored model; and the yolk is
+a three-axis volume-preserving sac standing in for the 160-node membrane lattice, so it squashes
+and rings correctly but cannot tear along a seam. The field solver, the yield stress, the
+cohesion rim and the crack test are the shipped ones, ported line for line.</div>
 
 <footer>
   <span>Stark RP · Kitchen</span>
@@ -262,7 +270,6 @@ the shapes as load-bearing.</div>
 
 <script>
 "use strict";
-
 /* ------------------------------------------------------------------ style */
 /* Straight port of EggProfile.For - same curves, same numbers. */
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -289,22 +296,6 @@ function profile(t){
   };
 }
 
-const MULTS = [
-  ["Size",       p => p.size,      "×1.3",  "On top of the ×1.2 already in the model. True scale reads as a pebble."],
-  ["Mound",      p => p.mound,     "×2.2",  "Yield slope. The mound is the shape an egg is recognised by."],
-  ["Skirt",      p => p.skirt,     "×1.4",  "Thin flow. The two-phase read needs a visible skirt."],
-  ["Rim",        p => p.rim,       "×2.4",  "Cohesion. A beaded edge is the cheapest silhouette in the system."],
-  ["Fingering",  p => p.fingering, "×1.6",  "Flow noise. A circle reads as a decal."],
-  ["Height",     p => p.height,    "×1.7",  "Render lift. Volume conserved, carried in a shape you can see."],
-  ["Membrane",   p => p.stiffness, "×0.45", "Softer sac, so it squashes and holds the squash."],
-  ["Ring",       p => p.ring,      "×0.35", "Damping retention. The wobble outlives the landing."],
-  ["Squash",     p => p.squash,    "×1.8",  "Pressure. Flattening it bulges the sides harder."],
-  ["Hitstop",    p => p.hitstop,   "100ms", "Time dip on the crack. Curved on t² — a short dip is not felt."],
-  ["Pour time",  p => p.pourTime,  "×0.7",  "The real thing dribbles past the interesting part."],
-  ["Pour body",  p => p.pourBody,  "×1.45", "A true-width thread of albumen is two pixels and is not there."],
-  ["Forgiveness",p => p.forgive,   "×1.6",  "Shatter window, upward only. The crack still takes the same swing."],
-  ["Colour",     p => p.punch,     "1.0",   "Saturation, warmth, milkiness, wet rim."]
-];
 
 /* ------------------------------------------------------------------ field */
 /* Port of EggFluidField: three phases, shared head, per-phase yield. */
@@ -441,50 +432,264 @@ class Field {
   }
 }
 
-/* ------------------------------------------------------------------ pour */
-/* Layer C, compressed: thin leaves first, thick follows, yolk lands last. */
+
+/* ------------------------------------------------------------------ world */
+/*
+   Inches, y up. The counter is the plane y = 0; the field lies on it, centred
+   on the origin. A raised rail runs across the far side of the counter and
+   carries the `edge` tag - the same tag EggShell.cs looks for.
+*/
+const G = 386.0;                       // in/s^2
+const HALF = N * CELL * 0.5;           // 3.24in of counter each way
+const RAIL = { x0: 1.95, x1: 2.45, top: 0.95 };
+
+const CRACK_SPEED = 42.0;
+const SHATTER_SPEED = 145.0;
+const EQUATOR_ADVANTAGE = 0.45;
+
+function nrm3(v){
+  const l = Math.hypot(v[0], v[1], v[2]) || 1;
+  return [v[0]/l, v[1]/l, v[2]/l];
+}
+
+class Egg {
+  constructor(){ this.reset(1); }
+  reset(size){
+    this.size = size;
+    this.a = 1.15 * size;              // semi-major, along the long axis
+    this.b = 0.85 * size;              // semi-minor
+    this.axis = nrm3([0.93, 0.18, 0.32]);
+    // Starts at rest on the counter: the page should open on an egg you can
+    // pick up, not on one already falling.
+    this.v = [0, 0, 0];
+    this.p = [-1.1, 0, -0.6];
+    this.spin = [0.9, 0.5, -0.6];
+    this.p[1] = this.supportY();
+    this.held = false;
+    this.opened = false;
+    this.damage = 0;
+    this.resting = true;
+  }
+  /* Distance from the centre to the surface along -Y, for this orientation.
+     An ellipsoid of revolution, so it is exact rather than a bounding sphere -
+     which matters, because lying flat and standing on end are different eggs. */
+  supportY(){
+    const uy = this.axis[1];
+    return Math.sqrt((this.a * this.a - this.b * this.b) * uy * uy + this.b * this.b);
+  }
+  step(dt, onImpact){
+    if (this.opened) return;
+
+    // Tumble. Slow, and only so the equator angle keeps changing under the
+    // player - the aiming test is only a test if the target moves.
+    if (!this.resting || this.held){
+      const s = this.spin;
+      this.axis = nrm3([
+        this.axis[0] + (s[0] * this.axis[1] - s[1] * this.axis[2]) * dt * 0.5,
+        this.axis[1] + (s[1] * this.axis[2] - s[2] * this.axis[0]) * dt * 0.5,
+        this.axis[2] + (s[2] * this.axis[0] - s[0] * this.axis[1]) * dt * 0.5
+      ]);
+    }
+    if (this.held) return;
+
+    this.v[1] -= G * dt;
+    for (let i = 0; i < 3; i++) this.p[i] += this.v[i] * dt;
+
+    const sy = this.supportY();
+    const overRail = this.p[0] > RAIL.x0 - this.b && this.p[0] < RAIL.x1 + this.b;
+    const surface = overRail ? RAIL.top : 0;
+
+    if (this.p[1] - sy <= surface){
+      this.p[1] = surface + sy;
+      const speed = Math.abs(this.v[1]);
+      onImpact(speed, overRail);
+      if (this.opened) return;
+      this.v[1] = speed > 6 ? speed * 0.22 : 0;
+      this.v[0] *= 0.55; this.v[2] *= 0.55;
+      this.resting = Math.abs(this.v[1]) < 6;
+    } else {
+      this.resting = false;
+    }
+
+    // The counter is not infinite.
+    this.p[0] = Math.min(HALF - 0.3, Math.max(-HALF + 0.3, this.p[0]));
+    this.p[2] = Math.min(HALF - 0.3, Math.max(-HALF + 0.3, this.p[2]));
+  }
+  /* 1 = struck square on the equator (weakest, cleanest), 0 = dead on an end. */
+  equatorDot(){ return 1 - Math.abs(this.axis[1]); }
+}
+
+/* ------------------------------------------------------------------- yolk */
+/*
+   Three-axis volume-preserving sac. The shipped version is a 160-node spring
+   lattice; this keeps the two behaviours that read - it squashes on landing
+   and it rings afterwards - in something that can be drawn in both views.
+*/
+class Sac {
+  constructor(){ this.alive = false; }
+  spawn(x, y, z, R){
+    this.alive = true; this.intact = true;
+    this.R = R; this.x = x; this.y = y; this.z = z;
+    this.vy = 0; this.s = 1; this.sv = 0;
+  }
+  step(dt, p, floorAt){
+    if (!this.alive || !this.intact) return;
+
+    const k = 620 * p.stiffness;
+    const damp = Math.pow(Math.pow(0.0016, p.ring), dt);
+
+    this.vy -= G * dt;
+    this.y += this.vy * dt;
+
+    const ry = this.R * this.s;
+    const floor = floorAt(this.x, this.z);
+
+    if (this.y - ry <= floor){
+      this.y = floor + ry;
+      if (this.vy < 0){
+        // Landing squash, scaled by the style dial's pressure term.
+        this.sv += this.vy / this.R * 0.38 * p.squash;
+        this.vy = -this.vy * 0.12;
+      }
+      // Resting slump: the sac carries its own weight, and a slack membrane
+      // loses that argument. This is the fresh-versus-old axis in one line.
+      this.sv -= 2.6 * dt / Math.max(p.stiffness, 0.2);
+    }
+
+    this.sv += (1 - this.s) * k * dt;
+    this.sv *= damp;
+    this.s += this.sv * dt;
+    this.s = Math.min(1.5, Math.max(0.12, this.s));
+
+    // Membrane tear: squashed past what the skin will take.
+    if (this.s < 0.22) this.rupture();
+  }
+  /* Volume-preserving bulge, with the dial pushing it wider than it has to be. */
+  radii(p){
+    const ry = this.R * this.s;
+    const rr = this.R / Math.sqrt(Math.max(this.s, 0.05));
+    const bulge = 1 + Math.max(0, 1 - this.s) * 0.3 * (p.squash - 1);
+    return [rr * bulge, ry];
+  }
+  rupture(){
+    if (!this.intact) return;
+    this.intact = false;
+    const size = state.style.size;
+    field.deposit(worldToCell(this.x), worldToCell(this.z),
+      0.95 * size * size, "yolk", 0.55 * size);
+    readout.food = readout.food;   // unchanged; rupture is not contamination
+    setQuality(state.quality, "yolk broken");
+  }
+}
+
+/* ----------------------------------------------------------------- debris */
+class Debris {
+  constructor(){ this.halves = []; this.bits = []; }
+  clear(){ this.halves = []; this.bits = []; }
+  open(egg, quality, fragments, onEdge){
+    const [ax, ay, az] = egg.axis;
+    for (const dir of [1, -1]){
+      this.halves.push({
+        x: egg.p[0] + ax * dir * egg.a * 0.4,
+        y: egg.p[1] + ay * dir * egg.a * 0.4,
+        z: egg.p[2] + az * dir * egg.a * 0.4,
+        vx: ax * dir * 7 + (Math.random() - 0.5) * 5,
+        vy: 17 + Math.random() * 8,
+        vz: az * dir * 7 + (Math.random() - 0.5) * 5,
+        rot: Math.random() * Math.PI, rotv: (Math.random() - 0.5) * 9,
+        a: egg.a, b: egg.b, dir
+      });
+    }
+    // Fragments as particles, per the design: nothing this small is a body.
+    for (let i = 0; i < fragments; i++){
+      // A flat surface drives them inward, an edge punches them straight down.
+      const inward = onEdge ? -0.2 : 0.55;
+      this.bits.push({
+        x: egg.p[0], y: egg.p[1], z: egg.p[2],
+        vx: (Math.random() - 0.5) * 34 - inward * 12 * Math.sign(egg.p[0] || 1),
+        vy: 12 + Math.random() * 26,
+        vz: (Math.random() - 0.5) * 34 - inward * 12 * Math.sign(egg.p[2] || 1),
+        r: 0.05 + Math.random() * 0.11, rest: false
+      });
+    }
+  }
+  step(dt){
+    for (const h of this.halves){
+      h.vy -= G * dt;
+      h.x += h.vx * dt; h.y += h.vy * dt; h.z += h.vz * dt;
+      h.rot += h.rotv * dt;
+      if (h.y < h.b * 0.5){
+        h.y = h.b * 0.5;
+        h.vy *= -0.22; h.vx *= 0.6; h.vz *= 0.6; h.rotv *= 0.5;
+        if (Math.abs(h.vy) < 4) h.vy = 0;
+      }
+    }
+    for (const b of this.bits){
+      if (b.rest) continue;
+      b.vy -= G * dt;
+      b.x += b.vx * dt; b.y += b.vy * dt; b.z += b.vz * dt;
+      if (b.y < b.r){
+        b.y = b.r; b.vy *= -0.25; b.vx *= 0.55; b.vz *= 0.55;
+        if (Math.abs(b.vy) < 3){ b.vy = 0; b.rest = true; }
+      }
+    }
+  }
+  /* The shell-in-the-food test: a fragment at rest over an occupied cell. One
+     grid lookup, exactly as EggFluidField.IsInPool does it. */
+  contamination(){
+    let n = 0;
+    for (const b of this.bits){
+      if (!b.rest) continue;
+      const cx = worldToCell(b.x), cz = worldToCell(b.z);
+      if (cx < 0 || cz < 0 || cx >= N || cz >= N) continue;
+      const i = cz * N + cx;
+      if (field.thin[i] + field.thick[i] + field.yolk[i] > MIN_DEPTH) n++;
+    }
+    return n;
+  }
+}
+
+/* ------------------------------------------------------------------- pour */
 class Pour {
-  constructor(field){ this.field = field; this.t = -1; }
-  begin(){ this.t = 0; this.yolkDone = false; }
+  constructor(){ this.t = -1; }
+  begin(x, z, fraction){
+    this.t = 0; this.x = x; this.z = z; this.fraction = fraction;
+  }
   update(dt, p){
     if (this.t < 0) return;
     const prev = this.t;
     this.t += dt;
     const dur = 0.55 * p.pourTime;
     const size = p.size * p.size;
-    const white = 2.05 * size;
-    const cx = N / 2, cy = N / 2;
+    const white = 2.05 * this.fraction * size;
+    const cx = worldToCell(this.x), cz = worldToCell(this.z);
 
     const emit = (from, to, vol, phase, radius, jitter) => {
       const a = Math.min(Math.max((prev - from) / (to - from), 0), 1);
       const b = Math.min(Math.max((this.t - from) / (to - from), 0), 1);
       if (b <= a) return;
       const share = (b - a) * vol;
-      const steps = 5;
-      for (let s = 0; s < steps; s++){
+      for (let s = 0; s < 5; s++){
         const ang = Math.random() * Math.PI * 2, rad = Math.random() * jitter;
-        this.field.deposit(
-          Math.round(cx + Math.cos(ang) * rad),
-          Math.round(cy + Math.sin(ang) * rad),
-          share / steps, phase, radius);
+        field.deposit(Math.round(cx + Math.cos(ang) * rad),
+                      Math.round(cz + Math.sin(ang) * rad),
+                      share / 5, phase, radius);
       }
     };
 
-    // Scattered the way falling, bouncing particles actually land - a pour
-    // dropped on one cell builds a cone the yield stress then refuses to let
-    // down, which is a solver artefact rather than an egg.
+    // Thin leaves first and fastest - the skirt is laid down before the mound
+    // lands on top of it, and reversing that order looks wrong.
     emit(0, dur * 0.55, white * 0.4, "thin", 1.15 * p.pourBody, 19);
-    emit(dur * 0.2, dur, white * 0.6, "thick", 0.9 * p.pourBody, 9);
+    emit(dur * 0.2, dur, white * 0.6, "thick", 1.1 * p.pourBody, 14);
 
-    if (!this.yolkDone && this.t > dur * 0.8){
-      this.yolkDone = true;
-      if (window.__yolkDrop) window.__yolkDrop();
-    }
     if (this.t > dur + 0.5) this.t = -1;
   }
 }
 
-/* --------------------------------------------------------------- drawing */
+const worldToCell = w => Math.round((w + HALF) / CELL);
+const cellToWorld = c => c * CELL - HALF;
+
+/* --------------------------------------------------------------- palette */
 function cssVar(name){
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
@@ -494,448 +699,602 @@ function parseHex(h){
   const v = parseInt(h, 16);
   return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
 }
+const mix = (a, b, t) => [lerp(a[0],b[0],t), lerp(a[1],b[1],t), lerp(a[2],b[2],t)];
+const rgb = c => "rgb(" + c.map(v => Math.round(Math.min(255, Math.max(0, v)))).join(",") + ")";
+
 let PAL = {};
 function readPalette(){
   PAL = {
     pan: parseHex(cssVar("--pan")), panD: parseHex(cssVar("--pan-d")),
     alb: parseHex(cssVar("--alb")), albD: parseHex(cssVar("--alb-d")),
     yolk: parseHex(cssVar("--yolk")), yolkD: parseHex(cssVar("--yolk-d")),
+    shell: parseHex(cssVar("--shell")), shellD: parseHex(cssVar("--shell-d")),
     ink: cssVar("--ink"), muted: cssVar("--muted"), hot: cssVar("--hot"),
     rule: cssVar("--rule"), panel: cssVar("--panel"), grid: cssVar("--grid")
   };
 }
-const mix = (a, b, t) => [lerp(a[0],b[0],t), lerp(a[1],b[1],t), lerp(a[2],b[2],t)];
 
-function drawPan(cv, field, p, yolk){
+/* --------------------------------------------------------------- the pool */
+function poolDepth(x, z){
+  const i = z * N + x;
+  return field.thin[i] + field.thick[i] + field.yolk[i];
+}
+function depthAtWorld(wx, wz){
+  const x = worldToCell(wx), z = worldToCell(wz);
+  if (x < 0 || z < 0 || x >= N || z >= N) return 0;
+  return poolDepth(x, z);
+}
+/* What the yolk and the shell rest on: the counter, plus whatever is on it. */
+function surfaceAt(wx, wz){
+  return depthAtWorld(wx, wz) * 0.6;
+}
+
+/* ---------------------------------------------------------------- shading */
+function shadeCell(x, z, p, out){
+  const i = z * N + x;
+  const thin = field.thin[i], thick = field.thick[i], yolk = field.yolk[i];
+  const depth = thin + thick + yolk;
+
+  let col = mix(PAL.pan, PAL.panD, 0.12);
+  if (depth <= MIN_DEPTH){ out[0] = col[0]; out[1] = col[1]; out[2] = col[2]; return; }
+
+  const g = (a, b) => (a - b) / (4 * CELL) * p.height;
+  const gx = g(depthAtCell(x + 2, z), depthAtCell(x - 2, z));
+  const gz = g(depthAtCell(x, z + 2), depthAtCell(x, z - 2));
+  const shade = Math.min(1.3, Math.max(0.76, 1 + (gx + gz) * 0.16));
+
+  const thickFrac = (thick + yolk) / depth;
+  const yolkFrac = yolk / depth;
+  const punch = p.punch;
+
+  // Beer-Lambert, roughly: the skirt is a film you see the counter through and
+  // the mound is not. Saturating this turns the whole pool into one white blob.
+  const opacity = Math.min(0.96,
+    1 - Math.exp(-depth * (2.4 + 7 * thickFrac * lerp(1, 1.7, punch))));
+
+  let fluid = mix(PAL.albD, PAL.alb, Math.min(1, thickFrac * lerp(1, 1.5, punch) + 0.15));
+  if (yolkFrac > 0.02)
+    fluid = mix(fluid, mix(PAL.yolkD, PAL.yolk, Math.min(1, depth * 9)),
+                Math.min(1, yolkFrac * 2.2));
+  fluid = fluid.map(c => c * shade);
+
+  let wet = 0;
+  for (const [ox, oz] of [[1,0],[-1,0],[0,1],[0,-1]])
+    if (depthAtCell(x + ox, z + oz) > MIN_DEPTH) wet++;
+  const edge = 1 - wet / 4;
+  fluid = mix(fluid, PAL.panD, Math.min(0.85, 0.55 * p.meniscus) * edge * edge);
+
+  col = mix(col, fluid, opacity);
+  out[0] = col[0]; out[1] = col[1]; out[2] = col[2];
+}
+function depthAtCell(x, z){
+  if (x < 0 || z < 0 || x >= N || z >= N) return 0;
+  return poolDepth(x, z);
+}
+
+/* ------------------------------------------------------------- plan view */
+const planScratch = document.createElement("canvas");
+planScratch.width = N; planScratch.height = N;
+
+function drawPlan(cv, p){
   const ctx = cv.getContext("2d");
-  const W = cv.width, px = W / N;
-  ctx.clearRect(0, 0, W, cv.height);
+  const W = cv.width, H = cv.height;
+  const S = W / (N * CELL);                       // pixels per inch
+  const toX = wx => (wx + HALF) * S;
+  const toZ = wz => (wz + HALF) * S;
 
-  const img = ctx.createImageData(N, N);
-  const dat = img.data;
-  const punch = p.punch, hgt = p.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = rgb(mix(PAL.pan, PAL.panD, 0.35));
+  ctx.fillRect(0, 0, W, H);
 
-  for (let y = 0; y < N; y++)
+  const sctx = planScratch.getContext("2d");
+  const img = sctx.createImageData(N, N);
+  const out = [0, 0, 0];
+  for (let z = 0; z < N; z++)
   for (let x = 0; x < N; x++){
-    const i = y * N + x;
-    const thin = field.thin[i], thick = field.thick[i], yolk = field.yolk[i];
-    const depth = thin + thick + yolk;
-
-    // The pan: dish shading, so the fluid has something to sit in.
-    const dish = Math.min(1, field.ground[i] * 1.6);
-    let col = mix(PAL.pan, PAL.panD, dish * 0.9);
-
-    if (depth > MIN_DEPTH){
-      // Surface normal from the height gradient, lit from the upper left -
-      // this is what the mound is actually read from.
-      // Wide stencil: the per-cell flow noise is real, but differencing
-      // adjacent cells turns it into dither. Two cells out reads the mound
-      // and not the grain.
-      const hL = at(field, x - 2, y), hR = at(field, x + 2, y);
-      const hD = at(field, x, y - 2), hU = at(field, x, y + 2);
-      const gx = (hR - hL) / (4 * CELL) * hgt, gy = (hU - hD) / (4 * CELL) * hgt;
-      const shade = Math.min(1.3, Math.max(0.76, 1 + (gx + gy) * 0.16));
-
-      const thickFrac = (thick + yolk) / depth;
-      const yolkFrac = yolk / depth;
-
-      // Milkiness: only the thick phase scatters, and the dial pushes it.
-      // Beer-Lambert, roughly: the skirt is a film you can see the pan
-      // through and the mound is not. Saturating this is what turns the
-      // whole pool into one white blob.
-      const opacity = Math.min(0.96, 1 - Math.exp(-depth * (2.4 + 7 * thickFrac * lerp(1, 1.7, punch))));
-      let fluid = mix(PAL.albD, PAL.alb, Math.min(1, thickFrac * lerp(1, 1.5, punch) + 0.15));
-      if (yolkFrac > 0.02){
-        const yc = mix(PAL.yolkD, PAL.yolk, Math.min(1, depth * 9));
-        fluid = mix(fluid, yc, Math.min(1, yolkFrac * 2.2));
-      }
-      fluid = fluid.map(c => Math.min(255, c * shade));
-
-      // Meniscus: darken where the pool runs out.
-      let wet = 0;
-      for (const [ox, oy] of [[1,0],[-1,0],[0,1],[0,-1]])
-        if (at(field, x + ox, y + oy) > MIN_DEPTH) wet++;
-      const edge = 1 - wet / 4;
-      const men = Math.min(0.85, 0.55 * p.meniscus) * edge * edge;
-      fluid = mix(fluid, PAL.panD, men);
-
-      col = mix(col, fluid, opacity);
-    }
-
-    const o = i * 4;
-    dat[o] = col[0]; dat[o+1] = col[1]; dat[o+2] = col[2]; dat[o+3] = 255;
+    shadeCell(x, z, p, out);
+    const o = (z * N + x) * 4;
+    img.data[o] = out[0]; img.data[o+1] = out[1]; img.data[o+2] = out[2]; img.data[o+3] = 255;
   }
-
-  ctx.putImageData(img, 0, 0);
+  sctx.putImageData(img, 0, 0);
   ctx.imageSmoothingEnabled = true;
-  ctx.drawImage(cv, 0, 0, N, N, 0, 0, W, W);
+  ctx.drawImage(planScratch, 0, 0, N, N, 0, 0, W, H);
 
-  // The intact sac, in plan. Layer E is a body sitting in the field, not part
-  // of it - and without it on screen the pool is unreadable as an egg.
-  if (yolk && yolk.intact){
-    const scale = W / (N * CELL);           // pixels per inch
-    const rx = yolk.R / 46 * 0.52 * scale;  // sac radius back into inches
-    const squash = 1 + (1 - yolk.area() / yolk.restArea) * 0.9;
-    ctx.save();
-    ctx.translate(W * 0.5 + 12, W * 0.5 + 6);
-    const g = ctx.createRadialGradient(-rx * 0.3, -rx * 0.35, rx * 0.12, 0, 0, rx * 1.25);
-    g.addColorStop(0, "rgb(" + mix(PAL.yolk, [255,255,255], 0.16 + 0.2 * p.punch).map(Math.round).join(",") + ")");
-    g.addColorStop(1, "rgb(" + mix(PAL.yolkD, PAL.yolk, 0.2 + 0.3 * p.punch).map(Math.round).join(",") + ")");
-    ctx.fillStyle = g;
-    ctx.beginPath();
-    ctx.ellipse(0, 0, rx * squash, rx * squash, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255," + (0.2 + 0.3 * p.punch).toFixed(2) + ")";
-    ctx.lineWidth = 1 + p.punch; ctx.stroke();
-    ctx.restore();
-  }
-
-  // Section line, so Fig 1's two halves obviously belong together.
-  ctx.save();
-  ctx.strokeStyle = PAL.hot; ctx.globalAlpha = 0.75;
-  ctx.lineWidth = 1.5; ctx.setLineDash([10, 4, 2, 4]);
-  ctx.beginPath(); ctx.moveTo(0, W / 2); ctx.lineTo(W, W / 2); ctx.stroke();
-  ctx.restore();
-
-  // Scale bar: one inch, because every other sheet on this map carries one.
-  ctx.save();
-  ctx.strokeStyle = PAL.ink; ctx.globalAlpha = 0.55; ctx.lineWidth = 2;
-  const inch = px / CELL;
-  ctx.beginPath(); ctx.moveTo(14, W - 16); ctx.lineTo(14 + inch, W - 16); ctx.stroke();
-  ctx.fillStyle = PAL.ink; ctx.globalAlpha = 0.7;
-  ctx.font = "11px ui-monospace, Menlo, monospace";
-  ctx.fillText("1 in", 14, W - 22);
-  ctx.restore();
-}
-function at(f, x, y){
-  if (x < 0 || y < 0 || x >= N || y >= N) return 0;
-  const i = y * N + x;
-  return f.thin[i] + f.thick[i] + f.yolk[i];
-}
-
-function drawSection(cv, field, p, ghost){
-  const ctx = cv.getContext("2d");
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0, 0, W, H);
-
-  const base = H - 26;
-  const scale = 150 * p.height;   // inches of depth -> pixels
-  const y = N >> 1;
-
-  ctx.strokeStyle = PAL.grid; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, base); ctx.lineTo(W, base); ctx.stroke();
-
-  const profile = (f, sc) => {
-    const pts = [];
-    for (let x = 0; x < N; x++){
-      const i = y * N + x;
-      const g = f.ground[i] * sc * 0.35;
-      pts.push([x / (N - 1) * W, base - g - (f.thin[i] + f.thick[i] + f.yolk[i]) * sc]);
-    }
-    return pts;
-  };
-
-  if (ghost){
-    ctx.save();
-    ctx.strokeStyle = PAL.muted; ctx.globalAlpha = 0.75;
-    ctx.setLineDash([4, 4]); ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    profile(ghost, 150).forEach(([px, py], i) => i ? ctx.lineTo(px, py) : ctx.moveTo(px, py));
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  const pts = profile(field, scale);
+  // The rail, seen from above.
+  ctx.fillStyle = rgb(mix(PAL.pan, PAL.panD, 0.75));
+  ctx.fillRect(toX(RAIL.x0), 0, (RAIL.x1 - RAIL.x0) * S, H);
+  ctx.strokeStyle = PAL.hot; ctx.globalAlpha = 0.5; ctx.lineWidth = 1;
+  ctx.setLineDash([6, 4]);
   ctx.beginPath();
-  ctx.moveTo(0, base);
-  pts.forEach(([px, py]) => ctx.lineTo(px, py));
-  ctx.lineTo(W, base);
-  ctx.closePath();
-  const grad = ctx.createLinearGradient(0, base - 90, 0, base);
-  grad.addColorStop(0, "rgba(" + PAL.alb.join(",") + ",0.92)");
-  grad.addColorStop(1, "rgba(" + PAL.albD.join(",") + ",0.55)");
-  ctx.fillStyle = grad; ctx.fill();
-
-  ctx.strokeStyle = PAL.ink; ctx.globalAlpha = 0.8; ctx.lineWidth = 1.4;
-  ctx.beginPath();
-  pts.forEach(([px, py], i) => i ? ctx.lineTo(px, py) : ctx.moveTo(px, py));
+  ctx.moveTo(toX(RAIL.x0), 0); ctx.lineTo(toX(RAIL.x0), H);
   ctx.stroke();
-  ctx.globalAlpha = 1;
-
-  ctx.fillStyle = PAL.muted;
+  ctx.setLineDash([]); ctx.globalAlpha = 1;
+  ctx.fillStyle = PAL.hot;
   ctx.font = "10px ui-monospace, Menlo, monospace";
-  ctx.fillText("SECTION · VERT ×" + (1.45 * p.height).toFixed(2), 8, H - 8);
+  ctx.save();
+  ctx.translate(toX(RAIL.x0) - 6, 14); ctx.rotate(Math.PI / 2);
+  ctx.fillText("EDGE", 0, 0);
+  ctx.restore();
+
+  drawDebrisPlan(ctx, toX, toZ, S);
+
+  if (sac.alive && sac.intact){
+    const [rr, ry] = sac.radii(p);
+    paintSac(ctx, toX(sac.x), toZ(sac.z), rr * S, rr * S, p);
+  }
+
+  if (!egg.opened) paintEggPlan(ctx, toX, toZ, S, p);
+
+  // Scale bar - every other sheet on this map carries one.
+  ctx.strokeStyle = PAL.ink; ctx.globalAlpha = 0.5; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(14, H - 14); ctx.lineTo(14 + S, H - 14); ctx.stroke();
+  ctx.globalAlpha = 0.7; ctx.fillStyle = PAL.ink;
+  ctx.fillText("1 in", 14, H - 20);
+  ctx.globalAlpha = 1;
 }
 
-/* ------------------------------------------------------------------ yolk */
-/* Layer E in section: a ring of nodes, radial + surface springs, pressure. */
-class Yolk {
-  constructor(){ this.reset(1); }
-  reset(size){
-    const n = 28;
-    this.R = 0.52 * size * 46;      // pixels
-    this.nodes = [];
-    for (let i = 0; i < n; i++){
-      const a = i / n * Math.PI * 2;
-      this.nodes.push({ x: Math.cos(a) * this.R, y: Math.sin(a) * this.R, vx: 0, vy: 0 });
-    }
-    this.cx = 240; this.cy = 90;
-    this.vy = 0;
-    this.intact = true;
-    this.restArea = Math.PI * this.R * this.R;
-    this.restLink = 2 * this.R * Math.sin(Math.PI / n);
-  }
-  area(){
-    let a = 0;
-    const nd = this.nodes;
-    for (let i = 0; i < nd.length; i++){
-      const b = nd[(i + 1) % nd.length];
-      a += nd[i].x * b.y - b.x * nd[i].y;
-    }
-    return Math.abs(a) / 2;
-  }
-  step(dt, p, floor){
-    if (!this.intact) return;
-    const nd = this.nodes;
-    const surfaceK = 165 * p.stiffness;
-    const radialK  = 105 * p.stiffness;
-    const retention = Math.pow(0.0016, p.ring);
-    const damp = Math.pow(retention, dt);
+function paintEggPlan(ctx, toX, toZ, S, p){
+  const flat = Math.hypot(egg.axis[0], egg.axis[2]) || 0.0001;
+  const ang = Math.atan2(egg.axis[2], egg.axis[0]);
+  const along = lerp(egg.b, egg.a, flat);          // foreshortened by tilt
 
-    this.vy += 620 * dt;
-    this.cy += this.vy * dt;
+  // Cast shadow: how high it is reads as how far the shadow is offset.
+  const lift = Math.max(0, egg.p[1] - egg.supportY());
+  ctx.save();
+  ctx.globalAlpha = 0.28 / (1 + lift * 0.5);
+  ctx.fillStyle = "#000";
+  ctx.beginPath();
+  ctx.ellipse(toX(egg.p[0]) + lift * 6, toZ(egg.p[2]) + lift * 6,
+    along * S, egg.b * S, ang, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
 
-    const err = (this.restArea - this.area()) / this.restArea;
-    const pressure = err * 900 * p.squash;
-
-    for (const n of nd){
-      const d = Math.hypot(n.x, n.y) || 0.0001;
-      const ux = n.x / d, uy = n.y / d;
-      const f = (this.R - d) * radialK + pressure * 26;
-      n.vx += ux * f * dt; n.vy += uy * f * dt;
-    }
-    for (let i = 0; i < nd.length; i++){
-      const a = nd[i], b = nd[(i + 1) % nd.length];
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const d = Math.hypot(dx, dy) || 0.0001;
-      // 2.6 rather than the sim's 1.9: this is a 28-node ring standing in
-      // for a 160-node lattice, so each link carries far more of the squash.
-      if (d > this.restLink * 2.6){ this.rupture(); return; }
-      const f = (d - this.restLink) * surfaceK * 0.5;
-      a.vx += dx / d * f * dt; a.vy += dy / d * f * dt;
-      b.vx -= dx / d * f * dt; b.vy -= dy / d * f * dt;
-    }
-    for (const n of nd){
-      n.vx *= damp; n.vy *= damp;
-      // Cap node speed. A spring lattice that overshoots at this scale tears
-      // itself on the first landing, which is a solver failure, not a yolk.
-      const sp = Math.hypot(n.vx, n.vy);
-      if (sp > 900){ n.vx = n.vx / sp * 900; n.vy = n.vy / sp * 900; }
-      n.x += n.vx * dt; n.y += n.vy * dt;
-      // Floor, in world space: the pan stops the sac, not the sac's centre.
-      const wy = this.cy + n.y;
-      if (wy > floor){
-        n.y = floor - this.cy;
-        n.vy = Math.min(0, n.vy) * 0.15;
-      }
-      const d = Math.hypot(n.x, n.y);
-      if (d < this.R * 0.4 && d > 0.0001){
-        n.x = n.x / d * this.R * 0.4; n.y = n.y / d * this.R * 0.4;
-        n.vx = n.vy = 0;
-      }
-    }
-    let low = -Infinity;
-    for (const n of nd) low = Math.max(low, this.cy + n.y);
-    if (low >= floor - 0.5 && this.vy > 0) this.vy = 0;
-    if (this.cy + this.R * 0.4 > floor){ this.cy = floor - this.R * 0.4; this.vy = 0; }
-  }
-  prod(power){
-    if (!this.intact) return;
-    const nd = this.nodes;
-    for (let i = 0; i < nd.length; i++){
-      const a = i / nd.length * Math.PI * 2;
-      if (Math.cos(a) < 0.2) continue;
-      nd[i].vx -= 260 * power; nd[i].vy += 90 * power;
-    }
-  }
-  rupture(){ this.intact = false; }
+  paintEgg(ctx, toX(egg.p[0]), toZ(egg.p[2]), along * S, egg.b * S, ang, p);
 }
 
-function drawYolk(cv, yolk, p, label){
+function drawDebrisPlan(ctx, toX, toZ, S){
+  for (const h of debris.halves){
+    ctx.save();
+    ctx.translate(toX(h.x), toZ(h.z));
+    ctx.rotate(h.rot);
+    ctx.fillStyle = rgb(PAL.shell);
+    ctx.strokeStyle = rgb(PAL.shellD); ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, h.a * S * 0.42, h.b * S * 0.5, 0, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+  ctx.fillStyle = rgb(PAL.shell);
+  for (const b of debris.bits){
+    ctx.beginPath();
+    ctx.arc(toX(b.x), toZ(b.z), Math.max(1.4, b.r * S), 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+/* --------------------------------------------------------- elevation view */
+function drawSide(cv, p){
   const ctx = cv.getContext("2d");
   const W = cv.width, H = cv.height;
+  const S = W / (N * CELL);
+  const baseY = H - 74;                            // y = 0 sits here
+  const toX = wx => (wx + HALF) * S;
+  const toY = wy => baseY - wy * S;
+
   ctx.clearRect(0, 0, W, H);
-  const floor = H - 44;
-
   ctx.fillStyle = PAL.panel; ctx.fillRect(0, 0, W, H);
-  ctx.fillStyle = "rgb(" + PAL.panD.join(",") + ")";
-  ctx.fillRect(0, floor, W, H - floor);
-  ctx.strokeStyle = PAL.rule; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, floor + 0.5); ctx.lineTo(W, floor + 0.5); ctx.stroke();
 
-  if (!yolk.intact){
-    ctx.fillStyle = "rgb(" + mix(PAL.yolkD, PAL.yolk, 0.55).join(",") + ")";
-    ctx.beginPath();
-    ctx.ellipse(yolk.cx, floor - 5, yolk.R * 2.4, 9, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = PAL.hot;
-    ctx.font = "11px ui-monospace, Menlo, monospace";
-    ctx.fillText("MEMBRANE TORE · VOLUME TO THE POOL", 16, 24);
-    return;
-  }
+  // Counter slab.
+  ctx.fillStyle = rgb(mix(PAL.pan, PAL.panD, 0.55));
+  ctx.fillRect(0, baseY, W, H - baseY);
+  ctx.strokeStyle = rgb(mix(PAL.pan, PAL.panD, 0.9));
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, baseY + 0.5); ctx.lineTo(W, baseY + 0.5); ctx.stroke();
 
-  const nd = yolk.nodes;
-  ctx.beginPath();
-  for (let i = 0; i <= nd.length; i++){
-    const a = nd[i % nd.length], b = nd[(i + 1) % nd.length];
-    const x = yolk.cx + a.x, y = yolk.cy + a.y;
-    const nx = yolk.cx + b.x, ny = yolk.cy + b.y;
-    if (i === 0) ctx.moveTo((x + nx) / 2, (y + ny) / 2);
-    else ctx.quadraticCurveTo(x, y, (x + nx) / 2, (y + ny) / 2);
-  }
-  ctx.closePath();
-
-  const g = ctx.createRadialGradient(
-    yolk.cx - yolk.R * 0.35, yolk.cy - yolk.R * 0.45, yolk.R * 0.15,
-    yolk.cx, yolk.cy, yolk.R * 1.5);
-  const hi = mix(PAL.yolk, [255, 255, 255], 0.18 + 0.22 * p.punch);
-  const lo = mix(PAL.yolkD, PAL.yolk, 0.15 * p.punch);
-  g.addColorStop(0, "rgb(" + hi.map(Math.round).join(",") + ")");
-  g.addColorStop(1, "rgb(" + lo.map(Math.round).join(",") + ")");
-  ctx.fillStyle = g; ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255," + (0.25 + 0.35 * p.punch).toFixed(2) + ")";
-  ctx.lineWidth = 1.4 + p.punch; ctx.stroke();
-
-  ctx.fillStyle = PAL.muted;
+  // The rail, in section, with its tag.
+  ctx.fillStyle = rgb(mix(PAL.pan, PAL.panD, 0.8));
+  ctx.fillRect(toX(RAIL.x0), toY(RAIL.top), (RAIL.x1 - RAIL.x0) * S, RAIL.top * S);
+  ctx.fillStyle = PAL.hot;
   ctx.font = "10px ui-monospace, Menlo, monospace";
-  ctx.fillText(label, 12, 20);
+  ctx.fillText("EDGE", toX(RAIL.x0) - 2, toY(RAIL.top) - 7);
+
+  // The pool in section, cut through the line the egg came down on. Taking a
+  // max over z instead draws a needle through the tallest cell on the counter,
+  // which is not a section of anything.
+  const lift = 1.45 * p.height;
+  const cutZ = Math.min(N - 2, Math.max(1, worldToCell(pour.t >= -0.5 ? pour.z : sac.z || 0)));
+  const cut = [];
+  for (let x = 0; x < N; x++){
+    // Three cells wide, so a single noisy cell cannot spike the line.
+    cut.push((poolDepth(x, cutZ - 1) + poolDepth(x, cutZ) + poolDepth(x, cutZ + 1)) / 3);
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(0, baseY);
+  for (let x = 0; x < N; x++) ctx.lineTo(toX(cellToWorld(x)), toY(cut[x]));
+  ctx.lineTo(W, baseY);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, baseY - 70, 0, baseY);
+  grad.addColorStop(0, "rgba(" + PAL.alb.join(",") + ",0.95)");
+  grad.addColorStop(1, "rgba(" + PAL.albD.join(",") + ",0.6)");
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.strokeStyle = PAL.ink; ctx.globalAlpha = 0.55; ctx.lineWidth = 1.2;
+  ctx.stroke(); ctx.globalAlpha = 1;
+
+  // The fill is true scale - this elevation is the one place on the sheet
+  // where an inch is an inch. The dotted line above it is the same section as
+  // the renderer actually ships it, vertical lift and all.
+  ctx.save();
+  ctx.strokeStyle = PAL.hot; ctx.globalAlpha = 0.7;
+  ctx.setLineDash([4, 4]); ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let x = 0; x < N; x++){
+    const px = toX(cellToWorld(x)), py = toY(cut[x] * lift);
+    x ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+  }
+  ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle = PAL.hot;
+  ctx.font = "10px ui-monospace, Menlo, monospace";
+  ctx.fillText("AS RENDERED · VERT ×" + lift.toFixed(2), 14, 20);
+  ctx.fillStyle = PAL.muted;
+  ctx.fillText("SOLID = TRUE SCALE", 14, 34);
+
+  if (sac.alive && sac.intact){
+    const [rr, ry] = sac.radii(p);
+    paintSac(ctx, toX(sac.x), toY(sac.y), rr * S, ry * S, p);
+  }
+
+  for (const h of debris.halves){
+    ctx.save();
+    ctx.translate(toX(h.x), toY(h.y));
+    ctx.rotate(h.rot);
+    ctx.fillStyle = rgb(PAL.shell);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, h.a * S * 0.46, h.b * S * 0.58, 0, 0, Math.PI, true);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = rgb(PAL.shellD); ctx.lineWidth = 1.5; ctx.stroke();
+    // The inside of the shell, so a half reads as a cup and not a pebble.
+    ctx.beginPath();
+    ctx.ellipse(0, 0, h.a * S * 0.46, h.b * S * 0.2, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(0,0,0,0.22)"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.restore();
+  }
+  ctx.fillStyle = rgb(PAL.shell);
+  for (const b of debris.bits){
+    ctx.beginPath();
+    ctx.arc(toX(b.x), toY(b.y), Math.max(1.4, b.r * S), 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  if (!egg.opened){
+    const flat = Math.hypot(egg.axis[0], egg.axis[1]) || 0.0001;
+    const ang = Math.atan2(-egg.axis[1], egg.axis[0]);
+    const along = lerp(egg.b, egg.a, flat);
+    paintEgg(ctx, toX(egg.p[0]), toY(egg.p[1]), along * S, egg.b * S, ang, p);
+
+    // Drop line and height, so the impact speed is something you can aim.
+    const floorY = egg.p[0] > RAIL.x0 - egg.b && egg.p[0] < RAIL.x1 + egg.b
+      ? RAIL.top : 0;
+    const h = egg.p[1] - egg.supportY() - floorY;
+    if (h > 0.15){
+      ctx.save();
+      ctx.strokeStyle = PAL.hot; ctx.globalAlpha = 0.55;
+      ctx.setLineDash([5, 5]); ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(toX(egg.p[0]), toY(egg.p[1] - egg.supportY()));
+      ctx.lineTo(toX(egg.p[0]), toY(floorY));
+      ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = PAL.hot;
+      ctx.fillText(h.toFixed(1) + "in", toX(egg.p[0]) + 6, toY(floorY) - 6);
+    }
+
+    // Damage, if it has been knocked but not opened.
+    if (egg.damage > 0.02){
+      ctx.fillStyle = PAL.hot;
+      ctx.fillText("DAMAGE " + Math.round(Math.min(1, egg.damage) * 100) + "%",
+        toX(egg.p[0]) - 26, toY(egg.p[1]) - egg.b * S - 12);
+    }
+  }
+
+  ctx.strokeStyle = PAL.ink; ctx.globalAlpha = 0.5; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(14, H - 14); ctx.lineTo(14 + S, H - 14); ctx.stroke();
+  ctx.globalAlpha = 0.7; ctx.fillStyle = PAL.ink;
+  ctx.fillText("1 in", 14, H - 20);
+  ctx.globalAlpha = 1;
 }
 
-/* ------------------------------------------------------------------- rig */
+/* ------------------------------------------------------------------ paint */
+function paintEgg(ctx, cx, cy, rx, ry, ang, p){
+  ctx.save();
+  ctx.translate(cx, cy); ctx.rotate(ang);
+  const g = ctx.createRadialGradient(-rx * 0.3, -ry * 0.4, ry * 0.1, 0, 0, rx * 1.25);
+  g.addColorStop(0, rgb(mix(PAL.shell, [255,255,255], 0.35)));
+  g.addColorStop(1, rgb(PAL.shellD));
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = "rgba(0,0,0,0.28)"; ctx.lineWidth = 1; ctx.stroke();
+  ctx.restore();
+}
+function paintSac(ctx, cx, cy, rx, ry, p){
+  ctx.save();
+  ctx.translate(cx, cy);
+  const g = ctx.createRadialGradient(-rx * 0.3, -ry * 0.4, ry * 0.12, 0, 0, rx * 1.3);
+  g.addColorStop(0, rgb(mix(PAL.yolk, [255,255,255], 0.16 + 0.22 * p.punch)));
+  g.addColorStop(1, rgb(mix(PAL.yolkD, PAL.yolk, 0.2 + 0.35 * p.punch)));
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255," + (0.2 + 0.35 * p.punch).toFixed(2) + ")";
+  ctx.lineWidth = 1 + p.punch; ctx.stroke();
+  ctx.restore();
+}
+
+/* -------------------------------------------------------------------- rig */
+const field = new Field(3);
+const egg = new Egg();
+const sac = new Sac();
+const debris = new Debris();
+const pour = new Pour();
+
+const state = { style: profile(0.55), hitstop: 0, quality: "intact" };
+const readout = { food: -1 };
+
 const dial = document.getElementById("dial");
 const dialv = document.getElementById("dialv");
-const dialv2 = document.getElementById("dialv2");
-const ringv = document.getElementById("ringv");
 const buttons = [...document.querySelectorAll(".presets button")];
+const sideCv = document.getElementById("side");
+const planCv = document.getElementById("plan");
 
-const fieldA = new Field(3), fieldB = new Field(3);
-const pourA = new Pour(fieldA), pourB = new Pour(fieldB);
-const yolkA = new Yolk(), yolkB = new Yolk();
+const MULTS = [
+  ["Size",       p => p.size,      "×1.3",  "On top of the ×1.2 already in the model. True scale reads as a pebble."],
+  ["Mound",      p => p.mound,     "×2.2",  "Yield slope. The mound is the shape an egg is recognised by."],
+  ["Skirt",      p => p.skirt,     "×1.4",  "Thin flow. The two-phase read needs a visible skirt."],
+  ["Rim",        p => p.rim,       "×2.4",  "Cohesion. A beaded edge is the cheapest silhouette in the system."],
+  ["Fingering",  p => p.fingering, "×1.6",  "Flow noise. A circle reads as a decal."],
+  ["Height",     p => p.height,    "×1.7",  "Render lift. Volume conserved, carried in a shape you can see."],
+  ["Membrane",   p => p.stiffness, "×0.45", "Softer sac, so it squashes and holds the squash."],
+  ["Ring",       p => p.ring,      "×0.35", "Damping retention. The wobble outlives the landing."],
+  ["Squash",     p => p.squash,    "×1.8",  "Pressure. Flattening it bulges the sides harder."],
+  ["Hitstop",    p => p.hitstop,   "100ms", "Time dip on the crack. Curved on t² — a short dip is not felt."],
+  ["Pour time",  p => p.pourTime,  "×0.7",  "The real thing dribbles past the interesting part."],
+  ["Pour body",  p => p.pourBody,  "×1.45", "A true-width thread of albumen is two pixels and is not there."],
+  ["Forgiveness",p => p.forgive,   "×1.6",  "Shatter window, upward only. The crack still takes the same swing."],
+  ["Colour",     p => p.punch,     "1.0",   "Saturation, warmth, milkiness, wet rim."]
+];
 
-const panA = document.getElementById("panA"), panB = document.getElementById("panB");
-const secA = document.getElementById("secA"), secB = document.getElementById("secB");
-const yA = document.getElementById("yolkA"), yB = document.getElementById("yolkB");
-
-const DOC = profile(0);
-let style = profile(0.55);
-let hitstop = 0;
-
-function setDial(v, fromButton){
+function setDial(v){
   dial.value = v;
-  style = profile(parseFloat(v));
-  dialv.textContent = style.t.toFixed(2);
-  dialv2.textContent = "dial " + style.t.toFixed(2);
-  ringv.textContent = style.t < 0.15 ? "barely rings" : style.t < 0.7 ? "rings on" : "rings hard";
+  state.style = profile(parseFloat(v));
+  dialv.textContent = state.style.t.toFixed(2);
   buttons.forEach(b => b.setAttribute("aria-pressed",
-    String(Math.abs(parseFloat(b.dataset.v) - style.t) < 0.005)));
-  yolkB.R = 0.52 * style.size * 46;
-  yolkB.restArea = Math.PI * yolkB.R * yolkB.R;
-  yolkB.restLink = 2 * yolkB.R * Math.sin(Math.PI / yolkB.nodes.length);
+    String(Math.abs(parseFloat(b.dataset.v) - state.style.t) < 0.005)));
   renderTable();
 }
 
 function renderTable(){
   const tb = document.getElementById("mult");
+  const p = state.style, full = profile(1), zero = profile(0);
   tb.innerHTML = "";
   for (const [name, fn, at1, why] of MULTS){
-    const now = fn(style), full = fn(profile(1));
-    const isMs = name === "Hitstop";
-    const shown = isMs ? (now * 1000).toFixed(0) + "ms" : "×" + now.toFixed(2);
-    const frac = full === 1 ? 0 : Math.min(1, Math.abs(now - fn(DOC)) / Math.abs(full - fn(DOC)));
+    const now = fn(p);
+    const span = Math.abs(fn(full) - fn(zero));
+    const frac = span === 0 ? 0 : Math.min(1, Math.abs(now - fn(zero)) / span);
+    const shown = name === "Hitstop" ? (now * 1000).toFixed(0) + "ms" : "×" + now.toFixed(2);
     const tr = document.createElement("tr");
     tr.innerHTML =
       "<td>" + name + "</td>" +
       "<td class='n'><b>" + shown + "</b><span class='bar' style='width:" +
         (frac * 100).toFixed(0) + "%'></span></td>" +
-      "<td class='n'>" + at1 + "</td>" +
-      "<td>" + why + "</td>";
+      "<td class='n'>" + at1 + "</td><td>" + why + "</td>";
     tb.appendChild(tr);
   }
 }
 
-function crack(){
-  fieldA.clear(); fieldB.clear();
-  pourA.begin(); pourB.begin();
-  hitstop = style.hitstop;
-  dropYolks();
-}
-function dropYolks(){
-  yolkA.reset(1); yolkB.reset(style.size);
-  yolkA.cy = 150; yolkB.cy = 150;
-}
-window.__yolkDrop = () => {};
+/* ------------------------------------------------------------------ crack */
+const rQuality = document.getElementById("rQuality");
+const rSpeed = document.getElementById("rSpeed");
+const rAngle = document.getElementById("rAngle");
+const rFrag = document.getElementById("rFrag");
+const rFood = document.getElementById("rFood");
 
-document.getElementById("crack").addEventListener("click", crack);
-document.getElementById("reset").addEventListener("click", () => {
-  fieldA.clear(); fieldB.clear(); pourA.t = -1; pourB.t = -1;
+function setQuality(q, extra){
+  state.quality = q;
+  rQuality.textContent = extra ? q + " · " + extra : q;
+  rQuality.className = "q-" + q.split(" ")[0];
+}
+
+function onImpact(speed, onEdge){
+  if (egg.opened || speed < 12) return;
+
+  const equatorDot = egg.equatorDot();
+  const p = state.style;
+
+  // Effective strength: side-on is weaker, and a hard edge concentrates the
+  // load - but see below for what an edge does to the fragments.
+  const strength = lerp(1, EQUATOR_ADVANTAGE, equatorDot) * (onEdge ? 0.7 : 1);
+  const need = CRACK_SPEED * strength;
+  const shatterAt = SHATTER_SPEED * strength * p.forgive;
+
+  egg.damage += speed / need;
+
+  rSpeed.textContent = speed.toFixed(0) + " in/s";
+  rAngle.textContent = (Math.acos(Math.min(1, 1 - equatorDot)) * 180 / Math.PI).toFixed(0) +
+    "° " + (equatorDot > 0.65 ? "side-on" : equatorDot > 0.35 ? "oblique" : "end-on");
+
+  if (egg.damage < 1){
+    setQuality("knock", onEdge ? "on the edge" : "flat, held");
+    return;
+  }
+
+  let quality, fragments;
+  if (speed > shatterAt){ quality = "shattered"; fragments = 6 + Math.floor(Math.random() * 7); }
+  else if (speed > shatterAt * 0.72 || equatorDot < 0.35){
+    quality = "messy"; fragments = 2 + Math.floor(Math.random() * 4);
+  } else { quality = "clean"; fragments = Math.floor(Math.random() * 3); }
+
+  if (onEdge) fragments += 2;
+  open(quality, fragments, onEdge, speed);
+}
+
+function open(quality, fragments, onEdge, speed){
+  egg.opened = true;
+  setQuality(quality, onEdge ? "on the edge" : "on the flat");
+  rFrag.textContent = fragments + (fragments === 1 ? " piece" : " pieces");
+
+  state.hitstop = state.style.hitstop;
+
+  debris.open(egg, quality, fragments, onEdge);
+
+  const lost = quality === "shattered" ? 0.35 : 0;
+  pour.begin(egg.p[0], egg.p[2], 1 - lost);
+
+  // A hard crack stresses the membrane on the way out, which is why slamming
+  // an egg gets you a broken yolk even when the shell comes off cleanly.
+  const R = 0.52 * state.style.size;
+  sac.spawn(egg.p[0], Math.max(egg.p[1], R + 0.2), egg.p[2], R);
+  sac.sv -= Math.min(0.9, speed / SHATTER_SPEED) * 0.8;
+}
+
+/* ---------------------------------------------------------------- pointer */
+function bindDrag(cv, axes){
+  let dragging = false, lastT = 0, lastP = null;
+
+  const toWorld = e => {
+    const r = cv.getBoundingClientRect();
+    const S = r.width / (N * CELL);
+    const x = (e.clientX - r.left) / S - HALF;
+    const second = axes === "xy"
+      ? (r.height - 74 * (r.height / cv.height) - (e.clientY - r.top)) / S
+      : (e.clientY - r.top) / S - HALF;
+    return [x, second];
+  };
+
+  cv.addEventListener("pointerdown", e => {
+    if (egg.opened) return;
+    const [x, s] = toWorld(e);
+    const near = axes === "xy"
+      ? Math.hypot(x - egg.p[0], s - egg.p[1])
+      : Math.hypot(x - egg.p[0], s - egg.p[2]);
+    if (near > egg.a * 1.6) return;
+
+    dragging = true; egg.held = true; egg.resting = false;
+    cv.classList.add("grabbing");
+    cv.setPointerCapture(e.pointerId);
+    lastP = [x, s]; lastT = performance.now();
+    e.preventDefault();
+  });
+
+  cv.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    const [x, s] = toWorld(e);
+    const now = performance.now();
+    const dt = Math.max(0.008, (now - lastT) / 1000);
+
+    if (axes === "xy"){
+      egg.v[0] = (x - egg.p[0]) / dt;
+      egg.v[1] = (s - egg.p[1]) / dt;
+      egg.p[0] = x;
+      egg.p[1] = Math.max(egg.supportY(), Math.min(6.5, s));
+    } else {
+      egg.v[0] = (x - egg.p[0]) / dt;
+      egg.v[2] = (s - egg.p[2]) / dt;
+      egg.p[0] = x;
+      egg.p[2] = Math.max(-HALF + 0.3, Math.min(HALF - 0.3, s));
+    }
+    lastP = [x, s]; lastT = now;
+  });
+
+  const release = e => {
+    if (!dragging) return;
+    dragging = false; egg.held = false;
+    cv.classList.remove("grabbing");
+    // Cap the throw: a pointer that jumps across the canvas in one event
+    // should not hand the egg a thousand inches a second.
+    for (let i = 0; i < 3; i++) egg.v[i] = Math.max(-420, Math.min(420, egg.v[i]));
+  };
+  cv.addEventListener("pointerup", release);
+  cv.addEventListener("pointercancel", release);
+}
+bindDrag(sideCv, "xy");
+bindDrag(planCv, "xz");
+
+/* ---------------------------------------------------------------- actions */
+document.getElementById("again").addEventListener("click", () => {
+  field.clear();
+  debris.clear();
+  sac.alive = false;
+  pour.t = -1;
+  egg.reset(state.style.size);
+  readout.food = -1;
+  setQuality("intact", "");
+  rSpeed.textContent = "—"; rAngle.textContent = "—";
+  rFrag.textContent = "—"; rFood.textContent = "—";
 });
-document.getElementById("drop").addEventListener("click", dropYolks);
-document.getElementById("prod").addEventListener("click", () => {
-  yolkA.prod(1); yolkB.prod(1 + style.t * 1.4);
+
+document.getElementById("slam").addEventListener("click", () => {
+  if (egg.opened) return;
+  egg.held = false;
+  egg.p[1] = 3.4;
+  egg.p[0] = -0.9;
+  egg.axis = nrm3([0.97, 0.12, 0.2]);   // side-on, the taught technique
+  egg.v = [0, -46, 0];
 });
+
 document.getElementById("poke").addEventListener("click", () => {
-  yolkA.prod(2.6); yolkB.prod(2.6 + style.t * 2);
-  // A ruptured yolk hands its volume to the pool as the third phase.
-  setTimeout(() => {
-    if (!yolkA.intact) fieldA.deposit(N/2, N/2, 0.95, "yolk", 0.5);
-    if (!yolkB.intact) fieldB.deposit(N/2, N/2, 0.95 * style.size * style.size, "yolk", 0.5 * style.size);
-  }, 60);
+  if (sac.alive && sac.intact) sac.sv -= 3.4;
 });
 
 dial.addEventListener("input", e => setDial(e.target.value));
 buttons.forEach(b => b.addEventListener("click", () => setDial(b.dataset.v)));
 
-const readVol = document.getElementById("rVol");
-const readWide = document.getElementById("rWide");
-const readDeep = document.getElementById("rDeep");
+/* ------------------------------------------------------------------- loop */
+const hLabel = document.getElementById("hLabel");
+const zLabel = document.getElementById("zLabel");
+const hintSide = document.getElementById("hintSide");
 
-let last = performance.now(), acc = 0, statTick = 0;
+let last = performance.now(), acc = 0, tick = 0;
+
 function frame(now){
   const raw = Math.min(0.05, (now - last) / 1000);
   last = now;
 
-  // Hitstop, unscaled - the dip slows the sim, not its own recovery.
+  // Hitstop runs on unscaled time - the dip must not slow its own recovery.
   let dt = raw;
-  if (hitstop > 0){ hitstop -= raw; dt = raw * 0.08; }
+  if (state.hitstop > 0){ state.hitstop -= raw; dt = raw * 0.08; }
 
   acc += dt;
   const STEP = 1 / 50;
   let steps = 0;
   while (acc >= STEP && steps < 4){
     acc -= STEP; steps++;
-    pourA.update(STEP, DOC); pourB.update(STEP, style);
-    fieldA.step(DOC); fieldB.step(style);
-    // The sac wants a finer step than the field does - four sub-steps is the
-    // cheapest thing that keeps a stiff membrane from tearing on contact.
-    for (let k = 0; k < 6; k++){
-      yolkA.step(STEP / 6, DOC, yA.height - 44);
-      yolkB.step(STEP / 6, style, yB.height - 44);
-    }
+    egg.step(STEP, onImpact);
+    debris.step(STEP);
+    pour.update(STEP, state.style);
+    field.step(state.style);
+    // The sac wants a finer step than the field does.
+    for (let k = 0; k < 6; k++) sac.step(STEP / 6, state.style, surfaceAt);
   }
 
-  drawPan(panA, fieldA, DOC, yolkA);
-  drawPan(panB, fieldB, style, yolkB);
-  drawSection(secA, fieldA, DOC, null);
-  drawSection(secB, fieldB, style, fieldA);
-  drawYolk(yA, yolkA, DOC, "MEMBRANE ×1.00 · DAMPING ×1.00");
-  drawYolk(yB, yolkB, style,
-    "MEMBRANE ×" + style.stiffness.toFixed(2) + " · DAMPING ×" + style.ring.toFixed(2));
+  drawSide(sideCv, state.style);
+  drawPlan(planCv, state.style);
 
-  if (++statTick % 6 === 0){
-    const a = fieldA.stats(), b = fieldB.stats();
-    readVol.textContent = a.volume.toFixed(2) + " → " + b.volume.toFixed(2) + " in³";
-    readWide.textContent = a.width.toFixed(1) + " → " + b.width.toFixed(1) + " in";
-    readDeep.textContent = a.peak.toFixed(3) + " → " + b.peak.toFixed(3) + " in";
+  if (++tick % 8 === 0){
+    if (!egg.opened){
+      const h = Math.max(0, egg.p[1] - egg.supportY());
+      hLabel.textContent = "height " + h.toFixed(1) + "in";
+      zLabel.textContent = "z " + egg.p[2].toFixed(1) + "in";
+      hintSide.textContent = egg.held ? "Release to drop" : "Drag the egg · release to drop";
+    } else {
+      hLabel.textContent = "opened";
+      zLabel.textContent = "pool " + field.stats().volume.toFixed(2) + " in³";
+      hintSide.textContent = "New egg to go again";
+      const n = debris.contamination();
+      if (n !== readout.food){
+        readout.food = n;
+        rFood.textContent = n === 0 ? "clean" : n + (n === 1 ? " piece" : " pieces");
+      }
+    }
   }
 
   requestAnimationFrame(frame);
@@ -943,10 +1302,11 @@ function frame(now){
 
 readPalette();
 if (window.matchMedia){
-  const mq = window.matchMedia("(prefers-color-scheme: dark)");
-  mq.addEventListener?.("change", readPalette);
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", readPalette);
 }
 setDial(0.55);
-crack();
+setQuality("intact", "");
+egg.reset(state.style.size);
 requestAnimationFrame(frame);
+
 </script>

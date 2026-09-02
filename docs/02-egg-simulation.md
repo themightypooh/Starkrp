@@ -307,10 +307,20 @@ Two of these are not free and are worth naming:
   aiming test is the mechanic and the dial does not soften it; it only stops
   the *upper* bound from being invisible and unfair.
 
-**Preview.** [`02-egg-stylisation.html`](02-egg-stylisation.html) runs the solver
-in the browser — two pans, the same egg, the dial live between them. The
-JavaScript is a port of `EggFluidField.cs` and `EggYolk.cs` rather than a
-mock-up, which is how the volume-conservation bug below was found.
+**Preview.** [`02-egg-stylisation.html`](02-egg-stylisation.html) is a playable
+rig: drag the egg around a counter in synced elevation and plan views, slam it
+into the flat or into the `edge`-tagged rail, and watch the crack test, the
+pour and the pool run at whatever the dial is set to. The JavaScript is a port
+of `EggFluidField.cs`, `EggShell.cs`'s crack test and the yolk sac rather than
+a mock-up, which is how the volume-conservation bug below was found.
+
+The elevation is drawn true scale with the renderer's vertical lift dotted over
+it — which shows up the **open tuning question**: the mound stands around 1.1in
+tall, where a real one is nearer 0.4in. The yield stress acts as an angle of
+repose, so a pour that lands in a tight footprint builds a cone the solver then
+refuses to let down. Either `ThickYield` comes down again or Layer C has to
+scatter deposits over the egg's own footprint; the preview leans on the
+second.
 
 ### Where it lives
 
