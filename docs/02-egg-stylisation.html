@@ -20,19 +20,19 @@
   --paper:#0F161B; --panel:#151F26; --ink:#DBE3E8; --muted:#8195A0;
   --rule:#2B3944; --grid:#22303A; --grid-hi:#2F3F4B;
   --hot:#E2685B; --good:#63B07C; --warn:#D2A03F;
-  --pan:#4B555B; --pan-d:#333C42;
-  --alb:#D9E6E9; --alb-d:#8FA3A9;
-  --yolk:#E9A620; --yolk-d:#8F4E09;
-  --shell:#CBBFA8; --shell-d:#8C8069;
+  --pan:#69747C; --pan-d:#48525A;
+  --alb:#E8F1F3; --alb-d:#9FB3B9;
+  --yolk:#F0AC22; --yolk-d:#9A550A;
+  --shell:#DCD0BA; --shell-d:#988B72;
 }}
 :root[data-theme="dark"]{
   --paper:#0F161B; --panel:#151F26; --ink:#DBE3E8; --muted:#8195A0;
   --rule:#2B3944; --grid:#22303A; --grid-hi:#2F3F4B;
   --hot:#E2685B; --good:#63B07C; --warn:#D2A03F;
-  --pan:#4B555B; --pan-d:#333C42;
-  --alb:#D9E6E9; --alb-d:#8FA3A9;
-  --yolk:#E9A620; --yolk-d:#8F4E09;
-  --shell:#CBBFA8; --shell-d:#8C8069;
+  --pan:#69747C; --pan-d:#48525A;
+  --alb:#E8F1F3; --alb-d:#9FB3B9;
+  --yolk:#F0AC22; --yolk-d:#9A550A;
+  --shell:#DCD0BA; --shell-d:#988B72;
 }
 
 *{box-sizing:border-box}
@@ -80,7 +80,11 @@ figcaption b{color:var(--ink);font-weight:600}
   color:var(--ink);font-variant-numeric:tabular-nums}
 input[type=range]{width:100%;margin:0;accent-color:var(--hot);height:26px}
 input[type=range]:focus-visible{outline:2px solid var(--hot);outline-offset:3px}
-.presets{display:flex;gap:0;flex-wrap:wrap}
+.presets{display:flex;gap:0}
+@media (max-width:720px){
+  .presets{width:100%}
+  .presets button{flex:1 1 0;padding:9px 4px;text-align:center}
+}
 .presets button{font-family:var(--font-m);font-size:11px;letter-spacing:.1em;
   text-transform:uppercase;padding:8px 13px;background:transparent;color:var(--muted);
   border:1px solid var(--rule);margin-left:-1px;cursor:pointer;white-space:nowrap}
@@ -104,6 +108,7 @@ canvas.grabbing{cursor:grabbing}
 .res{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--rule);
   border-top:1px solid var(--rule)}
 @media (max-width:760px){.res{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:760px){.res div:last-child{grid-column:1 / -1}}
 .res div{background:var(--panel);padding:9px 12px;font-family:var(--font-m);font-size:12px;
   font-variant-numeric:tabular-nums}
 .res span{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
@@ -119,6 +124,10 @@ canvas{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
 canvas.grabbing{cursor:grabbing}
 canvas:focus-visible{outline:2px solid var(--hot);outline-offset:-2px}
 .cams{position:absolute;right:14px;top:14px;display:flex}
+@media (max-width:640px){
+  .cams{position:static;padding:10px 12px 0;justify-content:stretch}
+  .cams button{flex:1 1 0;text-align:center;padding:8px 4px}
+}
 .cams button{font-family:var(--font-m);font-size:10.5px;letter-spacing:.1em;
   text-transform:uppercase;padding:7px 11px;background:var(--panel);color:var(--muted);
   border:1px solid var(--rule);margin-left:-1px;cursor:pointer;white-space:nowrap}
@@ -211,7 +220,7 @@ clean break; catch the raised rail and you drive shell inward.</p>
 <h2>1 · The rig</h2>
 
 <figure>
-  <div class="fig-hd"><b>Fig 1</b><span>Live · 6.5in of counter · drag to handle, drag off to orbit</span>
+  <div class="fig-hd"><b>Fig 1</b><span>Live · drag to handle, drag off to orbit</span>
     <span id="hLabel" class="fig-state">intact</span></div>
   <div class="stage">
     <canvas id="view" width="1000" height="620" tabindex="0" role="img"
@@ -259,8 +268,9 @@ equator advantage and the flat-versus-edge rule are untouched at every dial posi
 identically; the same impact goes from shattered to clean.</div>
 
 <div class="note"><b>What this preview is not.</b> Flat-shaded triangles standing in for the
-refraction-and-Fresnel material, an ellipsoid instead of the authored shell model, and a
-three-axis volume-preserving sac instead of the 160-node membrane lattice — so the yolk
+refraction-and-Fresnel material, a tessellated ellipsoid broken into shards instead of
+the authored ModelDoc gibs, and a three-axis volume-preserving sac instead of
+the 160-node membrane lattice — so the yolk
 squashes, rings and tears, but cannot split along a seam. The field solver, the yield stress,
 the cohesion rim and the crack test are the shipped ones, ported line for line. The mound also
 stands taller here than a real one does: the yield stress acts as an angle of repose, and that
@@ -598,70 +608,337 @@ class Sac {
   }
 }
 
-/* ----------------------------------------------------------------- debris */
-class Debris {
-  constructor(){ this.halves = []; this.bits = []; }
-  clear(){ this.halves = []; this.bits = []; }
-  open(egg, quality, fragments, onEdge){
-    const [ax, ay, az] = egg.axis;
-    for (const dir of [1, -1]){
-      this.halves.push({
-        x: egg.p[0] + ax * dir * egg.a * 0.4,
-        y: egg.p[1] + ay * dir * egg.a * 0.4,
-        z: egg.p[2] + az * dir * egg.a * 0.4,
-        vx: ax * dir * 14 + (Math.random() - 0.5) * 8,
-        vy: 26 + Math.random() * 12,
-        vz: az * dir * 14 + (Math.random() - 0.5) * 8,
-        rot: Math.random() * Math.PI, rotv: (Math.random() - 0.5) * 9,
-        a: egg.a, b: egg.b, dir
-      });
-    }
-    // Fragments as particles, per the design: nothing this small is a body.
-    for (let i = 0; i < fragments; i++){
-      // A flat surface drives them inward, an edge punches them straight down.
-      const inward = onEdge ? -0.2 : 0.55;
-      this.bits.push({
-        x: egg.p[0], y: egg.p[1], z: egg.p[2],
-        vx: (Math.random() - 0.5) * 34 - inward * 12 * Math.sign(egg.p[0] || 1),
-        vy: 12 + Math.random() * 26,
-        vz: (Math.random() - 0.5) * 34 - inward * 12 * Math.sign(egg.p[2] || 1),
-        r: 0.05 + Math.random() * 0.11, rest: false
-      });
+/* An orthonormal basis whose first axis is the egg's long axis. Rows are the
+   basis vectors, so a local point maps to world as x*e0 + y*e1 + z*e2. */
+function axisBasis(axis){
+  const f = norm(axis);
+  const up = Math.abs(f[1]) > 0.94 ? [1, 0, 0] : [0, 1, 0];
+  const r = norm(cross(up, f));
+  return [f, cross(f, r), r];
+}
+
+/* ----------------------------------------------------------------- shell */
+/*
+   The shell is a real surface broken into pieces, not two authored blobs.
+
+   An ellipsoid is tessellated once at load; the faces are grouped into ~60
+   shards by nearest seed point, which is a cheap Voronoi over the surface and
+   gives pieces with the irregular, angular outlines that broken shell
+   actually has. On a crack the shards are grouped again into rigid clusters -
+   two big ones for a clean break, a dozen small ones for a shatter - so the
+   same mesh produces halves, fragments, or confetti depending on how hard it
+   was hit. Each cluster then flies and lands as one body.
+*/
+const SHARD_SEEDS = 60;
+
+function seededRandom(seed){
+  let s = seed >>> 0;
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+
+function buildShell(){
+  const rings = 13, segs = 20;
+  const rnd = seededRandom(20260902);
+
+  // Vertices on the unit sphere, then squeezed into an egg: one end fatter,
+  // which is what makes a shard's outline read as shell and not as gravel.
+  const dirs = [];
+  for (let i = 0; i <= rings; i++){
+    const phi = i / rings * Math.PI;
+    for (let j = 0; j <= segs; j++){
+      const th = j / segs * Math.PI * 2;
+      dirs.push([Math.cos(phi),
+                 Math.sin(phi) * Math.cos(th),
+                 Math.sin(phi) * Math.sin(th)]);
     }
   }
+  const shape = d => {
+    const taper = 1 - 0.17 * d[0];
+    return [d[0], d[1] * taper, d[2] * taper];
+  };
+
+  const seeds = [];
+  for (let i = 0; i < SHARD_SEEDS; i++){
+    // Fibonacci-ish scatter, jittered, so the shards vary in size the way
+    // real ones do instead of tiling like a football.
+    const y = 1 - 2 * (i + 0.5) / SHARD_SEEDS;
+    const r = Math.sqrt(Math.max(0, 1 - y * y));
+    const th = i * 2.399963 + rnd() * 0.7;
+    seeds.push(norm([y + (rnd() - 0.5) * 0.12,
+                     r * Math.cos(th), r * Math.sin(th)]));
+  }
+
+  const shards = Array.from({ length: SHARD_SEEDS }, () => ({ tris: [], centre: [0,0,0] }));
+  const row = segs + 1;
+  for (let i = 0; i < rings; i++)
+  for (let j = 0; j < segs; j++){
+    const a = i * row + j, b = a + row;
+    const quad = [[a, b, b + 1], [a, b + 1, a + 1]];
+    for (const t of quad){
+      const c = norm([
+        (dirs[t[0]][0] + dirs[t[1]][0] + dirs[t[2]][0]) / 3,
+        (dirs[t[0]][1] + dirs[t[1]][1] + dirs[t[2]][1]) / 3,
+        (dirs[t[0]][2] + dirs[t[1]][2] + dirs[t[2]][2]) / 3
+      ]);
+      let best = 0, bestDot = -2;
+      for (let k = 0; k < seeds.length; k++){
+        const d = dot(c, seeds[k]);
+        if (d > bestDot){ bestDot = d; best = k; }
+      }
+      shards[best].tris.push([shape(dirs[t[0]]), shape(dirs[t[1]]), shape(dirs[t[2]])]);
+    }
+  }
+
+  for (const sh of shards){
+    if (!sh.tris.length) continue;
+    let c = [0, 0, 0];
+    for (const t of sh.tris)
+      for (const v of t) c = add(c, scl(v, 1 / (sh.tris.length * 3)));
+    sh.centre = c;
+  }
+  return shards.filter(s => s.tris.length);
+}
+// Built on first break rather than at load: the tessellation leans on the
+// vector helpers further down the file, which do not exist yet up here.
+let SHELL = null;
+const shellShards = () => SHELL || (SHELL = buildShell());
+
+/* One flying piece: a group of shards moving as a rigid body. */
+class Piece {
+  constructor(tris, centre, radii){
+    // Local geometry, relative to the piece's own centre of mass.
+    this.tris = tris.map(t => t.map(v => [
+      (v[0] - centre[0]) * radii[0],
+      (v[1] - centre[1]) * radii[1],
+      (v[2] - centre[2]) * radii[2]
+    ]));
+    this.r = Math.max(0.06, Math.hypot(centre[0] * radii[0], centre[1] * radii[1]) * 0.4);
+    // Which way this piece's outside faces. A shell fragment comes to rest
+    // cupped, so this is what it settles onto.
+    this.outward = norm(centre.map((c, i) => c * radii[i]));
+    this.pos = [0, 0, 0];
+    this.vel = [0, 0, 0];
+    this.spin = [0, 0, 0];
+    this.M = [[1,0,0],[0,1,0],[0,0,1]];
+    this.rest = false;
+    this.size = tris.length;
+  }
+  world(v){
+    const M = this.M;
+    return [
+      this.pos[0] + M[0][0]*v[0] + M[0][1]*v[1] + M[0][2]*v[2],
+      this.pos[1] + M[1][0]*v[0] + M[1][1]*v[1] + M[1][2]*v[2],
+      this.pos[2] + M[2][0]*v[0] + M[2][1]*v[1] + M[2][2]*v[2]
+    ];
+  }
+  lowest(){
+    let low = Infinity;
+    for (const t of this.tris) for (const v of t) low = Math.min(low, this.world(v)[1]);
+    return low;
+  }
+  /* Lie down the way a piece of shell does: convex side on the counter, cup
+     open upward, at whatever yaw it happened to stop at. Left to the solver a
+     hollow piece stands on its rim, which no shell has ever done. */
+  settle(){
+    const up = [0, 1, 0];
+    const f = this.outward;
+    let axis = cross(f, up);
+    const len = Math.hypot(axis[0], axis[1], axis[2]);
+    if (len > 1e-4){
+      axis = scl(axis, 1 / len);
+      const ang = Math.acos(Math.max(-1, Math.min(1, dot(f, up))));
+      const c = Math.cos(ang), sn = Math.sin(ang), t = 1 - c;
+      const [x, y, z] = axis;
+      const Rm = [
+        [t*x*x + c,   t*x*y - sn*z, t*x*z + sn*y],
+        [t*x*y + sn*z, t*y*y + c,   t*y*z - sn*x],
+        [t*x*z - sn*y, t*y*z + sn*x, t*z*z + c]
+      ];
+      this.M = Rm;
+    }
+    const low = this.lowest();
+    this.pos[1] += surfaceAt(this.pos[0], this.pos[2]) - low;
+  }
+
   step(dt){
-    for (const h of this.halves){
-      h.vy -= G * dt;
-      h.x += h.vx * dt; h.y += h.vy * dt; h.z += h.vz * dt;
-      h.rot += h.rotv * dt;
-      if (h.y < h.b * 0.5){
-        h.y = h.b * 0.5;
-        h.vy *= -0.22; h.vx *= 0.6; h.vz *= 0.6; h.rotv *= 0.5;
-        if (Math.abs(h.vy) < 4) h.vy = 0;
+    if (this.rest) return;
+
+    this.vel[1] -= G * dt;
+    for (let i = 0; i < 3; i++) this.pos[i] += this.vel[i] * dt;
+
+    // Rotation by the angular velocity, re-orthonormalised so the piece does
+    // not shear itself apart over a few hundred frames.
+    const w = this.spin, M = this.M;
+    for (let r = 0; r < 3; r++){
+      const c = [M[r][0], M[r][1], M[r][2]];
+      M[r][0] += (w[1]*c[2] - w[2]*c[1]) * dt;
+      M[r][1] += (w[2]*c[0] - w[0]*c[2]) * dt;
+      M[r][2] += (w[0]*c[1] - w[1]*c[0]) * dt;
+    }
+    orthonormalise(M);
+
+    const low = this.lowest();
+    const floor = surfaceAt(this.pos[0], this.pos[2]);
+    if (low < floor){
+      this.pos[1] += floor - low;
+      if (this.vel[1] < 0) this.vel[1] *= -0.24;
+      this.vel[0] *= 0.62; this.vel[2] *= 0.62;
+      this.spin = scl(this.spin, 0.45);
+      if (Math.abs(this.vel[1]) < 3 && Math.hypot(this.vel[0], this.vel[2]) < 2.5){
+        this.vel = [0, 0, 0]; this.spin = [0, 0, 0]; this.rest = true;
+        this.settle();
       }
     }
-    for (const b of this.bits){
-      if (b.rest) continue;
-      b.vy -= G * dt;
-      b.x += b.vx * dt; b.y += b.vy * dt; b.z += b.vz * dt;
-      if (b.y < b.r){
-        b.y = b.r; b.vy *= -0.25; b.vx *= 0.55; b.vz *= 0.55;
-        if (Math.abs(b.vy) < 3){ b.vy = 0; b.rest = true; }
+    // Stays on the counter: a piece that slides off the edge is a piece the
+    // player cannot see and cannot pick out of the food.
+    this.pos[0] = Math.min(HALF - 0.2, Math.max(-HALF + 0.2, this.pos[0]));
+    this.pos[2] = Math.min(HALF - 0.2, Math.max(-HALF + 0.2, this.pos[2]));
+  }
+}
+
+function orthonormalise(M){
+  const c0 = norm([M[0][0], M[1][0], M[2][0]]);
+  let c1 = [M[0][1], M[1][1], M[2][1]];
+  const d = dot(c0, c1);
+  c1 = norm([c1[0] - c0[0]*d, c1[1] - c0[1]*d, c1[2] - c0[2]*d]);
+  const c2 = cross(c0, c1);
+  M[0][0]=c0[0]; M[1][0]=c0[1]; M[2][0]=c0[2];
+  M[0][1]=c1[0]; M[1][1]=c1[1]; M[2][1]=c1[2];
+  M[0][2]=c2[0]; M[1][2]=c2[1]; M[2][2]=c2[2];
+}
+
+class Debris {
+  constructor(){ this.pieces = []; }
+  clear(){ this.pieces = []; }
+
+  /*
+     Break the shell. `groups` clusters of shards, seeded at the shards nearest
+     a set of scattered directions, with the impact point weighted so the shell
+     comes apart where it was struck rather than at the poles.
+  */
+  open(egg, quality, fragments, onEdge, contact){
+    this.pieces = [];
+
+    const groups = quality === "clean" ? 2
+                 : quality === "messy" ? 4 + Math.min(3, fragments)
+                 : 9 + Math.min(6, fragments);
+
+    const basis = axisBasis(egg.axis);
+    const toWorldDir = v => [
+      basis[0][0]*v[0] + basis[1][0]*v[1] + basis[2][0]*v[2],
+      basis[0][1]*v[0] + basis[1][1]*v[1] + basis[2][1]*v[2],
+      basis[0][2]*v[0] + basis[1][2]*v[1] + basis[2][2]*v[2]
+    ];
+    const radii = [egg.a, egg.b, egg.b];
+
+    // Cluster seeds: one at the impact, the rest scattered.
+    const shards0 = shellShards();
+    const local = shards0.map(s => s.centre);
+    const seeds = [];
+    const hitLocal = norm([
+      dot(contact, basis[0]), dot(contact, basis[1]), dot(contact, basis[2])
+    ]);
+
+    // A clean crack opens like a clamshell: the split runs the length of the
+    // egg through the point that was struck, not around a pole.
+    if (groups === 2){
+      const along = norm([hitLocal[0] * 0.15, hitLocal[1], hitLocal[2]]);
+      seeds.push(along, scl(along, -1));
+    } else seeds.push(hitLocal);
+
+    for (let i = seeds.length; i < groups; i++){
+      const y = 1 - 2 * (i + 0.5) / groups;
+      const r = Math.sqrt(Math.max(0, 1 - y * y));
+      const th = i * 2.399963;
+      seeds.push(norm([y, r * Math.cos(th), r * Math.sin(th)]));
+    }
+
+    const buckets = seeds.map(() => []);
+    for (let i = 0; i < shards0.length; i++){
+      let best = 0, bestDot = -2;
+      for (let k = 0; k < seeds.length; k++){
+        const d = dot(norm(local[i]), seeds[k]);
+        if (d > bestDot){ bestDot = d; best = k; }
       }
+      buckets[best].push(shards0[i]);
+    }
+
+    for (let k = 0; k < buckets.length; k++){
+      const shards = buckets[k];
+      if (!shards.length) continue;
+
+      let centre = [0, 0, 0];
+      for (const sh of shards) centre = add(centre, scl(sh.centre, 1 / shards.length));
+
+      const tris = [];
+      for (const sh of shards) for (const t of sh.tris) tris.push(t);
+
+      const piece = new Piece(tris, centre, radii);
+      const worldCentre = [
+        egg.p[0] + toWorldDir([centre[0] * egg.a, centre[1] * egg.b, centre[2] * egg.b])[0],
+        egg.p[1] + toWorldDir([centre[0] * egg.a, centre[1] * egg.b, centre[2] * egg.b])[1],
+        egg.p[2] + toWorldDir([centre[0] * egg.a, centre[1] * egg.b, centre[2] * egg.b])[2]
+      ];
+      piece.pos = worldCentre;
+      piece.M = [[basis[0][0], basis[1][0], basis[2][0]],
+                 [basis[0][1], basis[1][1], basis[2][1]],
+                 [basis[0][2], basis[1][2], basis[2][2]]];
+
+      // Small pieces are thrown; the big ones mostly fall open. A flat surface
+      // drives them inward over the food, an edge punches them straight down -
+      // which is the whole reason the flat counter is the taught technique.
+      // Pieces leave along the split they came apart on, so a clean break
+      // drops the two halves clear of the pool instead of sitting them back
+      // down in it. Small pieces are thrown much harder than big ones.
+      const away = norm(sub(worldCentre, egg.p));
+      const flat = norm([away[0], 0, away[2]]);
+      const spread = (14 + 13 / Math.sqrt(shards.length)) * (onEdge ? 0.6 : 1);
+      const inward = onEdge ? -0.25 : 0.3;
+
+      piece.vel = [
+        flat[0] * spread - contact[0] * spread * inward + (Math.random() - 0.5) * 6,
+        Math.abs(away[1]) * spread * 0.3 + 4 + Math.random() * 6,
+        flat[2] * spread - contact[2] * spread * inward + (Math.random() - 0.5) * 6
+      ];
+      piece.spin = [(Math.random() - 0.5) * 16, (Math.random() - 0.5) * 16,
+                    (Math.random() - 0.5) * 16];
+      this.pieces.push(piece);
     }
   }
-  /* The shell-in-the-food test: a fragment at rest over an occupied cell. One
-     grid lookup, exactly as EggFluidField.IsInPool does it. */
+
+  step(dt){ for (const p of this.pieces) p.step(dt); }
+
+  /* Shell in the food: a piece at rest whose centre lies over an occupied
+     cell. One grid lookup, exactly as EggFluidField.IsInPool does it. */
   contamination(){
     let n = 0;
-    for (const b of this.bits){
-      if (!b.rest) continue;
-      const cx = worldToCell(b.x), cz = worldToCell(b.z);
-      if (cx < 0 || cz < 0 || cx >= N || cz >= N) continue;
-      const i = cz * N + cx;
-      if (field.thin[i] + field.thick[i] + field.yolk[i] > MIN_DEPTH) n++;
+    for (const p of this.pieces){
+      if (!p.rest) continue;
+      // Only fragments count. A half shell lying with its rim in the skirt is
+      // something you pick up; the design's contamination test is about the
+      // small pieces you do not see until you are eating them.
+      if (p.size > 14) continue;
+      if (depthAtWorld(p.pos[0], p.pos[2]) > MIN_DEPTH) n++;
     }
     return n;
+  }
+}
+
+/* Shell pieces are thin plates: draw whichever face is towards the camera,
+   in shell outside and membrane inside. */
+function drawShellPieces(R){
+  // Outside is shell; inside is the membrane, which is paler and matt. Getting
+  // that the wrong way round is what makes a broken half read as a rock.
+  const outer = PAL.shell;
+  const inner = mix(PAL.shell, [255, 255, 255], 0.3);
+  for (const piece of debris.pieces)
+  for (const t of piece.tris){
+    const a = piece.world(t[0]), b = piece.world(t[1]), c = piece.world(t[2]);
+    R.tri(a, b, c, outer, 1, false, [0.2, 14]);
+    R.tri(a, c, b, inner, 1);
   }
 }
 
@@ -738,7 +1015,16 @@ function depthAtWorld(wx, wz){
   const i = z * N + x;
   return field.thin[i] + field.thick[i] + field.yolk[i];
 }
-const surfaceAt = (wx, wz) => depthAtWorld(wx, wz) * 0.6;
+/* The height the pool is *drawn* at, so a body resting on it is not left
+   hovering above its own surface. Mirrors the lift in drawPool. */
+function poolTop(wx, wz){
+  const d = depthAtWorld(wx, wz);
+  const L = 1.45 * state.style.height;
+  return d * (1 + (L - 1) * Math.exp(-d / 0.22));
+}
+// Sunk into the white rather than perched on it - a yolk displaces the
+// albumen around it, and the contact is most of what marries the two.
+const surfaceAt = (wx, wz) => poolTop(wx, wz) * 0.55 - 0.12;
 
 /* ------------------------------------------------------------------- 3D */
 /*
@@ -748,7 +1034,27 @@ const surfaceAt = (wx, wz) => depthAtWorld(wx, wz) * 0.6;
    a counter, a shell, a pool and a yolk - and it keeps the whole preview a
    single file with nothing to fetch.
 */
-const cam = { yaw: -0.62, pitch: 0.42, dist: 8.2, target: [0, 0.3, 0], fov: 1.05 };
+/*
+   Framing is derived, not typed in. The counter's bounding sphere is fitted to
+   whichever of the two fields of view is tighter, so the scene fills a phone
+   in portrait and a desk monitor in landscape without a magic distance per
+   layout - which is exactly what was wrong the first time.
+*/
+const cam = { yaw: -0.62, pitch: 0.42, zoom: 1, dist: 9, target: [0, 0.35, 0], fov: 1.02 };
+const SCENE_RADIUS = 4.4;
+
+function fitDistance(aspect){
+  const fovV = cam.fov;
+  const fovH = 2 * Math.atan(Math.tan(fovV / 2) * aspect);
+
+  // A counter seen from a low angle is a wide, short band, so fitting a sphere
+  // to it wastes most of the frame vertically. Fit the projected extents
+  // instead: the vertical one collapses with the camera's pitch.
+  const halfW = SCENE_RADIUS;
+  const halfH = SCENE_RADIUS * (0.22 + 0.78 * Math.sin(cam.pitch)) + 1.1;
+
+  return Math.max(halfH / Math.tan(fovV / 2), halfW / Math.tan(fovH / 2)) * cam.zoom;
+}
 
 let camEye = [0,0,0], camR = [1,0,0], camU = [0,1,0], camF = [0,0,1];
 
@@ -784,9 +1090,25 @@ class Renderer {
     this.tris.length = 0;
     this.overlay.length = 0;
     this.bias = 0;
-    updateCamera();
     this.W = this.cv.width; this.H = this.cv.height;
     this.F = (this.H * 0.5) / Math.tan(cam.fov * 0.5);
+    cam.dist = fitDistance(this.W / this.H);
+    updateCamera();
+  }
+  /* Match the backing store to the element, at the device's pixel density.
+     A 1000px canvas stretched across a phone is why the first pass looked
+     like a screenshot of something else. */
+  resize(){
+    const rect = this.cv.getBoundingClientRect();
+    if (!rect.width) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const aspect = rect.width > 640 ? 1.6 : 1.15;
+    const w = Math.round(rect.width * dpr);
+    const h = Math.round(rect.width / aspect * dpr);
+    if (this.cv.width !== w || this.cv.height !== h){
+      this.cv.width = w; this.cv.height = h;
+      this.cv.style.height = Math.round(rect.width / aspect) + "px";
+    }
   }
   project(p){
     const c = toCam(p);
@@ -811,7 +1133,7 @@ class Renderer {
       // A touch of rim: the up-facing half of a body picks up the room.
       shade += 0.12 * Math.max(0, n[1]);
 
-      if (spec){
+      if (spec && shade < 1.6){
         // Blinn-Phong, one light. On the pool this is the wet sheet, and it
         // does more work than anything else in the material.
         const centre = [(a[0]+b[0]+c[0])/3, (a[1]+b[1]+c[1])/3, (a[2]+b[2]+c[2])/3];
@@ -837,6 +1159,11 @@ class Renderer {
     this.overlay.push({ kind: "line", pa, pb, col, width: width || 1,
                         alpha: alpha === undefined ? 1 : alpha, z: (pa[2] + pb[2]) / 2 });
   }
+  /* A screen-space body, sorted with everything else. `draw` is handed the
+     context once the sort has decided where it belongs. */
+  sprite(z, draw){
+    this.tris.push({ kind: "sprite", z: z + this.bias, draw });
+  }
   dot3(p, r, col){
     const q = this.project(p);
     if (!q) return;
@@ -852,6 +1179,11 @@ class Renderer {
     this.tris.sort((a, b) => b.z - a.z);
 
     for (const t of this.tris){
+      if (t.kind === "sprite"){
+        ctx.globalAlpha = 1;
+        t.draw(ctx);
+        continue;
+      }
       if (t.kind === "dot"){
         ctx.globalAlpha = 1;
         ctx.fillStyle = rgb(t.col);
@@ -859,7 +1191,10 @@ class Renderer {
         continue;
       }
       ctx.globalAlpha = t.alpha;
-      ctx.fillStyle = rgb([t.col[0] * t.shade, t.col[1] * t.shade, t.col[2] * t.shade]);
+      // Clamp the highlight: a blown-out white sheet loses the shape it was
+      // drawn to show, and it is worse in a dark theme than a light one.
+      const sh = Math.min(1.42, t.shade);
+      ctx.fillStyle = rgb([t.col[0] * sh, t.col[1] * sh, t.col[2] * sh]);
       ctx.beginPath();
       ctx.moveTo(t.pa[0], t.pa[1]);
       ctx.lineTo(t.pb[0], t.pb[1]);
@@ -887,80 +1222,144 @@ class Renderer {
   }
 }
 
-/* ------------------------------------------------------------------ meshes */
-/* A UV sphere, built once and reused for every round thing in the scene. */
-function buildSphere(rings, segs){
-  const verts = [], faces = [];
-  for (let i = 0; i <= rings; i++){
-    const v = i / rings, phi = v * Math.PI;
-    for (let j = 0; j <= segs; j++){
-      const u = j / segs, th = u * Math.PI * 2;
-      verts.push([Math.sin(phi) * Math.cos(th), Math.cos(phi), Math.sin(phi) * Math.sin(th)]);
-    }
-  }
-  const row = segs + 1;
-  for (let i = 0; i < rings; i++)
-  for (let j = 0; j < segs; j++){
-    const a = i * row + j, b = a + row;
-    faces.push([a, b, a + 1], [b, b + 1, a + 1]);
-  }
-  return { verts, faces };
-}
-const SPHERE = buildSphere(14, 20);
+/* ---------------------------------------------------------------- bodies */
+/*
+   The round things are drawn as screen-space impostors rather than as
+   triangle meshes. A yolk is a smooth, wet, translucent sphere: at the
+   triangle counts this renderer can afford, faceting is the first thing you
+   see, and faceting is the one thing a yolk does not have. Projecting the
+   silhouette and shading it with gradients gives a smooth body, a real
+   highlight and a soft terminator for a fraction of the cost.
+*/
 
-/* Rotation that takes +X onto the egg's long axis. */
-function axisBasis(axis){
-  const f = norm(axis);
-  let up = Math.abs(f[1]) > 0.94 ? [1, 0, 0] : [0, 1, 0];
-  const r = norm(cross(up, f));
-  return [f, cross(f, r), r];
+/* Screen-space silhouette of an ellipsoid: centre, long axis and its two
+   radii, returned as an ellipse ready to fill. */
+function silhouette(R, centre, axis, along, across){
+  const c = R.project(centre);
+  if (!c) return null;
+
+  const view = norm(sub(camEye, centre));
+  let side = cross(axis, view);
+  if (Math.hypot(side[0], side[1], side[2]) < 1e-4) side = camR;
+  side = norm(side);
+
+  const pa = R.project(add(centre, scl(axis, along)));
+  const pb = R.project(add(centre, scl(side, across)));
+  if (!pa || !pb) return null;
+
+  let rx = Math.hypot(pa[0] - c[0], pa[1] - c[1]);
+  const ry = Math.hypot(pb[0] - c[0], pb[1] - c[1]);
+  const rot = Math.atan2(pa[1] - c[1], pa[0] - c[0]);
+
+  // Looking down the long axis, the silhouette is the cross-section.
+  rx = Math.max(rx, ry * 0.62);
+  return { x: c[0], y: c[1], rx, ry, rot, z: c[2] };
 }
 
-function drawEllipsoid(R, centre, radii, axis, col, alpha, taper, spec){
-  const [ex, ey, ez] = axisBasis(axis);
-  const pts = SPHERE.verts.map(v => {
-    // Egg taper: one end fatter than the other, along the long axis.
-    const t = taper ? 1 - taper * v[1] * 0.5 : 1;
-    const local = [v[1] * radii[0], v[0] * radii[1] * t, v[2] * radii[2] * t];
-    return [
-      centre[0] + ex[0]*local[0] + ey[0]*local[1] + ez[0]*local[2],
-      centre[1] + ex[1]*local[0] + ey[1]*local[1] + ez[1]*local[2],
-      centre[2] + ex[2]*local[0] + ey[2]*local[1] + ez[2]*local[2]
-    ];
+/* Where the key light sits on this body, in screen space. */
+function lightOffset(R, centre, r){
+  const c = R.project(centre);
+  const l = R.project(add(centre, scl(LIGHT, r)));
+  if (!c || !l) return [-0.32, -0.42];
+  const dx = (l[0] - c[0]) / (r * R.F / c[2]);
+  const dy = (l[1] - c[1]) / (r * R.F / c[2]);
+  const m = Math.hypot(dx, dy) || 1;
+  return [dx / m * 0.42, dy / m * 0.42];
+}
+
+/* A smooth body: terminator, bounce light off the counter, a wet highlight
+   and a rim. The order matters - the rim goes last or the highlight eats it. */
+function paintBody(ctx, e, col, opt){
+  const o = opt || {};
+  const gloss = o.gloss === undefined ? 0.5 : o.gloss;
+  const [lx, ly] = o.light || [-0.34, -0.42];
+
+  ctx.save();
+  ctx.translate(e.x, e.y);
+  ctx.rotate(e.rot);
+  ctx.scale(e.rx, e.ry);
+
+  const g = ctx.createRadialGradient(lx * 0.55, ly * 0.55, 0.05, 0, 0, 1.25);
+  g.addColorStop(0.00, rgb(mix(col, [255, 255, 255], 0.34 + 0.16 * gloss)));
+  g.addColorStop(0.42, rgb(col));
+  g.addColorStop(0.82, rgb(mix(col, [0, 0, 0], 0.34)));
+  g.addColorStop(1.00, rgb(mix(col, [0, 0, 0], 0.52)));
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(0, 0, 1, 0, Math.PI * 2); ctx.fill();
+
+  // Bounce: the counter throws light back up into the underside, which is
+  // what stops a sphere reading as a flat disc with a gradient on it.
+  const b = ctx.createRadialGradient(-lx * 0.5, -ly * 0.62, 0.05, 0, 0, 1.1);
+  b.addColorStop(0, "rgba(255,255,255," + (0.10 + 0.10 * gloss).toFixed(3) + ")");
+  b.addColorStop(0.75, "rgba(255,255,255,0)");
+  ctx.fillStyle = b;
+  ctx.beginPath(); ctx.arc(0, 0, 1, 0, Math.PI * 2); ctx.fill();
+
+  ctx.restore();
+
+  // Specular, drawn unrotated so it stays a round highlight on a squashed
+  // body - a stretched highlight is what makes CG food look like plastic.
+  if (gloss > 0.02){
+    const hr = Math.min(e.rx, e.ry) * (0.3 - 0.12 * gloss);
+    const hx = e.x + lx * e.rx * Math.cos(e.rot) * 0.72 - ly * e.ry * Math.sin(e.rot) * 0.72;
+    const hy = e.y + lx * e.rx * Math.sin(e.rot) * 0.72 + ly * e.ry * Math.cos(e.rot) * 0.72;
+    const s = ctx.createRadialGradient(hx, hy, 0, hx, hy, Math.max(1.5, hr * 2.4));
+    s.addColorStop(0, "rgba(255,255,255," + (0.34 + 0.5 * gloss).toFixed(3) + ")");
+    s.addColorStop(0.45, "rgba(255,255,255," + (0.10 * gloss).toFixed(3) + ")");
+    s.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = s;
+    ctx.beginPath(); ctx.arc(hx, hy, Math.max(1.5, hr * 2.4), 0, Math.PI * 2); ctx.fill();
+  }
+
+  if (o.rim){
+    ctx.save();
+    ctx.translate(e.x, e.y); ctx.rotate(e.rot);
+    ctx.strokeStyle = "rgba(255,255,255," + o.rim.toFixed(3) + ")";
+    ctx.lineWidth = Math.max(0.8, Math.min(e.rx, e.ry) * 0.06);
+    ctx.beginPath(); ctx.ellipse(0, 0, e.rx * 0.985, e.ry * 0.985, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* Soft contact shadow on the counter, as its own sprite so it sorts under
+   whatever is casting it. */
+function contactShadow(R, centre, radius, lift){
+  const at = [centre[0] + lift * 0.18, 0.004, centre[2] - lift * 0.1];
+  const e = silhouette(R, at, [1, 0, 0], radius * (1 + lift * 0.3), radius * (1 + lift * 0.3));
+  if (!e) return;
+  const a = Math.max(0.04, 0.34 / (1 + lift * 1.1));
+  R.sprite(e.z + 0.4, ctx => {
+    ctx.save();
+    ctx.translate(e.x, e.y); ctx.rotate(e.rot); ctx.scale(e.rx, e.ry);
+    const g = ctx.createRadialGradient(0, 0, 0.1, 0, 0, 1);
+    g.addColorStop(0, "rgba(0,0,0," + a.toFixed(3) + ")");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(0, 0, 1, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
   });
-  for (const f of SPHERE.faces) R.tri(pts[f[0]], pts[f[1]], pts[f[2]], col, alpha, false, spec);
 }
 
-/* Half a shell: the same sphere, cut, with the cut face closed off. */
-function drawHalfShell(R, h, col, inner){
-  const [ex, ey, ez] = axisBasis([Math.cos(h.rot), Math.sin(h.rot) * 0.4, Math.sin(h.rot)]);
-  const c = [h.x, h.y, h.z];
-  const put = v => [
-    c[0] + ex[0]*v[0] + ey[0]*v[1] + ez[0]*v[2],
-    c[1] + ex[1]*v[0] + ey[1]*v[1] + ez[1]*v[2],
-    c[2] + ex[2]*v[0] + ey[2]*v[1] + ez[2]*v[2]
-  ];
-  const rings = 7, segs = 14, ra = h.a * 0.62, rb = h.b * 0.62;
-  const ring = [];
-  for (let i = 0; i <= rings; i++){
-    const phi = (i / rings) * (Math.PI / 2);
-    const r = [];
-    for (let j = 0; j <= segs; j++){
-      const th = j / segs * Math.PI * 2;
-      r.push(put([Math.cos(phi) * ra * h.dir,
-                  Math.sin(phi) * Math.cos(th) * rb,
-                  Math.sin(phi) * Math.sin(th) * rb]));
-    }
-    ring.push(r);
-  }
-  for (let i = 0; i < rings; i++)
-  for (let j = 0; j < segs; j++)
-    R.quad(ring[i][j], ring[i][j+1], ring[i+1][j+1], ring[i+1][j], col);
+function drawYolkBody(R, p){
+  const [rr, ry] = sac.radii(p);
+  const centre = [sac.x, sac.y, sac.z];
+  contactShadow(R, centre, rr * 0.95, Math.max(0, sac.y - ry));
 
-  // The cut face, dished inward so a half reads as a cup rather than a disc.
-  const rim = ring[rings], mid = put([-0.42 * ra * h.dir, 0, 0]);
-  for (let j = 0; j < segs; j++) R.tri(mid, rim[j+1], rim[j], inner);
-  for (let j = 0; j < segs; j++) R.tri(mid, rim[j], rim[j+1], inner);
+  const e = silhouette(R, centre, [0, 1, 0], ry, rr);
+  if (!e) return;
+  const col = mix(PAL.yolkD, PAL.yolk, 0.62 + 0.3 * p.punch);
+  const light = lightOffset(R, centre, rr);
+  R.sprite(e.z, ctx => paintBody(ctx, e, col, {
+    gloss: 0.62 + 0.3 * p.punch, light, rim: 0.16 + 0.2 * p.punch }));
+}
+
+function drawEggBody(R, p){
+  contactShadow(R, egg.p, egg.b * 1.05, Math.max(0, egg.p[1] - egg.supportY()));
+  const e = silhouette(R, egg.p, egg.axis, egg.a, egg.b);
+  if (!e) return;
+  const light = lightOffset(R, egg.p, egg.b);
+  R.sprite(e.z, ctx => paintBody(ctx, e, PAL.shell, { gloss: 0.16, light, rim: 0.07 }));
 }
 
 /* ------------------------------------------------------------------ scene */
@@ -975,16 +1374,10 @@ function drawScene(R, p){
   drawPool(R, p);
   drawDebris3(R);
 
-  if (sac.alive && sac.intact){
-    const [rr, ry] = sac.radii(p);
-    const yolkCol = mix(PAL.yolkD, PAL.yolk, 0.55 + 0.4 * p.punch);
-    drawEllipsoid(R, [sac.x, sac.y, sac.z], [rr, ry, rr], [1, 0, 0], yolkCol, 1, 0,
-      [0.6 + 0.4 * p.punch, 34]);
-  }
+  if (sac.alive && sac.intact) drawYolkBody(R, p);
 
   if (!egg.opened){
-    shadow(R, egg.p, egg.a * 0.95);
-    drawEllipsoid(R, egg.p, [egg.a, egg.b, egg.b], egg.axis, PAL.shell, 1, 0.28, [0.22, 12]);
+    drawEggBody(R, p);
     dropLine(R, p);
   }
 }
@@ -1009,7 +1402,7 @@ function drawCounter(R){
 }
 
 function drawRail(R){
-  const c = mix(PAL.pan, PAL.panD, 0.8);
+  const c = mix(PAL.pan, PAL.panD, 0.55);
   const { x0, x1, top } = RAIL, E = HALF + 0.35;
   // Top and the two faces the egg can actually strike.
   R.quad([x0, top, -E], [x0, top, E], [x1, top, E], [x1, top, -E], c);
@@ -1018,78 +1411,219 @@ function drawRail(R){
   R.label([x0, top + 0.25, 2.2], "EDGE", PAL.hot);
 }
 
-/* The pool: the height field as a surface, cells below the contact-line
-   threshold skipped entirely, so the silhouette of the mesh is the silhouette
-   of the puddle - which is the thing the eye reads. */
+/* ------------------------------------------------------------------ pool */
+/*
+   The pool is drawn as stacked depth contours, not as a grid of quads.
+
+   A height field rendered cell by cell gives a stepped silhouette and a lot of
+   triangles to sort, and the eye reads the grid before it reads the fluid.
+   Tracing the contour at a few depths and filling the loops gives a smooth
+   edge - the thing the design says does the heavy lifting - a legible mound,
+   and about five paths instead of five thousand triangles.
+*/
+const POOL_LEVELS = 6;
+const blurred = new Float32Array(N * N);
+const yolkBlur = new Float32Array(N * N);
+
+function blurField(){
+  const thin = field.thin, thick = field.thick, yolk = field.yolk;
+  for (let z = 0; z < N; z++)
+  for (let x = 0; x < N; x++){
+    let sum = 0, ysum = 0, n = 0;
+    for (let oz = -1; oz <= 1; oz++)
+    for (let ox = -1; ox <= 1; ox++){
+      const px = x + ox, pz = z + oz;
+      if (px < 0 || pz < 0 || px >= N || pz >= N) continue;
+      const i = pz * N + px;
+      sum += thin[i] + thick[i] + yolk[i];
+      ysum += yolk[i];
+      n++;
+    }
+    blurred[z * N + x] = sum / n;
+    yolkBlur[z * N + x] = ysum / n;
+  }
+}
+
+/* Marching squares over one field at one threshold, returned as loops of
+   points in cell coordinates. */
+function contour(src, level){
+  const segs = new Map();
+  const key = (x, y) => (Math.round(x * 64) << 12) ^ Math.round(y * 64);
+  const at = (x, z) => (x < 0 || z < 0 || x >= N || z >= N) ? 0 : src[z * N + x];
+
+  const push = (a, b) => {
+    const k = key(a[0], a[1]);
+    if (!segs.has(k)) segs.set(k, []);
+    segs.get(k).push([a, b]);
+  };
+  const lerpEdge = (x0, z0, x1, z1, v0, v1) => {
+    const t = (level - v0) / (v1 - v0 || 1e-6);
+    return [x0 + (x1 - x0) * t, z0 + (z1 - z0) * t];
+  };
+
+  for (let z = -1; z < N; z++)
+  for (let x = -1; x < N; x++){
+    const v00 = at(x, z), v10 = at(x + 1, z), v11 = at(x + 1, z + 1), v01 = at(x, z + 1);
+    let code = 0;
+    if (v00 > level) code |= 1;
+    if (v10 > level) code |= 2;
+    if (v11 > level) code |= 4;
+    if (v01 > level) code |= 8;
+    if (code === 0 || code === 15) continue;
+
+    const top    = () => lerpEdge(x, z, x + 1, z, v00, v10);
+    const right  = () => lerpEdge(x + 1, z, x + 1, z + 1, v10, v11);
+    const bottom = () => lerpEdge(x + 1, z + 1, x, z + 1, v11, v01);
+    const left   = () => lerpEdge(x, z + 1, x, z, v01, v00);
+
+    // Directed so the interior stays on the left. The complementary cases run
+    // the other way round - treating 1 and 14 as the same segment leaves every
+    // chain dead-ended and the contour comes out as confetti.
+    switch (code){
+      case 1:  push(left(), top()); break;
+      case 2:  push(top(), right()); break;
+      case 3:  push(left(), right()); break;
+      case 4:  push(right(), bottom()); break;
+      case 5:  push(left(), top()); push(right(), bottom()); break;
+      case 6:  push(top(), bottom()); break;
+      case 7:  push(left(), bottom()); break;
+      case 8:  push(bottom(), left()); break;
+      case 9:  push(bottom(), top()); break;
+      case 10: push(top(), right()); push(bottom(), left()); break;
+      case 11: push(bottom(), right()); break;
+      case 12: push(right(), left()); break;
+      case 13: push(right(), top()); break;
+      case 14: push(top(), left()); break;
+    }
+  }
+
+  const loops = [];
+  const seen = new Set();
+  for (const [, list] of segs)
+  for (const seg of list){
+    if (seen.has(seg)) continue;
+    const loop = [seg[0]];
+    let cur = seg;
+    for (let guard = 0; guard < 4000; guard++){
+      seen.add(cur);
+      loop.push(cur[1]);
+      const next = (segs.get(key(cur[1][0], cur[1][1])) || []).find(s => !seen.has(s));
+      if (!next) break;
+      cur = next;
+    }
+    if (loop.length > 4) loops.push(loop);
+  }
+  return loops;
+}
+
 function drawPool(R, p){
-  // Vertical exaggeration, but only where it was meant to apply. A flat scale
-  // on the whole field turns a mound into a traffic cone; the lift exists to
-  // rescue a tenth-of-an-inch film, so it decays as the depth gets real.
+  blurField();
+
+  let peak = 0, yolkPeak = 0;
+  for (let i = 0; i < blurred.length; i++){
+    if (blurred[i] > peak) peak = blurred[i];
+    if (yolkBlur[i] > yolkPeak) yolkPeak = yolkBlur[i];
+  }
+  if (peak <= MIN_DEPTH) return;
+
+  // Vertical exaggeration, but only where it was meant to apply: the lift
+  // exists to rescue a tenth-of-an-inch film, so it decays as depth gets real.
   const L = 1.45 * p.height;
   const lift = d => d * (1 + (L - 1) * Math.exp(-d / 0.22));
-  R.bias = 0.35;
-  const step = 2;
-  const h = (x, z) => {
-    if (x < 0 || z < 0 || x >= N || z >= N) return 0;
-    const i = z * N + x;
-    return field.thin[i] + field.thick[i] + field.yolk[i];
+
+  const paint = (src, level, col, alpha, gloss) => {
+    const loops = contour(src, level);
+    if (!loops.length) return;
+    const y = lift(level);
+
+    // Sorted by the deepest point of the loop, so a mound sitting inside the
+    // skirt still paints after it.
+    let z = 0, n = 0;
+    const paths = [];
+    for (const loop of loops){
+      const pts = [];
+      for (const [cx, cz] of loop){
+        const q = R.project([cellToWorld(cx), y, cellToWorld(cz)]);
+        if (!q) continue;
+        pts.push(q);
+        z += q[2]; n++;
+      }
+      if (pts.length > 3) paths.push(pts);
+    }
+    if (!paths.length) return;
+
+    R.sprite(z / n + 0.25 - level, ctx => {
+      ctx.beginPath();
+      for (const pts of paths){
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+        ctx.closePath();
+      }
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = rgb(col);
+      ctx.fill("nonzero");
+
+      // The contact line. A dark bead at the edge is what puts the pool on
+      // the counter instead of painting it onto the surface.
+      if (gloss){
+        ctx.globalAlpha = Math.min(0.5, 0.2 * p.meniscus);
+        ctx.strokeStyle = rgb(mix(PAL.albD, [0, 0, 0], 0.45));
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    });
   };
-  const phase = (x, z) => {
-    const i = z * N + x;
-    const d = field.thin[i] + field.thick[i] + field.yolk[i];
-    if (d <= 0) return [0, 0];
-    return [(field.thick[i] + field.yolk[i]) / d, field.yolk[i] / d];
-  };
 
-  for (let z = 0; z < N - step; z += step)
-  for (let x = 0; x < N - step; x += step){
-    const d00 = h(x, z), d10 = h(x + step, z),
-          d11 = h(x + step, z + step), d01 = h(x, z + step);
-    const dm = (d00 + d10 + d11 + d01) / 4;
-    if (dm <= MIN_DEPTH) continue;
-
-    const [thickFrac, yolkFrac] = phase(x + (step >> 1), z + (step >> 1));
-    let col = mix(PAL.albD, PAL.alb, Math.min(1, thickFrac * lerp(1, 1.5, p.punch) + 0.2));
-    if (yolkFrac > 0.02)
-      col = mix(col, mix(PAL.yolkD, PAL.yolk, 0.6), Math.min(1, yolkFrac * 2.4));
-
-    // Beer-Lambert: the skirt is a film you see the counter through, the mound
-    // is not. This is the two-phase read, and it is most of the material.
-    const alpha = Math.min(0.97,
-      1 - Math.exp(-dm * (5 + 12 * thickFrac * lerp(1, 1.7, p.punch))));
-
-    const wx = cellToWorld(x), wz = cellToWorld(z), s = CELL * step;
-    R.quad(
-      [wx,     lift(d00), wz],
-      [wx,     lift(d01), wz + s],
-      [wx + s, lift(d11), wz + s],
-      [wx + s, lift(d10), wz],
-      col, alpha, false, [0.85 + 0.5 * p.punch, 26]);
+  // White: a translucent skirt with the mound stacked on top of it.
+  for (let i = 0; i < POOL_LEVELS; i++){
+    const t = i / (POOL_LEVELS - 1);
+    const level = Math.max(MIN_DEPTH, peak * (0.04 + 0.9 * t * t));
+    const col = mix(PAL.albD, PAL.alb, 0.35 + 0.65 * t);
+    paint(blurred, level, col, i === 0 ? 0.5 : 0.34 + 0.1 * t, i === 0);
   }
-  R.bias = 0;
+
+  // Yolk, when it has been let out: same trick, three levels, warmer.
+  if (yolkPeak > MIN_DEPTH * 2){
+    for (let i = 0; i < 3; i++){
+      const t = i / 2;
+      const level = Math.max(MIN_DEPTH, yolkPeak * (0.06 + 0.85 * t * t));
+      paint(yolkBlur, level, mix(PAL.yolkD, PAL.yolk, 0.35 + 0.6 * t), 0.72, false);
+    }
+  }
+
+  // One broad wet highlight over the mound, placed where the light is.
+  const peakCell = peakOf(blurred);
+  if (peakCell){
+    const q = R.project([cellToWorld(peakCell[0]), lift(peak), cellToWorld(peakCell[1])]);
+    if (q){
+      const rad = 0.9 * R.F / q[2];
+      R.sprite(q[2] - 0.2, ctx => {
+        const g = ctx.createRadialGradient(q[0] - rad * 0.3, q[1] - rad * 0.35, 1,
+                                           q[0] - rad * 0.3, q[1] - rad * 0.35, rad);
+        g.addColorStop(0, "rgba(255,255,255," + (0.35 + 0.25 * p.punch).toFixed(2) + ")");
+        g.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(q[0] - rad * 0.3, q[1] - rad * 0.35, rad, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+  }
+}
+
+function peakOf(src){
+  let best = -1, bx = 0, bz = 0;
+  for (let z = 0; z < N; z++)
+  for (let x = 0; x < N; x++){
+    const v = src[z * N + x];
+    if (v > best){ best = v; bx = x; bz = z; }
+  }
+  return best > MIN_DEPTH ? [bx, bz] : null;
 }
 
 function drawDebris3(R){
-  for (const hf of debris.halves) drawHalfShell(R, hf, PAL.shell, mix(PAL.shell, PAL.shellD, 0.55));
-  for (const b of debris.bits) R.dot3([b.x, b.y, b.z], b.r, PAL.shell);
-}
-
-/* Contact shadow, as a flat fan on the counter. Reads as height, which is the
-   one thing a single fixed view cannot otherwise tell you. */
-function shadow(R, at, r){
-  const lift = Math.max(0, at[1] - egg.supportY());
-  const spread = r * (1 + lift * 0.28);
-  const a = Math.max(0.05, 0.3 / (1 + lift * 0.7));
-  const c = [0, 0, 0];
-  const cx = at[0] + lift * 0.22, cz = at[2] - lift * 0.12;
-  const seg = 16, y = 0.006;
-  for (let i = 0; i < seg; i++){
-    const t0 = i / seg * Math.PI * 2, t1 = (i + 1) / seg * Math.PI * 2;
-    R.tri([cx, y, cz],
-          [cx + Math.cos(t1) * spread, y, cz + Math.sin(t1) * spread],
-          [cx + Math.cos(t0) * spread, y, cz + Math.sin(t0) * spread],
-          c, a, true);
-  }
+  drawShellPieces(R);
 }
 
 function dropLine(R, p){
@@ -1207,7 +1741,9 @@ function onImpact(speed, onEdge){
   rFrag.textContent = fragments + (fragments === 1 ? " piece" : " pieces");
   state.hitstop = p.hitstop;
 
-  debris.open(egg, quality, fragments, onEdge);
+  // Where it was struck, in world space: straight down onto the counter, or
+  // up into the rail. The shell comes apart from there.
+  debris.open(egg, quality, fragments, onEdge, [0, -1, 0]);
   pour.begin(egg.p[0], egg.p[2], quality === "shattered" ? 0.65 : 1);
 
   const Rr = 0.52 * p.size;
@@ -1282,7 +1818,7 @@ function release(){
 view.addEventListener("pointerup", release);
 view.addEventListener("pointercancel", release);
 view.addEventListener("wheel", e => {
-  cam.dist = Math.min(26, Math.max(5.5, cam.dist + Math.sign(e.deltaY) * 0.8));
+  cam.zoom = Math.min(1.7, Math.max(0.55, cam.zoom + Math.sign(e.deltaY) * 0.08));
   e.preventDefault();
 }, { passive: false });
 
@@ -1322,9 +1858,9 @@ document.getElementById("poke").addEventListener("click", () => {
 });
 
 const CAMS = {
-  eye:  { pitch: 0.19, dist: 8.6, yaw: -0.62 },
-  three:{ pitch: 0.46, dist: 9.2, yaw: -0.62 },
-  top:  { pitch: 1.47, dist: 8.4, yaw: 0 }
+  eye:  { pitch: 0.17, yaw: -0.62, zoom: 0.78 },
+  three:{ pitch: 0.46, yaw: -0.62, zoom: 0.92 },
+  top:  { pitch: 1.47, yaw: 0,     zoom: 0.95 }
 };
 function setCamButtons(name){
   camButtons.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.cam === name)));
@@ -1360,6 +1896,7 @@ function frame(now){
     for (let k = 0; k < 6; k++) sac.step(STEP / 6, state.style, surfaceAt);
   }
 
+  R.resize();
   R.begin();
   drawScene(R, state.style);
   R.flush();
